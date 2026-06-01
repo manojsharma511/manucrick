@@ -10,6 +10,12 @@
   --text-primary: #F3F4F6;
   --text-secondary: #9CA3AF;
 
+  /* Metallic Theme Gradients */
+  --gold-metal: linear-gradient(135deg, #FFE066 0%, #F5B041 50%, #D35400 100%);
+  --silver-metal: linear-gradient(135deg, #FFFFFF 0%, #BDC3C7 50%, #7F8C8D 100%);
+  --neon-metal: linear-gradient(135deg, #1C1D21 0%, #00FF87 50%, #FF6B00 100%);
+  --leather-metal: linear-gradient(135deg, #E74C3C 0%, #C0392B 50%, #7B241C 100%);
+
   /* Fonts */
   --font-headings: 'Bebas Neue', sans-serif;
   --font-body: 'Rajdhani', sans-serif;
@@ -498,4 +504,118 @@ section {
     align-items: center;
     justify-content: center;
   }
+}
+
+/* Coin Flip 3D Styles */
+.coin-container {
+  perspective: 1200px;
+  width: 200px;
+  height: 200px;
+  position: relative;
+}
+
+.coin-3d {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  transform-style: preserve-3d;
+  transition: transform 0.1s linear;
+}
+
+.coin-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  backface-visibility: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--font-headings);
+  font-size: 2.2rem;
+  letter-spacing: 1px;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 255, 135, 0.25);
+  user-select: none;
+}
+
+.coin-face.front {
+  transform: rotateY(0deg);
+}
+
+.coin-face.back {
+  transform: rotateY(180deg);
+}
+
+/* 3D Coin Edge Ridges */
+.coin-edge-loop {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.coin-edge-segment {
+  position: absolute;
+  width: 6px;
+  height: 200px;
+  left: 97px;
+  top: 0;
+  background: rgba(0, 0, 0, 0.25);
+  border-top: 5px solid rgba(255, 255, 255, 0.4);
+  border-bottom: 5px solid rgba(0, 0, 0, 0.4);
+}
+
+/* Coin shadow below */
+.coin-shadow-3d {
+  width: 160px;
+  height: 12px;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.6) 0%, transparent 70%);
+  border-radius: 50%;
+  position: absolute;
+  bottom: -40px;
+  left: 20px;
+  transition: transform 0.15s ease-out, opacity 0.15s ease-out;
+  pointer-events: none;
+}
+
+/* Shimmer shine overlay for coin */
+.coin-shine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.4) 40%, rgba(255, 255, 255, 0.6) 50%, transparent 60%);
+  background-size: 200% 200%;
+  animation: shineSweep 4s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 5;
+  mix-blend-mode: overlay;
+}
+
+@keyframes shineSweep {
+  0% { background-position: -200% -200%; }
+  50% { background-position: 200% 200%; }
+  100% { background-position: 200% 200%; }
+}
+
+/* Floating elements */
+.floating-element {
+  animation: floatAnim 6s ease-in-out infinite alternate;
+}
+
+@keyframes floatAnim {
+  0% { transform: translateY(0px) rotate(0deg); }
+  100% { transform: translateY(-12px) rotate(3deg); }
+}
+
+/* Glowing text class */
+.glow-text {
+  text-shadow: 0 0 10px rgba(0, 255, 135, 0.5), 0 0 20px rgba(0, 255, 135, 0.2);
+}
+
+.glow-text-orange {
+  text-shadow: 0 0 10px rgba(255, 107, 0, 0.5), 0 0 20px rgba(255, 107, 0, 0.2);
 }

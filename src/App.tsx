@@ -19,11 +19,12 @@ import { ContactCard } from './components/ContactCard';
 import { Footer } from './components/Footer';
 import { TrophyCabinet } from './components/TrophyCabinet';
 import { LocalScorer } from './components/LocalScorer';
+import { TossArena } from './components/TossArena';
 import './App.css';
 
 function App() {
   const [loading, setLoading] = useState(true);
-  const [currentTab, setCurrentTab] = useState<'home' | 'play' | 'practice' | 'leaderboard' | 'contact' | 'academy' | 'scorer' | 'share-scorecard'>('home');
+  const [currentTab, setCurrentTab] = useState<'home' | 'play' | 'practice' | 'leaderboard' | 'contact' | 'academy' | 'scorer' | 'share-scorecard' | 'toss'>('home');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastType, setToastType] = useState<'success' | 'info' | 'warning'>('success');
   const [scrolled, setScrolled] = useState(false);
@@ -40,7 +41,7 @@ function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.split('?')[0].replace('#', '') as any;
-      const validTabs = ['home', 'play', 'practice', 'leaderboard', 'contact', 'academy', 'scorer', 'share-scorecard'];
+      const validTabs = ['home', 'play', 'practice', 'leaderboard', 'contact', 'academy', 'scorer', 'share-scorecard', 'toss'];
       if (validTabs.includes(hash)) {
         setCurrentTab(hash);
       } else {
@@ -98,6 +99,7 @@ function App() {
     { label: 'Home', id: 'home' },
     { label: 'Play Arena', id: 'play' },
     { label: 'Practice Nets', id: 'practice' },
+    { label: 'Toss Arena', id: 'toss' },
     { label: 'Local Scorer', id: 'scorer' },
     { label: 'Trophy Room', id: 'academy' },
     { label: 'Leaderboard', id: 'leaderboard' },
@@ -430,8 +432,6 @@ function App() {
                     <div style={{ position: 'absolute', bottom: '10px', width: '180px', height: '60px', background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(0,255,135,0.15)', transform: 'perspective(120px) rotateX(60deg)' }} />
                   </div>
                 </section>
-
-                {/* About Content on Home Screen */}
                 <section style={{ width: '100%', backgroundColor: '#040915', padding: '80px 8%' }}>
                   <div style={{ width: '100%', maxWidth: '1100px', margin: '0 auto' }}>
                     <div className="section-title-wrapper">
@@ -441,7 +441,7 @@ function App() {
                       </h2>
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: '30px', marginTop: '50px', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', gap: '30px', marginTop: '50px', flexWrap: 'wrap' }}>
                       <FeatureCard icon="🏃" title="Interactive Running" description="Hit in gaps and trigger runs manually. Slide home or stop in creases to prevent run-out wickets from fielding throws!" />
                       <FeatureCard icon="🎯" title="Steering Aim Arc" description="Position targeted sweeps and cover drives. Guide hits away from fielders to prevent high catches." />
                       <FeatureCard icon="🥎" title="Delivery Variations" description="Refining batting accuracy against Fast, Outswinger curves, high Bouncers, and sharp Spin breaks." />
@@ -449,9 +449,158 @@ function App() {
 
                     <HowToPlay />
                   </div>
+                </section>
 
-                  <div style={{ width: '100%', margin: '80px 0 0', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '50px' }}>
-                    <DeveloperCard onToast={triggerToast} />
+                <section style={{ width: '100%', backgroundColor: '#050a18', padding: '80px 8%', borderTop: '1px solid rgba(255,255,255,0.03)' }}>
+                  <div style={{ width: '100%', maxWidth: '1100px', margin: '0 auto' }}>
+                    <div className="section-title-wrapper" style={{ marginBottom: '50px' }}>
+                      <h2 className="reveal-text visible" style={{ fontFamily: 'var(--font-headings)', fontSize: '3rem', color: '#FFF', position: 'relative' }}>
+                        THE STORY OF MANUCRICK
+                        <span style={{ position: 'absolute', bottom: '-8px', left: '50%', transform: 'translateX(-50%)', width: '60px', height: '3px', backgroundColor: 'var(--primary)' }} />
+                      </h2>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '50px', alignItems: 'center', flexWrap: 'wrap' }}>
+                      <div style={{ flex: '1.2', minWidth: '320px' }}>
+                        <h3 style={{ fontSize: '1.8rem', color: 'var(--primary)', marginBottom: '15px' }}>Where Passion Meets Pixels</h3>
+                        <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', lineHeight: '1.7', marginBottom: '20px' }}>
+                          Born from a deep love for gully cricket and state-of-the-art frontend engineering, <strong>ManucricK</strong> is the ultimate virtual stadium built directly in your browser. Whether you are timing sweet sweeps in the <strong>Play Arena</strong>, training your reflexes in the <strong>Practice Nets</strong>, or tracking matches with our robust <strong>Local Scorer</strong>, every module is designed to feel fast, responsive, and tactile.
+                        </p>
+                        <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', lineHeight: '1.7', marginBottom: '25px' }}>
+                          Built using <strong>React</strong>, <strong>TypeScript</strong>, and premium custom CSS animations, the site leverages advanced browser APIs—like the <strong>Web Audio API</strong> for programmatic sound synthesis—to provide an immersive soundscape without loading heavy media assets.
+                        </p>
+                        
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                          <div style={{ borderLeft: '3px solid var(--secondary)', paddingLeft: '15px' }}>
+                            <h4 style={{ fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '1.1rem', color: '#FFF' }}>Pure Performance</h4>
+                            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)' }}>No heavy WebGL engines or bloated assets. Just lightweight, custom-optimized rendering.</p>
+                          </div>
+                          <div style={{ borderLeft: '3px solid var(--primary)', paddingLeft: '15px' }}>
+                            <h4 style={{ fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '1.1rem', color: '#FFF' }}>Tactile Experience</h4>
+                            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)' }}>Features satisfying hover offsets, magnetic buttons, and dynamic cursor states.</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div style={{ flex: '0.8', minWidth: '280px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <div className="glass-panel" style={{ padding: '30px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+                          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: 'linear-gradient(90deg, var(--primary), var(--secondary))' }} />
+                          
+                          <span style={{ fontSize: '2.5rem', marginBottom: '10px' }}>🪙</span>
+                          <h4 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.4rem', color: '#FFF', marginBottom: '8px' }}>QUICK TOSS DECIDER</h4>
+                          <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: '1.4' }}>
+                            Need a quick decision on who bowls first? Test our 100% fair 50/50 probability coin tosser below!
+                          </p>
+
+                          <div style={{ marginBottom: '20px' }}>
+                            <div style={{ width: '90px', height: '90px', borderRadius: '50%', background: 'var(--gold-metal)', border: '3.5px solid #F39C12', boxShadow: 'inset 0 0 10px rgba(0,0,0,0.3), 0 0 15px rgba(241,196,15,0.4)', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center', animation: 'logoEntrance 1.5s infinite alternate ease-in-out' }}>
+                              <span style={{ fontSize: '2rem', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>🏆</span>
+                            </div>
+                          </div>
+
+                          <button
+                            onClick={() => handleTabTransition('toss')}
+                            style={{
+                              padding: '10px 22px',
+                              borderRadius: '6px',
+                              border: 'none',
+                              backgroundColor: 'var(--primary)',
+                              color: '#050A18',
+                              fontFamily: 'var(--font-headings)',
+                              fontSize: '1.1rem',
+                              letterSpacing: '1px',
+                              cursor: 'none',
+                              boxShadow: '0 0 12px rgba(0,255,135,0.2)',
+                            }}
+                            className="interactive"
+                          >
+                            OPEN TOSS ARENA
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section style={{ width: '100%', backgroundColor: '#03060F', padding: '80px 8%', borderTop: '1px solid rgba(255,255,255,0.03)' }}>
+                  <div style={{ width: '100%', maxWidth: '1100px', margin: '0 auto' }}>
+                    <div className="section-title-wrapper" style={{ marginBottom: '50px' }}>
+                      <h2 className="reveal-text visible" style={{ fontFamily: 'var(--font-headings)', fontSize: '3rem', color: '#FFF', position: 'relative' }}>
+                        MEET THE ARCHITECT
+                        <span style={{ position: 'absolute', bottom: '-8px', left: '50%', transform: 'translateX(-50%)', width: '60px', height: '3px', backgroundColor: 'var(--primary)' }} />
+                      </h2>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '40px', alignItems: 'stretch', flexWrap: 'wrap' }}>
+                      
+                      <div className="glass-panel" style={{ flex: '1.4', minWidth: '320px', padding: '40px', display: 'flex', flexDirection: 'column', gap: '25px', justifyContent: 'space-between' }}>
+                        <div>
+                          <span style={{ fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.85rem', color: 'var(--secondary)', textTransform: 'uppercase', letterSpacing: '3px' }}>
+                            DESIGNER & DEVELOPER
+                          </span>
+                          <h3 style={{ fontSize: '2.6rem', color: '#FFFFFF', marginTop: '5px', marginBottom: '15px' }}>
+                            Manoj Kumar Sharma
+                          </h3>
+                          <p style={{ fontSize: '1.02rem', color: 'var(--text-secondary)', lineHeight: '1.6', marginBottom: '15px' }}>
+                            Hello! I am a Full Stack Developer dedicated to merging cutting-edge architectural backend design with polished, high-fidelity user interfaces. My design philosophy revolves around clean semantics, performance-oriented UI states, and robust enterprise patterns.
+                          </p>
+                          <p style={{ fontSize: '1.02rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
+                            Through projects like <strong>ManucricK</strong>, I push the limits of modern web engines to deliver rich interactive experiences that run smoothly on every screen size.
+                          </p>
+                        </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                          <h4 style={{ fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.95rem', color: '#FFF', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                            Technical Expertise
+                          </h4>
+                          
+                          <div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 700, marginBottom: '4px' }}>
+                              <span>JAVA & ENTERPRISE ARCHITECTURE</span>
+                              <span style={{ color: 'var(--primary)' }}>95%</span>
+                            </div>
+                            <div style={{ width: '100%', height: '6px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
+                              <div style={{ width: '95%', height: '100%', background: 'linear-gradient(90deg, var(--secondary), var(--primary))', boxShadow: '0 0 6px var(--primary)' }} />
+                            </div>
+                          </div>
+
+                          <div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 700, marginBottom: '4px' }}>
+                              <span>SPRING BOOT & MICROSERVICES</span>
+                              <span style={{ color: 'var(--primary)' }}>95%</span>
+                            </div>
+                            <div style={{ width: '100%', height: '6px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
+                              <div style={{ width: '95%', height: '100%', background: 'linear-gradient(90deg, var(--secondary), var(--primary))', boxShadow: '0 0 6px var(--primary)' }} />
+                            </div>
+                          </div>
+
+                          <div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 700, marginBottom: '4px' }}>
+                              <span>REACT.JS & ANIMATION ENGINES</span>
+                              <span style={{ color: 'var(--primary)' }}>90%</span>
+                            </div>
+                            <div style={{ width: '100%', height: '6px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
+                              <div style={{ width: '90%', height: '100%', background: 'linear-gradient(90deg, var(--secondary), var(--primary))', boxShadow: '0 0 6px var(--primary)' }} />
+                            </div>
+                          </div>
+
+                          <div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 700, marginBottom: '4px' }}>
+                              <span>LIFERAY DXP PORTAL DEVELOPMENT</span>
+                              <span style={{ color: 'var(--primary)' }}>88%</span>
+                            </div>
+                            <div style={{ width: '100%', height: '6px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
+                              <div style={{ width: '88%', height: '100%', background: 'linear-gradient(90deg, var(--secondary), var(--primary))', boxShadow: '0 0 6px var(--primary)' }} />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div style={{ flex: '0.8', minWidth: '280px', display: 'flex' }}>
+                        <DeveloperCard onToast={triggerToast} />
+                      </div>
+
+                    </div>
                   </div>
                 </section>
               </div>
@@ -497,6 +646,20 @@ function App() {
                   ) : (
                     <CricketGame />
                   )}
+                </div>
+              </div>
+            )}
+
+            {/* TAB VIEW: TOSS ARENA */}
+            {currentTab === 'toss' && (
+              <div style={{ padding: '60px 4%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', animation: 'tabTransition 0.5s ease-out', width: '100%' }}>
+                <div style={{ width: '100%', maxWidth: '1200px', textAlign: 'center' }}>
+                  <div className="section-title-wrapper">
+                    <h2 style={{ fontFamily: 'var(--font-headings)', fontSize: '3rem', color: '#FFF' }}>
+                      TOSS ARENA & DECISION COIN
+                    </h2>
+                  </div>
+                  <TossArena />
                 </div>
               </div>
             )}

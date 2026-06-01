@@ -22,7 +22,7 @@ export function DeveloperCard({ onToast }: DeveloperCardProps) {
         padding: '45px 30px',
         width: '100%',
         maxWidth: '520px',
-        margin: '40px auto 10px',
+        margin: '0 auto',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',

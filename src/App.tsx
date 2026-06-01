@@ -22,6 +22,13 @@ import { LocalScorer } from './components/LocalScorer';
 import { TossArena } from './components/TossArena';
 import './App.css';
 
+const thoughts = [
+  { text: "Cricket is not just a game, it is an emotion.", author: "ManuCrick Philosophy" },
+  { text: "In gully cricket, every tree is a fielder and every street is a stadium.", author: "Local Lore" },
+  { text: "Every ball is a new opportunity. Timing and patience turn deliveries into boundaries.", author: "Mastery Guide" },
+  { text: "Where passion meets pixels, we rebuild the nostalgia of the gentleman's game.", author: "Manoj Kumar Sharma" }
+];
+
 function App() {
   const [loading, setLoading] = useState(true);
   const [currentTab, setCurrentTab] = useState<'home' | 'play' | 'practice' | 'leaderboard' | 'contact' | 'academy' | 'scorer' | 'share-scorecard' | 'toss'>('home');
@@ -30,6 +37,15 @@ function App() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [customizingPlayer, setCustomizingPlayer] = useState(false);
+  const [activeBat, setActiveBat] = useState(localStorage.getItem('manucrick_selected_bat') || 'kashmir');
+  const [activeThoughtIdx, setActiveThoughtIdx] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveThoughtIdx((prev) => (prev + 1) % thoughts.length);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Initialize smooth scrolling
   useSmoothScroll(0.08);
@@ -97,9 +113,8 @@ function App() {
 
   const navLinks = [
     { label: 'Home', id: 'home' },
-    { label: 'Play Arena', id: 'play' },
     { label: 'Practice Nets', id: 'practice' },
-    { label: 'Toss Arena', id: 'toss' },
+    { label: 'Flip Coin', id: 'toss' },
     { label: 'Local Scorer', id: 'scorer' },
     { label: 'Trophy Room', id: 'academy' },
     { label: 'Leaderboard', id: 'leaderboard' },
@@ -140,83 +155,118 @@ function App() {
             <div
               onClick={() => handleTabTransition('home')}
               style={{
-                fontFamily: 'var(--font-headings)',
-                fontSize: '2.1rem',
-                letterSpacing: '2.5px',
-                color: '#FFFFFF',
                 display: 'flex',
-                gap: '1px',
+                alignItems: 'center',
                 cursor: 'none',
                 userSelect: 'none',
               }}
               className="interactive"
             >
-              {'ManucricK'.split('').map((char, index) => (
-                <span
-                  key={index}
-                  style={{
-                    display: 'inline-block',
-                    animation: 'logoEntrance 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
-                    animationDelay: `${index * 0.06}s`,
-                    opacity: 0,
-                    transform: 'scale(0.5) translateY(-5px)',
-                  }}
-                >
-                  {char}
-                </span>
-              ))}
+              {/* Rotating Cricket Ball SVG Logo */}
+              <svg
+                width="38"
+                height="38"
+                viewBox="0 0 100 100"
+                style={{
+                  marginRight: '12px',
+                  filter: 'drop-shadow(0 0 8px var(--primary))',
+                  display: 'block',
+                }}
+                className="spin-logo"
+              >
+                <circle cx="50" cy="50" r="45" fill="url(#logoBallGrad)" />
+                <path d="M 50,5 A 45,45 0 0,1 50,95" fill="none" stroke="#FFFFFF" strokeWidth="4" strokeDasharray="8,5" />
+                <path d="M 5,50 A 45,45 0 0,1 95,50" fill="none" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="2" />
+                <defs>
+                  <linearGradient id="logoBallGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="var(--primary)" />
+                    <stop offset="100%" stopColor="var(--secondary)" />
+                  </linearGradient>
+                </defs>
+              </svg>
+
+              <div
+                style={{
+                  fontFamily: 'var(--font-headings)',
+                  fontSize: '2.2rem',
+                  letterSpacing: '2.5px',
+                  color: '#FFFFFF',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <span style={{ color: '#FFFFFF' }}>MANU</span>
+                <span style={{ color: 'var(--primary)', textShadow: '0 0 10px rgba(0, 255, 135, 0.5)' }}>CRICK</span>
+              </div>
             </div>
 
             {/* Desktop Navigation */}
-            <ul
+            <div
               style={{
                 display: 'flex',
-                gap: '30px',
-                listStyle: 'none',
                 alignItems: 'center',
+                gap: '35px',
               }}
               className="desktop-nav"
             >
-              {navLinks.map((link) => (
-                <li key={link.id}>
-                  <button
-                    onClick={() => handleTabTransition(link.id as any)}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: currentTab === link.id ? 'var(--primary)' : 'var(--text-primary)',
-                      fontFamily: 'var(--font-body)',
-                      fontWeight: 700,
-                      fontSize: '1.02rem',
-                      letterSpacing: '1px',
-                      textTransform: 'uppercase',
-                      position: 'relative',
-                      padding: '6px 0',
-                      cursor: 'none',
-                      transition: 'color 0.3s ease',
-                    }}
-                    className="interactive nav-link-btn"
-                  >
-                    {link.label}
-                    <span
-                      className={`nav-underline ${currentTab === link.id ? 'active' : ''}`}
+              <ul
+                style={{
+                  display: 'flex',
+                  gap: '24px',
+                  listStyle: 'none',
+                  alignItems: 'center',
+                }}
+              >
+                {navLinks.map((link) => (
+                  <li key={link.id}>
+                    <button
+                      onClick={() => handleTabTransition(link.id as any)}
                       style={{
-                        position: 'absolute',
-                        bottom: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '2px',
-                        backgroundColor: 'var(--primary)',
-                        transform: currentTab === link.id ? 'scaleX(1)' : 'scaleX(0)',
-                        transformOrigin: 'left',
-                        transition: 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
-                        boxShadow: '0 0 8px var(--primary)',
+                        background: 'none',
+                        border: 'none',
+                        color: currentTab === link.id ? 'var(--primary)' : 'var(--text-primary)',
+                        fontFamily: 'var(--font-body)',
+                        fontWeight: 700,
+                        fontSize: '1.02rem',
+                        letterSpacing: '1px',
+                        textTransform: 'uppercase',
+                        position: 'relative',
+                        padding: '6px 0',
+                        cursor: 'none',
+                        transition: 'color 0.3s ease',
                       }}
-                    />
-                  </button>
-                </li>
-              ))}
-            </ul>
+                      className="interactive nav-link-btn"
+                    >
+                      {link.label}
+                      <span
+                        className={`nav-underline ${currentTab === link.id ? 'active' : ''}`}
+                        style={{
+                          position: 'absolute',
+                          bottom: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '2px',
+                          backgroundColor: 'var(--primary)',
+                          transform: currentTab === link.id ? 'scaleX(1)' : 'scaleX(0)',
+                          transformOrigin: 'left',
+                          transition: 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
+                          boxShadow: '0 0 8px var(--primary)',
+                        }}
+                      />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+
+              {/* Bold highlighted CTA button */}
+              <button
+                onClick={() => handleTabTransition('play')}
+                className="interactive nav-play-now-btn"
+                style={{ cursor: 'none' }}
+              >
+                PLAY NOW 🏏
+              </button>
+            </div>
 
             {/* Hamburger mobile toggle */}
             <button
@@ -261,7 +311,30 @@ function App() {
                 transition: 'transform 0.5s cubic-bezier(0.77, 0, 0.175, 1)',
               }}
             >
-              <ul style={{ listStyle: 'none', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '30px' }}>
+              <ul style={{ listStyle: 'none', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center' }}>
+                <li>
+                  <button
+                    onClick={() => handleTabTransition('play')}
+                    style={{
+                      background: 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)',
+                      border: 'none',
+                      color: '#050A18',
+                      fontFamily: 'var(--font-headings)',
+                      fontSize: '2rem',
+                      fontWeight: 'bold',
+                      letterSpacing: '2px',
+                      textTransform: 'uppercase',
+                      padding: '12px 36px',
+                      borderRadius: '10px',
+                      cursor: 'none',
+                      boxShadow: '0 0 15px rgba(0, 255, 135, 0.4)',
+                      marginBottom: '10px',
+                    }}
+                    className="interactive"
+                  >
+                    PLAY NOW 🏏
+                  </button>
+                </li>
                 {navLinks.map((link) => (
                   <li key={link.id}>
                     <button
@@ -487,9 +560,9 @@ function App() {
                           <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: 'linear-gradient(90deg, var(--primary), var(--secondary))' }} />
                           
                           <span style={{ fontSize: '2.5rem', marginBottom: '10px' }}>🪙</span>
-                          <h4 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.4rem', color: '#FFF', marginBottom: '8px' }}>QUICK TOSS DECIDER</h4>
+                          <h4 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.4rem', color: '#FFF', marginBottom: '8px' }}>QUICK COIN FLIPPER</h4>
                           <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: '1.4' }}>
-                            Need a quick decision on who bowls first? Test our 100% fair 50/50 probability coin tosser below!
+                            Need a quick decision on who plays first? Test our 100% fair 50/50 probability coin flipper below!
                           </p>
 
                           <div style={{ marginBottom: '20px' }}>
@@ -514,9 +587,109 @@ function App() {
                             }}
                             className="interactive"
                           >
-                            OPEN TOSS ARENA
+                            OPEN COIN FLIPPER
                           </button>
                         </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <section style={{ width: '100%', backgroundColor: '#040814', padding: '80px 8%', borderTop: '1px solid rgba(255,255,255,0.03)' }}>
+                  <div style={{ width: '100%', maxWidth: '1100px', margin: '0 auto' }}>
+                    <div className="section-title-wrapper" style={{ marginBottom: '55px' }}>
+                      <h2 className="reveal-text visible" style={{ fontFamily: 'var(--font-headings)', fontSize: '3rem', color: '#FFF', position: 'relative' }}>
+                        WELCOME TO MANUCRICK
+                        <span style={{ position: 'absolute', bottom: '-8px', left: '50%', transform: 'translateX(-50%)', width: '60px', height: '3px', backgroundColor: 'var(--primary)' }} />
+                      </h2>
+                      <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', marginTop: '10px', letterSpacing: '0.8px', textTransform: 'uppercase' }}>
+                        YOUR ULTIMATE HUB FOR VIRTUAL CRICKET & GULLY MATCH SCORING
+                      </p>
+                    </div>
+
+                    {/* Feature Grid */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '25px', marginBottom: '60px' }}>
+                      <div className="feature-glass-card">
+                        <div style={{ fontSize: '2.2rem' }}>🏏</div>
+                        <h3 style={{ fontSize: '1.4rem', color: 'var(--primary)' }}>PLAY NOW (PLAY ARENA)</h3>
+                        <p style={{ fontSize: '0.92rem', lineHeight: '1.5', color: 'var(--text-secondary)' }}>
+                          Step into the Championship Stadium! Choose your challenge format (Championship, Super Over, Wicket Survival, or Target Attack). Swing with precision aiming overlays and control your batsman run-crease manually.
+                        </p>
+                      </div>
+
+                      <div className="feature-glass-card">
+                        <div style={{ fontSize: '2.2rem' }}>🥎</div>
+                        <h3 style={{ fontSize: '1.4rem', color: 'var(--primary)' }}>PRACTICE NETS</h3>
+                        <p style={{ fontSize: '0.92rem', lineHeight: '1.5', color: 'var(--text-secondary)' }}>
+                          Hone your timing reflexes against Fast, Curve Outswingers, high Bouncers, and sharp Spin breaks. Analyze your bat alignment offset in milliseconds after every shot to reach peak performance.
+                        </p>
+                      </div>
+
+                      <div className="feature-glass-card">
+                        <div style={{ fontSize: '2.2rem' }}>🪙</div>
+                        <h3 style={{ fontSize: '1.4rem', color: 'var(--primary)' }}>3D FLIP COIN</h3>
+                        <p style={{ fontSize: '0.92rem', lineHeight: '1.5', color: 'var(--text-secondary)' }}>
+                          Need a quick match decision? Access our Flip Coin arena featuring a 100% fair, mathematically simulated 50/50 probability coin tosser with rich 3D graphics, sound effects, and a smooth metallic spin.
+                        </p>
+                      </div>
+
+                      <div className="feature-glass-card">
+                        <div style={{ fontSize: '2.2rem' }}>📊</div>
+                        <h3 style={{ fontSize: '1.4rem', color: 'var(--primary)' }}>LOCAL SCORER</h3>
+                        <p style={{ fontSize: '0.92rem', lineHeight: '1.5', color: 'var(--text-secondary)' }}>
+                          Ditch the notebook! Keep score for your real-world gully matches with our comprehensive scorer tool. Log batsman records, extra runs, overs, wickets, view dynamic charts, and generate shareable scorecards.
+                        </p>
+                      </div>
+
+                      <div className="feature-glass-card">
+                        <div style={{ fontSize: '2.2rem' }}>🏆</div>
+                        <h3 style={{ fontSize: '1.4rem', color: 'var(--primary)' }}>LEGENDS VAULT & TROPHY CABINET</h3>
+                        <p style={{ fontSize: '0.92rem', lineHeight: '1.5', color: 'var(--text-secondary)' }}>
+                          Unleash special powers! Track achievements like matches played, runs scored, and sixes hit. Unlock premium equipment including the carbon Cyber-Carbon bat or Manoj's explosive Helicopter Special bat.
+                        </p>
+                      </div>
+
+                      <div className="feature-glass-card">
+                        <div style={{ fontSize: '2.2rem' }}>🎖️</div>
+                        <h3 style={{ fontSize: '1.4rem', color: 'var(--primary)' }}>GLOBAL LEADERBOARDS</h3>
+                        <p style={{ fontSize: '0.92rem', lineHeight: '1.5', color: 'var(--text-secondary)' }}>
+                          Pit your skills against other batsmen. Check out the top scores, delivery faced stats, and global player rankings to see who dominates the virtual turf.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Thoughts / Quotes Slider */}
+                    <div className="quote-slider-card">
+                      <span className="quote-decor open">“</span>
+                      <div style={{ minHeight: '80px', display: 'flex', flexDirection: 'column', justifyContent: 'center', transition: 'all 0.5s ease' }}>
+                        <p style={{ fontFamily: 'var(--font-body)', fontSize: '1.4rem', fontWeight: 600, color: '#FFF', fontStyle: 'italic', marginBottom: '15px', lineHeight: '1.5' }}>
+                          {thoughts[activeThoughtIdx].text}
+                        </p>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--secondary)', textTransform: 'uppercase', letterSpacing: '2px' }}>
+                          — {thoughts[activeThoughtIdx].author}
+                        </span>
+                      </div>
+                      <span className="quote-decor close">”</span>
+
+                      {/* Indicators */}
+                      <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '25px' }}>
+                        {thoughts.map((_, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => setActiveThoughtIdx(idx)}
+                            style={{
+                              width: '10px',
+                              height: '10px',
+                              borderRadius: '50%',
+                              backgroundColor: activeThoughtIdx === idx ? 'var(--primary)' : 'rgba(255,255,255,0.15)',
+                              border: 'none',
+                              padding: 0,
+                              cursor: 'none',
+                              transition: 'background-color 0.3s ease',
+                            }}
+                            className="interactive"
+                          />
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -610,42 +783,136 @@ function App() {
             {currentTab === 'play' && (
               <div style={{ padding: '20px 2%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', animation: 'tabTransition 0.5s ease-out', width: '100%' }}>
                 <div style={{ width: '100%', maxWidth: '1200px', textAlign: 'center', marginBottom: '20px' }}>
-                  <div className="section-title-wrapper">
+                  <div className="section-title-wrapper" style={{ marginBottom: '40px' }}>
                     <h2 style={{ fontFamily: 'var(--font-headings)', fontSize: '3rem', color: '#FFF' }}>
-                      CHAMPIONSHIP STADIUM
+                      MANUCRICK PLAY NOW
                     </h2>
-                  </div>
-                  
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginBottom: '30px' }}>
-                    <button
-                      onClick={() => setCustomizingPlayer(!customizingPlayer)}
-                      style={{
-                        padding: '8px 20px',
-                        borderRadius: '6px',
-                        border: '1.5px solid var(--primary)',
-                        backgroundColor: customizingPlayer ? 'rgba(0, 255, 135, 0.08)' : 'transparent',
-                        color: 'var(--primary)',
-                        fontFamily: 'var(--font-body)',
-                        fontWeight: 700,
-                        fontSize: '0.9rem',
-                        letterSpacing: '1px',
-                        textTransform: 'uppercase',
-                        cursor: 'none',
-                      }}
-                      className="interactive"
-                    >
-                      {customizingPlayer ? '🛡️ HIDE JERSEY CONFIG' : '👕 EDIT JERSEY & NAME'}
-                    </button>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', marginTop: '4px', letterSpacing: '1px', textTransform: 'uppercase' }}>
+                      OPERATED BY MANOJ KUMAR SHARMA &bull; THE ULTIMATE ARENA
+                    </p>
                   </div>
 
-                  {customizingPlayer ? (
-                    <PlayerCustomizer onSave={(c) => {
-                      triggerToast(`Saved customizations for batsman ${c.name}!`, 'success');
-                      setCustomizingPlayer(false);
-                    }} onClose={() => setCustomizingPlayer(false)} />
-                  ) : (
-                    <CricketGame />
-                  )}
+                  <div className="play-now-layout">
+                    {/* Left side: Game Arena */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+                      {customizingPlayer ? (
+                        <PlayerCustomizer onSave={(c) => {
+                          triggerToast(`Saved customizations for batsman ${c.name}!`, 'success');
+                          setCustomizingPlayer(false);
+                        }} onClose={() => setCustomizingPlayer(false)} />
+                      ) : (
+                        <CricketGame />
+                      )}
+                    </div>
+
+                    {/* Right side: Bold Control & Branding Panel */}
+                    <div className="neon-brand-panel">
+                      <div>
+                        <h3 style={{ fontSize: '1.8rem', color: 'var(--primary)', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          🏟️ ARENA DASHBOARD
+                        </h3>
+                        <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+                          Welcome to the official arena of Manoj Kumar Sharma. Equip your gear, review guidelines, and take your stance.
+                        </p>
+                      </div>
+
+                      {/* Quick Gear Customization */}
+                      <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '15px' }}>
+                        <h4 style={{ fontSize: '1.05rem', color: '#FFF', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                          🏏 Select Active Bat
+                        </h4>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                          <button 
+                            onClick={() => {
+                              localStorage.setItem('manucrick_selected_bat', 'kashmir');
+                              setActiveBat('kashmir');
+                              triggerToast('Equipped Kashmir Willow Pro!', 'success');
+                            }}
+                            className={`premium-bat-option interactive ${activeBat === 'kashmir' ? 'active' : ''}`}
+                            style={{ width: '100%' }}
+                          >
+                            <span style={{ fontSize: '1.2rem' }}>🪵</span>
+                            <div style={{ textAlign: 'left' }}>
+                              <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: '#FFF' }}>Kashmir Willow Pro</div>
+                              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Standard wood bat, balanced swing speed.</div>
+                            </div>
+                          </button>
+
+                          <button 
+                            onClick={() => {
+                              localStorage.setItem('manucrick_selected_bat', 'cyber');
+                              setActiveBat('cyber');
+                              triggerToast('Equipped Cyber-Carbon Neon!', 'success');
+                            }}
+                            className={`premium-bat-option interactive ${activeBat === 'cyber' ? 'active' : ''}`}
+                            style={{ width: '100%' }}
+                          >
+                            <span style={{ fontSize: '1.2rem' }}>⚡</span>
+                            <div style={{ textAlign: 'left' }}>
+                              <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: 'var(--primary)' }}>Cyber-Carbon Neon</div>
+                              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Lightweight cyber chassis with glowing tracer seam.</div>
+                            </div>
+                          </button>
+
+                          <button 
+                            onClick={() => {
+                              localStorage.setItem('manucrick_selected_bat', 'helicopter');
+                              setActiveBat('helicopter');
+                              triggerToast("Equipped Manoj's Helicopter Special!", 'success');
+                            }}
+                            className={`premium-bat-option interactive ${activeBat === 'helicopter' ? 'active' : ''}`}
+                            style={{ width: '100%' }}
+                          >
+                            <span style={{ fontSize: '1.2rem' }}>🔥</span>
+                            <div style={{ textAlign: 'left' }}>
+                              <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: 'var(--secondary)' }}>Manoj's Helicopter Special</div>
+                              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Heavy profile custom wood. Unlocks explosive power!</div>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Jersey & Match Gear */}
+                      <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '15px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        <h4 style={{ fontSize: '1.05rem', color: '#FFF', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                          👕 Jersey Settings
+                        </h4>
+                        <button
+                          onClick={() => setCustomizingPlayer(!customizingPlayer)}
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '8px',
+                            border: '1.5px solid var(--primary)',
+                            backgroundColor: customizingPlayer ? 'rgba(0, 255, 135, 0.08)' : 'rgba(0, 255, 135, 0.03)',
+                            color: 'var(--primary)',
+                            fontFamily: 'var(--font-headings)',
+                            fontSize: '1.1rem',
+                            letterSpacing: '1px',
+                            textTransform: 'uppercase',
+                            cursor: 'none',
+                            transition: 'all 0.2s',
+                          }}
+                          className="interactive"
+                        >
+                          {customizingPlayer ? '🛡️ CLOSE JERSEY EDITOR' : '👕 EDIT JERSEY & NAME'}
+                        </button>
+                      </div>
+
+                      {/* Playbook / Instructions */}
+                      <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '15px' }}>
+                        <h4 style={{ fontSize: '1.05rem', color: '#FFF', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                          📖 Stadium Guidelines
+                        </h4>
+                        <ul style={{ paddingLeft: '18px', fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '6px', lineHeight: '1.4' }}>
+                          <li><strong>Shot Timing:</strong> Watch the ball curve carefully. Wait for it to enter the batting crease before clicking.</li>
+                          <li><strong>Manual Running:</strong> Click <strong>RUN CREASE</strong> after hitting into gaps. Click again or <strong>STOP RUNNING</strong> to ground your batsman.</li>
+                          <li><strong>Fielding Throws:</strong> Fielders throw to stumps! Sliding or grounding on time prevents run-out wickets.</li>
+                          <li><strong>Aiming Arc:</strong> Drag or click to set the swing direction overlay. Guide hits away from fielders.</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -656,7 +923,7 @@ function App() {
                 <div style={{ width: '100%', maxWidth: '1200px', textAlign: 'center' }}>
                   <div className="section-title-wrapper">
                     <h2 style={{ fontFamily: 'var(--font-headings)', fontSize: '3rem', color: '#FFF' }}>
-                      TOSS ARENA & DECISION COIN
+                      3D FLIP COIN ARENA
                     </h2>
                   </div>
                   <TossArena />

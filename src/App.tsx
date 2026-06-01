@@ -20,6 +20,8 @@ import { Footer } from './components/Footer';
 import { TrophyCabinet } from './components/TrophyCabinet';
 import { LocalScorer } from './components/LocalScorer';
 import { TossArena } from './components/TossArena';
+import { TournamentBracket } from './components/TournamentBracket';
+import { PlayerStats } from './components/PlayerStats';
 import './App.css';
 
 const thoughts = [
@@ -31,7 +33,7 @@ const thoughts = [
 
 function App() {
   const [loading, setLoading] = useState(true);
-  const [currentTab, setCurrentTab] = useState<'home' | 'play' | 'practice' | 'leaderboard' | 'contact' | 'academy' | 'scorer' | 'share-scorecard' | 'toss'>('home');
+  const [currentTab, setCurrentTab] = useState<'home' | 'play' | 'practice' | 'leaderboard' | 'contact' | 'academy' | 'scorer' | 'share-scorecard' | 'toss' | 'tournament' | 'players'>('home');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastType, setToastType] = useState<'success' | 'info' | 'warning'>('success');
   const [scrolled, setScrolled] = useState(false);
@@ -57,7 +59,7 @@ function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.split('?')[0].replace('#', '') as any;
-      const validTabs = ['home', 'play', 'practice', 'leaderboard', 'contact', 'academy', 'scorer', 'share-scorecard', 'toss'];
+      const validTabs = ['home', 'play', 'practice', 'leaderboard', 'contact', 'academy', 'scorer', 'share-scorecard', 'toss', 'tournament', 'players'];
       if (validTabs.includes(hash)) {
         setCurrentTab(hash);
       } else {
@@ -110,16 +112,6 @@ function App() {
     setMobileMenuOpen(false);
     window.location.hash = tab;
   };
-
-  const navLinks = [
-    { label: 'Home', id: 'home' },
-    { label: 'Practice Nets', id: 'practice' },
-    { label: 'Flip Coin', id: 'toss' },
-    { label: 'Local Scorer', id: 'scorer' },
-    { label: 'Trophy Room', id: 'academy' },
-    { label: 'Leaderboard', id: 'leaderboard' },
-    { label: 'Contact', id: 'contact' },
-  ];
 
   return (
     <>
@@ -205,7 +197,7 @@ function App() {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '35px',
+                gap: '25px',
               }}
               className="desktop-nav"
             >
@@ -217,45 +209,71 @@ function App() {
                   alignItems: 'center',
                 }}
               >
-                {navLinks.map((link) => (
-                  <li key={link.id}>
-                    <button
-                      onClick={() => handleTabTransition(link.id as any)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: currentTab === link.id ? 'var(--primary)' : 'var(--text-primary)',
-                        fontFamily: 'var(--font-body)',
-                        fontWeight: 700,
-                        fontSize: '1.02rem',
-                        letterSpacing: '1px',
-                        textTransform: 'uppercase',
-                        position: 'relative',
-                        padding: '6px 0',
-                        cursor: 'none',
-                        transition: 'color 0.3s ease',
-                      }}
-                      className="interactive nav-link-btn"
-                    >
-                      {link.label}
-                      <span
-                        className={`nav-underline ${currentTab === link.id ? 'active' : ''}`}
-                        style={{
-                          position: 'absolute',
-                          bottom: 0,
-                          left: 0,
-                          width: '100%',
-                          height: '2px',
-                          backgroundColor: 'var(--primary)',
-                          transform: currentTab === link.id ? 'scaleX(1)' : 'scaleX(0)',
-                          transformOrigin: 'left',
-                          transition: 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
-                          boxShadow: '0 0 8px var(--primary)',
-                        }}
-                      />
-                    </button>
-                  </li>
-                ))}
+                {/* Home */}
+                <li>
+                  <button
+                    onClick={() => handleTabTransition('home')}
+                    className={`interactive nav-link-btn ${currentTab === 'home' ? 'active' : ''}`}
+                    style={{ cursor: 'none' }}
+                  >
+                    Home
+                  </button>
+                </li>
+
+                {/* Dropdown 1: Play Arena */}
+                <li className="nav-dropdown-wrapper">
+                  <button 
+                    className={`interactive nav-link-btn dropdown-trigger ${(currentTab === 'play' || currentTab === 'practice') ? 'active' : ''}`}
+                    style={{ cursor: 'none' }}
+                  >
+                    Play Arena ▾
+                  </button>
+                  <div className="nav-dropdown-menu">
+                    <button onClick={() => handleTabTransition('play')} className="dropdown-item">🏏 Play Game</button>
+                    <button onClick={() => handleTabTransition('practice')} className="dropdown-item">🥎 Practice Nets</button>
+                  </div>
+                </li>
+
+                {/* Dropdown 2: Gully Tools */}
+                <li className="nav-dropdown-wrapper">
+                  <button 
+                    className={`interactive nav-link-btn dropdown-trigger ${(currentTab === 'toss' || currentTab === 'scorer' || currentTab === 'tournament' || currentTab === 'players') ? 'active' : ''}`}
+                    style={{ cursor: 'none' }}
+                  >
+                    Gully Tools ▾
+                  </button>
+                  <div className="nav-dropdown-menu">
+                    <button onClick={() => handleTabTransition('toss')} className="dropdown-item">🪙 Coin Flip & Rules</button>
+                    <button onClick={() => handleTabTransition('scorer')} className="dropdown-item">📊 Live Scorer</button>
+                    <button onClick={() => handleTabTransition('tournament')} className="dropdown-item">🏆 Bracket Builder</button>
+                    <button onClick={() => handleTabTransition('players')} className="dropdown-item">👤 Player Stats</button>
+                  </div>
+                </li>
+
+                {/* Dropdown 3: Standings */}
+                <li className="nav-dropdown-wrapper">
+                  <button 
+                    className={`interactive nav-link-btn dropdown-trigger ${(currentTab === 'academy' || currentTab === 'leaderboard') ? 'active' : ''}`}
+                    style={{ cursor: 'none' }}
+                  >
+                    Clubhouse ▾
+                  </button>
+                  <div className="nav-dropdown-menu">
+                    <button onClick={() => handleTabTransition('academy')} className="dropdown-item">🎖️ Trophy Cabinet</button>
+                    <button onClick={() => handleTabTransition('leaderboard')} className="dropdown-item">📈 Global Leaderboard</button>
+                  </div>
+                </li>
+
+                {/* Contact */}
+                <li>
+                  <button
+                    onClick={() => handleTabTransition('contact')}
+                    className={`interactive nav-link-btn ${currentTab === 'contact' ? 'active' : ''}`}
+                    style={{ cursor: 'none' }}
+                  >
+                    Contact
+                  </button>
+                </li>
               </ul>
 
               {/* Bold highlighted CTA button */}
@@ -264,7 +282,7 @@ function App() {
                 className="interactive nav-play-now-btn"
                 style={{ cursor: 'none' }}
               >
-                PLAY NOW 🏏
+                PLAY GAME 🏏
               </button>
             </div>
 
@@ -305,13 +323,15 @@ function App() {
                 zIndex: 1001,
                 display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'center',
+                justifyContent: 'flex-start',
                 alignItems: 'center',
                 transform: mobileMenuOpen ? 'translateY(0)' : 'translateY(-100%)',
                 transition: 'transform 0.5s cubic-bezier(0.77, 0, 0.175, 1)',
+                overflowY: 'auto',
+                padding: '100px 0 40px',
               }}
             >
-              <ul style={{ listStyle: 'none', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center' }}>
+              <ul style={{ listStyle: 'none', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', width: '100%', maxWidth: '300px' }}>
                 <li>
                   <button
                     onClick={() => handleTabTransition('play')}
@@ -320,41 +340,60 @@ function App() {
                       border: 'none',
                       color: '#050A18',
                       fontFamily: 'var(--font-headings)',
-                      fontSize: '2rem',
+                      fontSize: '1.6rem',
                       fontWeight: 'bold',
                       letterSpacing: '2px',
                       textTransform: 'uppercase',
-                      padding: '12px 36px',
-                      borderRadius: '10px',
+                      padding: '10px 24px',
+                      borderRadius: '8px',
                       cursor: 'none',
                       boxShadow: '0 0 15px rgba(0, 255, 135, 0.4)',
-                      marginBottom: '10px',
+                      marginBottom: '15px',
                     }}
                     className="interactive"
                   >
-                    PLAY NOW 🏏
+                    PLAY GAME 🏏
                   </button>
                 </li>
-                {navLinks.map((link) => (
-                  <li key={link.id}>
-                    <button
-                      onClick={() => handleTabTransition(link.id as any)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: currentTab === link.id ? 'var(--primary)' : '#FFFFFF',
-                        fontFamily: 'var(--font-headings)',
-                        fontSize: '2.5rem',
-                        letterSpacing: '2px',
-                        textTransform: 'uppercase',
-                        cursor: 'none',
-                      }}
-                      className="interactive"
-                    >
-                      {link.label}
-                    </button>
-                  </li>
-                ))}
+                
+                {/* Home */}
+                <li>
+                  <button onClick={() => handleTabTransition('home')} className="mobile-nav-item">Home</button>
+                </li>
+
+                {/* Play Arena Title */}
+                <li className="mobile-nav-section-title">Play Arena</li>
+                <li>
+                  <button onClick={() => handleTabTransition('practice')} className="mobile-nav-subitem">Practice Nets</button>
+                </li>
+
+                {/* Gully Tools Title */}
+                <li className="mobile-nav-section-title">Gully Tools</li>
+                <li>
+                  <button onClick={() => handleTabTransition('toss')} className="mobile-nav-subitem">Coin Toss & Rules</button>
+                </li>
+                <li>
+                  <button onClick={() => handleTabTransition('scorer')} className="mobile-nav-subitem">Live Scorer</button>
+                </li>
+                <li>
+                  <button onClick={() => handleTabTransition('tournament')} className="mobile-nav-subitem">Bracket Builder</button>
+                </li>
+                <li>
+                  <button onClick={() => handleTabTransition('players')} className="mobile-nav-subitem">Player Stats</button>
+                </li>
+
+                {/* Clubhouse Title */}
+                <li className="mobile-nav-section-title">Clubhouse</li>
+                <li>
+                  <button onClick={() => handleTabTransition('academy')} className="mobile-nav-subitem">Trophy Cabinet</button>
+                </li>
+                <li>
+                  <button onClick={() => handleTabTransition('leaderboard')} className="mobile-nav-subitem">Leaderboard</button>
+                </li>
+                {/* Contact */}
+                <li>
+                  <button onClick={() => handleTabTransition('contact')} className="mobile-nav-item" style={{ marginTop: '15px' }}>Contact</button>
+                </li>
               </ul>
             </div>
           </nav>
@@ -941,6 +980,34 @@ function App() {
             {(currentTab === 'scorer' || currentTab === 'share-scorecard') && (
               <div style={{ padding: '60px 4%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', animation: 'tabTransition 0.5s ease-out', width: '100%' }}>
                 <LocalScorer />
+              </div>
+            )}
+
+            {/* TAB VIEW: TOURNAMENT BRACKET */}
+            {currentTab === 'tournament' && (
+              <div style={{ padding: '60px 4%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', animation: 'tabTransition 0.5s ease-out', width: '100%' }}>
+                <div style={{ width: '100%', maxWidth: '1200px', textAlign: 'center' }}>
+                  <div className="section-title-wrapper">
+                    <h2 style={{ fontFamily: 'var(--font-headings)', fontSize: '3rem', color: '#FFF' }}>
+                      TOURNAMENT BRACKET BUILDER
+                    </h2>
+                  </div>
+                  <TournamentBracket />
+                </div>
+              </div>
+            )}
+
+            {/* TAB VIEW: PLAYER STATS */}
+            {currentTab === 'players' && (
+              <div style={{ padding: '60px 4%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', animation: 'tabTransition 0.5s ease-out', width: '100%' }}>
+                <div style={{ width: '100%', maxWidth: '1200px', textAlign: 'center' }}>
+                  <div className="section-title-wrapper">
+                    <h2 style={{ fontFamily: 'var(--font-headings)', fontSize: '3rem', color: '#FFF' }}>
+                      PLAYER PROFILES & SEASON STATS
+                    </h2>
+                  </div>
+                  <PlayerStats />
+                </div>
               </div>
             )}
 

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 export function TossArena() {
   const [isFlipping, setIsFlipping] = useState(false);
@@ -12,6 +12,78 @@ export function TossArena() {
   // We keep track of the cumulative rotation so the coin always spins forward
   const [rotation, setRotation] = useState({ x: 20, y: 0, z: 0 });
   const rotationRef = useRef({ x: 20, y: 0, z: 0 });
+
+  // Ground Rules states
+  const [groundRules, setGroundRules] = useState({
+    oneTipOneHand: false,
+    boxCricketMode: false,
+    lostBallRuns: false,
+    noBallFreeHit: false,
+    lastManBatting: false,
+  });
+  const [customRules, setCustomRules] = useState<string[]>([]);
+  const [newCustomRule, setNewCustomRule] = useState('');
+
+  // Load ground rules on mount
+  useEffect(() => {
+    const savedRules = localStorage.getItem('manucrick_ground_rules');
+    if (savedRules) {
+      try {
+        const { standard, custom } = JSON.parse(savedRules);
+        if (standard) setGroundRules(standard);
+        if (custom) setCustomRules(custom);
+      } catch (e) {
+        console.error("Error reading saved rules", e);
+      }
+    }
+  }, []);
+
+  const saveRules = () => {
+    localStorage.setItem('manucrick_ground_rules', JSON.stringify({
+      standard: groundRules,
+      custom: customRules
+    }));
+    alert("Ground rules saved successfully as default!");
+  };
+
+  const shareRules = () => {
+    let rulesText = `🏏 ManucricK Match Setup & Rules 🏏\n═══════════════════\n`;
+    if (message) {
+      rulesText += `Toss Result: ${message}\n═══════════════════\n`;
+    }
+    rulesText += `AGREED GROUND RULES:\n`;
+    
+    const rulesList: string[] = [];
+    if (groundRules.oneTipOneHand) rulesList.push("✔ 1 Tip 1 Hand Out (One bounce catch is OUT)");
+    if (groundRules.boxCricketMode) rulesList.push("✔ Box Cricket Boundaries (No standard 6s)");
+    if (groundRules.lostBallRuns) rulesList.push("✔ Lost Ball = 5 Runs");
+    if (groundRules.noBallFreeHit) rulesList.push("✔ No Ball = Free Hit");
+    if (groundRules.lastManBatting) rulesList.push("✔ Last Man Standing bats alone");
+    
+    customRules.forEach(rule => {
+      rulesList.push(`✔ ${rule}`);
+    });
+    
+    if (rulesList.length === 0) {
+      rulesList.push("• Standard cricket rules apply.");
+    }
+    
+    rulesText += rulesList.join('\n') + `\n═══════════════════\nCreate matches at manucrick.vercel.app`;
+    
+    navigator.clipboard.writeText(rulesText);
+    alert("WhatsApp rules summary copied to clipboard! Paste it in your group.");
+  };
+
+  const addCustomRule = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCustomRule.trim()) return;
+    setCustomRules([...customRules, newCustomRule.trim()]);
+    setNewCustomRule('');
+  };
+
+  const removeCustomRule = (idx: number) => {
+    setCustomRules(customRules.filter((_, i) => i !== idx));
+  };
 
   // Synthesize sound effects using Web Audio API
   const playSound = (type: 'flip' | 'land') => {
@@ -556,6 +628,165 @@ export function TossArena() {
           </div>
         )}
 
+      </div>
+
+      {/* GULLY CRICKET GROUND RULES MANAGER */}
+      <div
+        className="glass-panel"
+        style={{
+          width: '100%',
+          padding: '24px',
+          display: 'flex',
+          flexDirection: 'column',
+          textAlign: 'left',
+          animation: 'tabTransition 0.5s ease-out',
+        }}
+      >
+        <h3 style={{ fontSize: '1.4rem', color: 'var(--primary)', marginBottom: '4px' }}>
+          🏏 GULLY MATCH RULES MANAGER
+        </h3>
+        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '15px' }}>
+          Local ground arguments start at rules. Select and lock rules below, then share with both teams!
+        </p>
+
+        {/* Rules Checklist */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '0.95rem' }}>
+            <input
+              type="checkbox"
+              checked={groundRules.oneTipOneHand}
+              onChange={(e) => setGroundRules({ ...groundRules, oneTipOneHand: e.target.checked })}
+              style={{ width: '18px', height: '18px', accentColor: 'var(--primary)' }}
+            />
+            <span>☝️ 1 Tip 1 Hand Out (One bounce catch is OUT)</span>
+          </label>
+
+          <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '0.95rem' }}>
+            <input
+              type="checkbox"
+              checked={groundRules.boxCricketMode}
+              onChange={(e) => setGroundRules({ ...groundRules, boxCricketMode: e.target.checked })}
+              style={{ width: '18px', height: '18px', accentColor: 'var(--primary)' }}
+            />
+            <span>📦 Box cricket boundaries (No 6s allowed unless hit over/wall check)</span>
+          </label>
+
+          <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '0.95rem' }}>
+            <input
+              type="checkbox"
+              checked={groundRules.lostBallRuns}
+              onChange={(e) => setGroundRules({ ...groundRules, lostBallRuns: e.target.checked })}
+              style={{ width: '18px', height: '18px', accentColor: 'var(--primary)' }}
+            />
+            <span>🥎 Lost ball = 5 Runs awarded to batting team</span>
+          </label>
+
+          <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '0.95rem' }}>
+            <input
+              type="checkbox"
+              checked={groundRules.noBallFreeHit}
+              onChange={(e) => setGroundRules({ ...groundRules, noBallFreeHit: e.target.checked })}
+              style={{ width: '18px', height: '18px', accentColor: 'var(--primary)' }}
+            />
+            <span>🚀 No ball = Free hit on next delivery</span>
+          </label>
+
+          <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '0.95rem' }}>
+            <input
+              type="checkbox"
+              checked={groundRules.lastManBatting}
+              onChange={(e) => setGroundRules({ ...groundRules, lastManBatting: e.target.checked })}
+              style={{ width: '18px', height: '18px', accentColor: 'var(--primary)' }}
+            />
+            <span>🧍 Last man batting (Last batsman bats alone till out)</span>
+          </label>
+        </div>
+
+        {/* Custom Ground Rules list */}
+        {customRules.length > 0 && (
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '12px', marginBottom: '15px' }}>
+            <span style={{ fontSize: '0.78rem', color: 'var(--secondary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Custom Ground Rules</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '6px' }}>
+              {customRules.map((rule, idx) => (
+                <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.04)' }}>
+                  <span style={{ fontSize: '0.92rem' }}>✔ {rule}</span>
+                  <button
+                    type="button"
+                    onClick={() => removeCustomRule(idx)}
+                    style={{ background: 'none', border: 'none', color: 'var(--red)', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 'bold' }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Custom Rule Input Form */}
+        <form onSubmit={addCustomRule} style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+          <input
+            type="text"
+            value={newCustomRule}
+            onChange={(e) => setNewCustomRule(e.target.value)}
+            placeholder="Add custom rule (e.g. Lost ball in drain is OUT)..."
+            className="premium-input"
+            style={{ flex: 1, marginTop: 0, padding: '8px 12px' }}
+          />
+          <button
+            type="submit"
+            style={{
+              padding: '0 15px',
+              borderRadius: '8px',
+              border: 'none',
+              backgroundColor: 'var(--primary)',
+              color: '#050A18',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+            }}
+            className="interactive"
+          >
+            Add Rule
+          </button>
+        </form>
+
+        {/* Action buttons */}
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button
+            onClick={saveRules}
+            style={{
+              flex: 1,
+              padding: '10px 0',
+              borderRadius: '6px',
+              border: '1px solid rgba(255,255,255,0.15)',
+              backgroundColor: 'transparent',
+              color: '#FFF',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+            }}
+            className="interactive"
+          >
+            💾 Save Ground Rules
+          </button>
+
+          <button
+            onClick={shareRules}
+            style={{
+              flex: 1.5,
+              padding: '10px 0',
+              borderRadius: '6px',
+              border: 'none',
+              backgroundColor: 'var(--primary)',
+              color: '#050A18',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              boxShadow: '0 0 10px rgba(0, 255, 135, 0.2)',
+            }}
+            className="interactive"
+          >
+            💬 WhatsApp Rules Checklist
+          </button>
+        </div>
       </div>
     </div>
   );

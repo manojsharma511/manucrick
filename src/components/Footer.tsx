@@ -28,7 +28,7 @@ export function Footer() {
       >
         {/* Copyright info */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-secondary)', fontSize: '0.9rem', justifyContent: 'center' }}>
-          <span>&copy; 2025 ManucricK &bull; Built with ❤️ by Manoj Kumar Sharma</span>
+          <span>&copy; 2025 ManucricK &bull; Built with ❤️ by <a href="https://manojkumarsharma.vercel.app/" target="_blank" rel="noopener noreferrer" className="interactive footer-link" style={{ color: 'inherit', textDecoration: 'underline', transition: 'color 0.2s', cursor: 'none' }}>Manoj Kumar Sharma</a></span>
           <div
             style={{
               width: '16px',

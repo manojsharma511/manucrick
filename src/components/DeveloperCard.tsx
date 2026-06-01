@@ -111,7 +111,9 @@ export function DeveloperCard({ onToast }: DeveloperCardProps) {
             letterSpacing: '1px',
           }}
         >
-          Manoj Kumar Sharma
+          <a href="https://manojkumarsharma.vercel.app/" target="_blank" rel="noopener noreferrer" className="interactive" style={{ color: 'inherit', textDecoration: 'underline', cursor: 'none' }}>
+            Manoj Kumar Sharma
+          </a>
         </h3>
         
         {/* Badge */}

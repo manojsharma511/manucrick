@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { FormEvent } from 'react';
 
 interface ContactCardProps {
@@ -14,8 +14,61 @@ export function ContactCard({ onToast }: ContactCardProps) {
   const [senderEmail, setSenderEmail] = useState('');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
+  const [jerseyClicks, setJerseyClicks] = useState(0);
+  const [showAdminInbox, setShowAdminInbox] = useState(false);
+  
+  // Real-time Cloud Messages State
+  const [cloudMessages, setCloudMessages] = useState<any[]>([]);
+  const [loadingMessages, setLoadingMessages] = useState(false);
 
-  const handleFormSubmit = (e: FormEvent) => {
+  const kvBucketId = 'manucrick_msg_store_c3f7b8d9';
+
+  // Fetch messages from cloud KVdb store
+  const fetchCloudMessages = async () => {
+    setLoadingMessages(true);
+    try {
+      const res = await fetch(`https://kvdb.io/${kvBucketId}/messages`);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setCloudMessages(data);
+          // Also save/update local storage as a local backup
+          localStorage.setItem('manucrick_messages', JSON.stringify(data));
+        }
+      } else if (res.status === 404) {
+        // If key doesn't exist yet, initialize it as empty list
+        setCloudMessages([]);
+      }
+    } catch (err) {
+      console.error("Failed to fetch messages from KVdb", err);
+      // Fallback to local storage if offline or error
+      const local = localStorage.getItem('manucrick_messages');
+      if (local) {
+        try { setCloudMessages(JSON.parse(local)); } catch (e) {}
+      }
+    } finally {
+      setLoadingMessages(false);
+    }
+  };
+
+  // Trigger fetch when admin inbox is toggled open
+  useEffect(() => {
+    if (showAdminInbox) {
+      fetchCloudMessages();
+    }
+  }, [showAdminInbox]);
+
+  const handleJerseyClick = () => {
+    const clicks = jerseyClicks + 1;
+    setJerseyClicks(clicks);
+    if (clicks >= 5) {
+      setShowAdminInbox(!showAdminInbox);
+      setJerseyClicks(0);
+      onToast(showAdminInbox ? 'Admin Inbox Closed' : 'Developer Admin Inbox Unlocked! 🔓', 'info');
+    }
+  };
+
+  const handleFormSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!senderName.trim() || !senderEmail.trim() || !message.trim()) {
       onToast('Please fill out all mandatory fields!', 'warning');
@@ -30,16 +83,54 @@ export function ContactCard({ onToast }: ContactCardProps) {
       date: new Date().toLocaleString(),
     };
 
-    // Save to localStorage messages list
+    onToast('Submitting message...', 'info');
+
+    // 1. Save local backup first
     const existingMessages = localStorage.getItem('manucrick_messages');
-    let messages = [];
+    let localMsgs = [];
     if (existingMessages) {
       try {
-        messages = JSON.parse(existingMessages);
+        localMsgs = JSON.parse(existingMessages);
       } catch (err) { }
     }
-    messages.push(newMessage);
-    localStorage.setItem('manucrick_messages', JSON.stringify(messages));
+    localMsgs.push(newMessage);
+    localStorage.setItem('manucrick_messages', JSON.stringify(localMsgs));
+
+    // 2. Save to Cloud KVdb (fetch current first, append, and put)
+    try {
+      let currentCloudMsgs: any[] = [];
+      const fetchRes = await fetch(`https://kvdb.io/${kvBucketId}/messages`);
+      if (fetchRes.ok) {
+        const data = await fetchRes.json();
+        if (Array.isArray(data)) {
+          currentCloudMsgs = data;
+        }
+      }
+      const updatedCloudMsgs = [...currentCloudMsgs, newMessage];
+      
+      const putRes = await fetch(`https://kvdb.io/${kvBucketId}/messages`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedCloudMsgs),
+      });
+
+      if (putRes.ok) {
+        // Sync our local state if it's currently open
+        setCloudMessages(updatedCloudMsgs);
+      }
+    } catch (err) {
+      console.error("Failed to sync message to cloud database", err);
+    }
+
+    // 3. Open mail client populated
+    try {
+      const mailtoUrl = `mailto:${email}?subject=${encodeURIComponent(newMessage.subject)}&body=${encodeURIComponent(
+        `Name: ${newMessage.name}\nEmail: ${newMessage.email}\nDate: ${newMessage.date}\n\nMessage:\n${newMessage.message}`
+      )}`;
+      window.open(mailtoUrl, '_blank');
+    } catch (err) {
+      console.warn("Failed to open mail client", err);
+    }
 
     // Clear form
     setSenderName('');
@@ -47,7 +138,7 @@ export function ContactCard({ onToast }: ContactCardProps) {
     setSubject('');
     setMessage('');
 
-    onToast('Message sent successfully! Saved to localStorage database. 📧', 'success');
+    onToast('Message saved to cloud database & email draft opened! 📧', 'success');
   };
 
   const copyToClipboard = (text: string, type: 'email' | 'phone') => {
@@ -94,8 +185,9 @@ export function ContactCard({ onToast }: ContactCardProps) {
             position: 'relative',
           }}
         >
-          {/* Jersey Graphic */}
+          {/* Jersey Graphic (Secret inbox toggle) */}
           <div
+            onClick={handleJerseyClick}
             style={{
               position: 'absolute',
               width: '80px',
@@ -109,7 +201,9 @@ export function ContactCard({ onToast }: ContactCardProps) {
               alignItems: 'center',
               justifyContent: 'center',
               boxShadow: '0 -4px 12px rgba(0, 255, 135, 0.18)',
+              cursor: 'pointer',
             }}
+            className="interactive"
           >
             <div style={{ fontSize: '0.62rem', color: '#9CA3AF', fontWeight: 700, letterSpacing: '0.5px' }}>MKS</div>
             <div
@@ -135,7 +229,9 @@ export function ContactCard({ onToast }: ContactCardProps) {
               marginBottom: '4px',
             }}
           >
-            Manoj Kumar Sharma
+            <a href="https://manojkumarsharma.vercel.app/" target="_blank" rel="noopener noreferrer" className="interactive" style={{ color: 'inherit', textDecoration: 'underline', cursor: 'none' }}>
+              Manoj Kumar Sharma
+            </a>
           </h4>
           <p
             style={{
@@ -426,6 +522,117 @@ export function ContactCard({ onToast }: ContactCardProps) {
           </button>
         </form>
       </div>
+
+      {showAdminInbox && (
+        <div
+          className="glass-panel"
+          style={{
+            width: '100%',
+            padding: '30px',
+            background: 'rgba(5, 10, 24, 0.85)',
+            border: '2px solid var(--primary)',
+            borderRadius: '16px',
+            marginTop: '20px',
+            textAlign: 'left',
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '12px', flexWrap: 'wrap', gap: '15px' }}>
+            <h4 style={{ fontFamily: 'var(--font-headings)', fontSize: '2rem', color: 'var(--primary)', letterSpacing: '1px', margin: 0 }}>
+              📥 DEVELOPER INBOX (Cloud Synced)
+            </h4>
+            
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button
+                onClick={fetchCloudMessages}
+                disabled={loadingMessages}
+                style={{
+                  padding: '6px 16px',
+                  borderRadius: '6px',
+                  border: '1px solid var(--primary)',
+                  backgroundColor: 'rgba(0, 255, 135, 0.08)',
+                  color: 'var(--primary)',
+                  fontSize: '0.85rem',
+                  fontWeight: 'bold',
+                  cursor: 'none',
+                }}
+                className="interactive"
+              >
+                {loadingMessages ? 'Refreshing...' : '🔄 Refresh'}
+              </button>
+
+              <button
+                onClick={async () => {
+                  if (window.confirm('Delete all messages globally in cloud database?')) {
+                    try {
+                      onToast('Clearing cloud database...', 'info');
+                      const putRes = await fetch(`https://kvdb.io/${kvBucketId}/messages`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify([]),
+                      });
+                      if (putRes.ok) {
+                        setCloudMessages([]);
+                        localStorage.setItem('manucrick_messages', JSON.stringify([]));
+                        onToast('All messages cleared globally!', 'success');
+                      }
+                    } catch (err) {
+                      console.error("Failed to clear cloud messages", err);
+                      onToast('Failed to clear cloud messages.', 'warning');
+                    }
+                  }
+                }}
+                style={{
+                  padding: '6px 16px',
+                  borderRadius: '6px',
+                  border: '1px solid #FF3B30',
+                  backgroundColor: 'rgba(255, 59, 48, 0.1)',
+                  color: '#FF3B30',
+                  fontSize: '0.85rem',
+                  fontWeight: 'bold',
+                  cursor: 'none',
+                }}
+                className="interactive"
+              >
+                Clear All
+              </button>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', maxHeight: '400px', overflowY: 'auto' }} className="table-scroll-container">
+            {loadingMessages ? (
+              <div style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: '20px' }}>Loading cloud database...</div>
+            ) : cloudMessages.length > 0 ? (
+              cloudMessages.map((m: any, idx: number) => (
+                <div
+                  key={idx}
+                  style={{
+                    padding: '16px',
+                    borderRadius: '8px',
+                    background: 'rgba(255, 255, 255, 0.02)',
+                    border: '1px solid rgba(255, 255, 255, 0.05)',
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '5px' }}>
+                    <div>
+                      <strong style={{ color: '#FFF' }}>{m.name}</strong>{' '}
+                      <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>({m.email})</span>
+                    </div>
+                    <span style={{ color: 'var(--secondary)', fontSize: '0.82rem', fontWeight: 'bold' }}>{m.date}</span>
+                  </div>
+                  <div style={{ fontSize: '0.9rem', color: 'var(--primary)', marginBottom: '6px', fontWeight: 'bold' }}>
+                    Subject: {m.subject}
+                  </div>
+                  <p style={{ fontSize: '0.92rem', color: 'var(--text-primary)', whiteSpace: 'pre-wrap', lineHeight: '1.4' }}>
+                    {m.message}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <div style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: '20px' }}>No messages in database.</div>
+            )}
+          </div>
+        </div>
+      )}
 
       <style>{`
         .copy-btn-emoji:hover {

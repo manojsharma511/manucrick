@@ -666,7 +666,11 @@ function App() {
                           {thoughts[activeThoughtIdx].text}
                         </p>
                         <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--secondary)', textTransform: 'uppercase', letterSpacing: '2px' }}>
-                          — {thoughts[activeThoughtIdx].author}
+                          — {thoughts[activeThoughtIdx].author === "Manoj Kumar Sharma" ? (
+                            <a href="https://manojkumarsharma.vercel.app/" target="_blank" rel="noopener noreferrer" className="interactive" style={{ color: 'inherit', textDecoration: 'underline', cursor: 'none' }}>
+                              Manoj Kumar Sharma
+                            </a>
+                          ) : thoughts[activeThoughtIdx].author}
                         </span>
                       </div>
                       <span className="quote-decor close">”</span>
@@ -712,7 +716,9 @@ function App() {
                             DESIGNER & DEVELOPER
                           </span>
                           <h3 style={{ fontSize: '2.6rem', color: '#FFFFFF', marginTop: '5px', marginBottom: '15px' }}>
-                            Manoj Kumar Sharma
+                            <a href="https://manojkumarsharma.vercel.app/" target="_blank" rel="noopener noreferrer" className="interactive" style={{ color: 'inherit', textDecoration: 'underline', transition: 'color 0.2s', cursor: 'none' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary)'} onMouseLeave={(e) => e.currentTarget.style.color = '#FFF'}>
+                              Manoj Kumar Sharma
+                            </a>
                           </h3>
                           <p style={{ fontSize: '1.02rem', color: 'var(--text-secondary)', lineHeight: '1.6', marginBottom: '15px' }}>
                             Hello! I am a Full Stack Developer dedicated to merging cutting-edge architectural backend design with polished, high-fidelity user interfaces. My design philosophy revolves around clean semantics, performance-oriented UI states, and robust enterprise patterns.
@@ -788,7 +794,7 @@ function App() {
                       MANUCRICK PLAY NOW
                     </h2>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', marginTop: '4px', letterSpacing: '1px', textTransform: 'uppercase' }}>
-                      OPERATED BY MANOJ KUMAR SHARMA &bull; THE ULTIMATE ARENA
+                      OPERATED BY <a href="https://manojkumarsharma.vercel.app/" target="_blank" rel="noopener noreferrer" className="interactive" style={{ color: 'var(--primary)', textDecoration: 'underline', cursor: 'none' }}>MANOJ KUMAR SHARMA</a> &bull; THE ULTIMATE ARENA
                     </p>
                   </div>
 
@@ -812,7 +818,7 @@ function App() {
                           🏟️ ARENA DASHBOARD
                         </h3>
                         <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
-                          Welcome to the official arena of Manoj Kumar Sharma. Equip your gear, review guidelines, and take your stance.
+                          Welcome to the official arena of <a href="https://manojkumarsharma.vercel.app/" target="_blank" rel="noopener noreferrer" className="interactive" style={{ color: 'var(--primary)', textDecoration: 'underline', cursor: 'none' }}>Manoj Kumar Sharma</a>. Equip your gear, review guidelines, and take your stance.
                         </p>
                       </div>
 

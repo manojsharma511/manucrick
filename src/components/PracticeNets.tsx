@@ -64,6 +64,22 @@ class PracticeAudio {
     osc.start();
     osc.stop(now + 0.05);
   }
+
+  speakCommentary(text: string) {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1.1;
+      utterance.pitch = 1.05;
+      utterance.lang = 'en-US';
+      const voices = window.speechSynthesis.getVoices();
+      const engVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Samantha') || v.name.includes('Daniel')));
+      if (engVoice) {
+        utterance.voice = engVoice;
+      }
+      window.speechSynthesis.speak(utterance);
+    }
+  }
 }
 
 export function PracticeNets() {
@@ -96,6 +112,7 @@ export function PracticeNets() {
   const ballDurationRef = useRef(1000);
   const ballTrailRef = useRef<{ x: number; y: number }[]>([]);
   const isBallHitRef = useRef(false);
+  const autoNextBallTimeoutRef = useRef<any>(null);
 
   // Stump objects
   const stumpsRef = useRef<{ x: number; y: number; angle: number; vx: number; vy: number }[]>([]);
@@ -104,6 +121,14 @@ export function PracticeNets() {
     resetStumps();
     startNewBall();
   }, [deliveryType]);
+
+  useEffect(() => {
+    return () => {
+      if (autoNextBallTimeoutRef.current) {
+        clearTimeout(autoNextBallTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const resetStumps = () => {
     stumpsRef.current = [
@@ -114,6 +139,10 @@ export function PracticeNets() {
   };
 
   const startNewBall = () => {
+    if (autoNextBallTimeoutRef.current) {
+      clearTimeout(autoNextBallTimeoutRef.current);
+      autoNextBallTimeoutRef.current = null;
+    }
     audioRef.current.init();
     setBallActive(false);
     isBallHitRef.current = false;
@@ -193,6 +222,14 @@ export function PracticeNets() {
       setFeedbackColor('var(--primary)');
       audioRef.current.playImpact(true);
       
+      const perfectPhrases = [
+        "What a shot! Timed to perfection!",
+        "Magnificent timing! Right in the sweet spot!",
+        "Beautifully played! Brilliant connection!",
+        "That is clean! Absolute beauty of a shot!"
+      ];
+      audioRef.current.speakCommentary(perfectPhrases[Math.floor(Math.random() * perfectPhrases.length)]);
+      
       // Hit ball away
       isBallHitRef.current = true;
       animateHit(240, -100);
@@ -201,11 +238,20 @@ export function PracticeNets() {
       setFeedbackColor('var(--accent)');
       audioRef.current.playImpact(false);
       
+      const goodPhrases = [
+        "Well played! Good connection there.",
+        "Good shot! Nicely pushed into the gap!",
+        "Decent contact! Safe shot."
+      ];
+      audioRef.current.speakCommentary(goodPhrases[Math.floor(Math.random() * goodPhrases.length)]);
+      
       isBallHitRef.current = true;
       animateHit(240, 60);
     } else if (diffMs < -goodTolerance) {
       setTimingFeedback(`TOO EARLY! Offset: ${diffMs}ms (Swing Missed) 💨`);
       setFeedbackColor('#9CA3AF');
+      
+      audioRef.current.speakCommentary("Too early on that swing!");
     } else {
       setTimingFeedback(`TOO LATE! Stumps hit! Offset: +${diffMs}ms 🛑`);
       setFeedbackColor('#FF3B30');
@@ -229,6 +275,9 @@ export function PracticeNets() {
         requestAnimationFrame(hitLoop);
       } else {
         setBallActive(false);
+        autoNextBallTimeoutRef.current = setTimeout(() => {
+          startNewBall();
+        }, 2000);
       }
     };
     hitLoop();
@@ -472,6 +521,12 @@ export function PracticeNets() {
           setTimingFeedback('STUMPS SHATTERED! Too late on connection 🛑');
           setFeedbackColor('#FF3B30');
           setOffsetMs(null);
+          
+          audioRef.current.speakCommentary("Bowled him! Stumps shattered!");
+          
+          autoNextBallTimeoutRef.current = setTimeout(() => {
+            startNewBall();
+          }, 2000);
         }
       }
 

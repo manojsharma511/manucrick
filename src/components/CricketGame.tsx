@@ -111,6 +111,22 @@ class GameAudio {
     osc.start();
     osc.stop(now + 0.05);
   }
+
+  speakCommentary(text: string) {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1.1;
+      utterance.pitch = 1.05;
+      utterance.lang = 'en-US';
+      const voices = window.speechSynthesis.getVoices();
+      const engVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Samantha') || v.name.includes('Daniel')));
+      if (engVoice) {
+        utterance.voice = engVoice;
+      }
+      window.speechSynthesis.speak(utterance);
+    }
+  }
 }
 
 interface HighScore {
@@ -157,9 +173,9 @@ export function CricketGame() {
   const [jerseyNumber, setJerseyNumber] = useState('27');
   const [batGripColor, setBatGripColor] = useState('#FF6B00');
 
-  // Game flow states
   const [gameState, setGameState] = useState<'start' | 'playing' | 'out'>('start');
-  const [gameMode, setGameMode] = useState<'endless' | 'superover' | 'survival' | 'target'>('endless');
+  const [gameMode, setGameMode] = useState<'endless' | 'superover' | 'survival' | 'target' | 'quick'>('endless');
+  const [selectedOvers, setSelectedOvers] = useState<number>(2);
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
   const [score, setScore] = useState(0);
   const [wickets, setWickets] = useState(0);
@@ -197,7 +213,7 @@ export function CricketGame() {
   const runnerXRef = useRef(240);
   const runnerYRef = useRef(600);
   const runnerDirectionRef = useRef(0); // 0 = idle, -1 = running up, 1 = running down
-  const runnerSpeedRef = useRef(4.2);
+  const runnerSpeedRef = useRef(8.5);
 
   // Ball variables
   const ballXRef = useRef(-100);
@@ -262,7 +278,7 @@ export function CricketGame() {
     audioRef.current.init();
   };
 
-  const initGame = (mode: 'endless' | 'superover' | 'survival' | 'target') => {
+  const initGame = (mode: 'endless' | 'superover' | 'survival' | 'target' | 'quick') => {
     audioRef.current.init();
     setGameMode(mode);
     setScore(0);
@@ -277,13 +293,33 @@ export function CricketGame() {
     setIsFullscreen(true); // Immersive fullscreen view
 
     if (mode === 'superover') {
-      setTargetRuns(16);
+      const randTarget = Math.floor(Math.random() * 13) + 10; // 10 to 22 runs
+      setTargetRuns(randTarget);
       setBallsRemaining(6);
     } else if (mode === 'survival') {
       setBallsRemaining(10);
     } else if (mode === 'target') {
-      setTargetRuns(30);
-      setBallsRemaining(12);
+      // Dynamic overs and targets
+      const randOvers = [2, 3, 5][Math.floor(Math.random() * 3)];
+      setBallsRemaining(randOvers * 6);
+      if (randOvers === 2) {
+        setTargetRuns(Math.floor(Math.random() * 23) + 20); // 20 to 42 runs
+      } else if (randOvers === 3) {
+        setTargetRuns(Math.floor(Math.random() * 26) + 35); // 35 to 60 runs
+      } else {
+        setTargetRuns(Math.floor(Math.random() * 36) + 60); // 60 to 95 runs
+      }
+    } else if (mode === 'quick') {
+      setBallsRemaining(selectedOvers * 6);
+      if (selectedOvers === 1) {
+        setTargetRuns(Math.floor(Math.random() * 14) + 12); // 12 to 25 runs
+      } else if (selectedOvers === 2) {
+        setTargetRuns(Math.floor(Math.random() * 22) + 24); // 24 to 45 runs
+      } else if (selectedOvers === 5) {
+        setTargetRuns(Math.floor(Math.random() * 46) + 60); // 60 to 105 runs
+      } else {
+        setTargetRuns(Math.floor(Math.random() * 76) + 120); // 120 to 195 runs
+      }
     }
 
     // Spreads fielders further out to the boundaries for a larger outfield
@@ -425,6 +461,29 @@ export function CricketGame() {
       setFeedbackColor(runs === 6 ? 'var(--accent)' : 'var(--primary)');
       triggerOverlay(runs === 6 ? 'six' : 'four');
 
+      // Speak commentary
+      if (runs === 6) {
+        const sixPhrases = [
+          "What a shot! That is a massive six!",
+          "Maximum! That's gone all the way!",
+          "It's a six! Out of the park!",
+          "Six runs! Absolutely smashed it!",
+          "Clean strike! That is a huge six!",
+          "Beautiful shot! Sent high into the crowd for six!"
+        ];
+        audioRef.current.speakCommentary(sixPhrases[Math.floor(Math.random() * sixPhrases.length)]);
+      } else {
+        const fourPhrases = [
+          "Beautiful shot! Races away for four!",
+          "Four runs! Exquisite cover drive!",
+          "Shot! Placed perfectly for a boundary!",
+          "It's a boundary! Four runs to the total!",
+          "Lovely timing, finding the gap for four!",
+          "Crack! That's a textbook boundary!"
+        ];
+        audioRef.current.speakCommentary(fourPhrases[Math.floor(Math.random() * fourPhrases.length)]);
+      }
+
       setScore((prev) => prev + runs);
       setBalls((prev) => prev + 1);
       if (gameMode !== 'endless') {
@@ -508,6 +567,18 @@ export function CricketGame() {
       if (closest) {
         (closest as Fielder).state = 'chasing';
       }
+
+      // Automatically start running!
+      setBatsmanRunning(true);
+      runnerDirectionRef.current = -1; // run up
+      
+      const nudgePhrases = [
+        "Nudged into the gap! Quick runs here!",
+        "Shot! Push for runs!",
+        "Excellent placement, they are running hard!",
+        "Pushed into the outfield, run hard!"
+      ];
+      audioRef.current.speakCommentary(nudgePhrases[Math.floor(Math.random() * nudgePhrases.length)]);
     } else if (prog < targetSpot) {
       // Too early
       setShotFeedback('TOO EARLY! Swung before the ball arrived. 💨');
@@ -582,7 +653,7 @@ export function CricketGame() {
       score: currentScore,
       balls: currentBalls,
       difficulty,
-      mode: gameMode === 'superover' ? 'Super Over' : gameMode === 'survival' ? 'Survival' : gameMode === 'target' ? 'Target Attack' : 'Championship',
+      mode: gameMode === 'superover' ? 'Super Over' : gameMode === 'survival' ? 'Survival' : gameMode === 'target' ? 'Target Attack' : gameMode === 'quick' ? 'Quick Match' : 'Championship',
       status: 'Ended',
       date: new Date().toLocaleDateString(),
     };
@@ -611,6 +682,21 @@ export function CricketGame() {
         setGameState('out');
       } else if (remaining <= 0 || currentWickets >= 1) {
         setShotFeedback('DEFEAT! Target attack failed. ❌');
+        newLog.status = 'Lost';
+        saveMatchResult(newLog);
+        setGameState('out');
+      } else {
+        startNewDelivery();
+      }
+    } else if (gameMode === 'quick') {
+      const remaining = ballsRemaining - (wicketLost ? 1 : 0);
+      if (currentScore >= targetRuns) {
+        setShotFeedback('VICTORY!! Target successfully chased! 🏆');
+        newLog.status = 'Won';
+        saveMatchResult(newLog);
+        setGameState('out');
+      } else if (remaining <= 0 || currentWickets >= 3) {
+        setShotFeedback('DEFEAT! Target chase failed. ❌');
         newLog.status = 'Lost';
         saveMatchResult(newLog);
         setGameState('out');
@@ -752,6 +838,13 @@ export function CricketGame() {
           ballStateRef.current = 'idle';
           explodeStumps();
 
+          const bowledPhrases = [
+            "Bowled him! That's a beautiful delivery, stumps shattered!",
+            "Bowled him! The batsman misses, and the stumps are broken!",
+            "Clean bowled! Absolute peach of a delivery!"
+          ];
+          audioRef.current.speakCommentary(bowledPhrases[Math.floor(Math.random() * bowledPhrases.length)]);
+
           if (gameMode === 'survival') {
             setScore((prev) => Math.max(0, prev - 5));
             setShotFeedback('BOWLED OUT! Stumps broken: -5 Runs! ❌');
@@ -831,6 +924,13 @@ export function CricketGame() {
           if (!insideCrease && batsmanRunning) {
             explodeStumps();
             
+            const runoutPhrases = [
+              "Oh no! That's a run out! Disaster in the middle!",
+              "Run out! Brilliant fielding has done the trick!",
+              "Gone! He couldn't make it back in time, run out!"
+            ];
+            audioRef.current.speakCommentary(runoutPhrases[Math.floor(Math.random() * runoutPhrases.length)]);
+
             if (gameMode === 'survival') {
               setScore((prev) => Math.max(0, prev - 5));
               setShotFeedback('RUN OUT! Wicket lost: -5 Runs! 🛑');
@@ -856,8 +956,16 @@ export function CricketGame() {
             setScore((prev) => prev + currentRunsInSession);
             setBalls((prev) => prev + 1);
             if (gameMode !== 'endless') setBallsRemaining((prev) => prev - 1);
+            
+            const safePhrases = [
+              `Safe! Outstanding running between the wickets.`,
+              `Brilliant running! Easy runs there.`,
+              `Excellent speed, safely back in the crease.`
+            ];
+            audioRef.current.speakCommentary(safePhrases[Math.floor(Math.random() * safePhrases.length)]);
+
             setBatsmanRunning(false);
-            setTimeout(() => checkNextBallFlow(0), 2000);
+            setTimeout(() => checkNextBallFlow(currentRunsInSession), 2000);
           }
         }
       }
@@ -881,12 +989,22 @@ export function CricketGame() {
         runnerYRef.current += runnerDirectionRef.current * runnerSpeedRef.current;
         if (runnerDirectionRef.current === -1 && runnerYRef.current <= 160) {
           runnerYRef.current = 160;
-          runnerDirectionRef.current = 1;
-          setCurrentRunsInSession((prev) => prev + 0.5);
+          setCurrentRunsInSession((prev) => prev + 1);
+          if (ballStateRef.current === 'thrown') {
+            setBatsmanRunning(false);
+            runnerDirectionRef.current = 0;
+          } else {
+            runnerDirectionRef.current = 1;
+          }
         } else if (runnerDirectionRef.current === 1 && runnerYRef.current >= 600) {
           runnerYRef.current = 600;
-          runnerDirectionRef.current = -1;
-          setCurrentRunsInSession((prev) => prev + 0.5);
+          setCurrentRunsInSession((prev) => prev + 1);
+          if (ballStateRef.current === 'thrown') {
+            setBatsmanRunning(false);
+            runnerDirectionRef.current = 0;
+          } else {
+            runnerDirectionRef.current = -1;
+          }
         }
         setIsBatsmanSafe(runnerYRef.current >= 580 || runnerYRef.current <= 180);
       } else {
@@ -1409,12 +1527,18 @@ export function CricketGame() {
                 <>
                   <div>
                     <span style={{ color: 'var(--text-secondary)' }}>NEED: </span>
-                    <span style={{ color: 'var(--accent)' }}>{targetRuns - score} Runs</span>
+                    <span style={{ color: 'var(--accent)' }}>{Math.max(0, targetRuns - score)} Runs</span>
                   </div>
                   <div>
                     <span style={{ color: 'var(--text-secondary)' }}>BALLS: </span>
                     <span style={{ color: '#FFF' }}>{ballsRemaining} Left</span>
                   </div>
+                  {gameMode === 'quick' && (
+                    <div>
+                      <span style={{ color: 'var(--text-secondary)' }}>WICKETS: </span>
+                      <span style={{ color: '#FF3B30' }}>{wickets}/3</span>
+                    </div>
+                  )}
                 </>
               )}
             </div>
@@ -1482,7 +1606,7 @@ export function CricketGame() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', width: '300px', marginBottom: '24px' }}>
               {/* Game Modes */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                {(['endless', 'superover', 'survival', 'target'] as const).map((mode) => (
+                {(['endless', 'superover', 'survival', 'target', 'quick'] as const).map((mode) => (
                   <button
                     key={mode}
                     onClick={() => setGameMode(mode)}
@@ -1498,13 +1622,46 @@ export function CricketGame() {
                       textTransform: 'uppercase',
                       letterSpacing: '0.5px',
                       cursor: 'pointer',
+                      gridColumn: mode === 'quick' ? 'span 2' : undefined,
                     }}
                     className="interactive"
                   >
-                    {mode === 'endless' ? 'Championship' : mode === 'superover' ? 'Super Over' : mode === 'survival' ? 'Wicket Survival' : 'Target Attack'}
+                    {mode === 'endless' ? 'Championship' : mode === 'superover' ? 'Super Over' : mode === 'survival' ? 'Wicket Survival' : mode === 'target' ? 'Target Attack' : 'Quick Match'}
                   </button>
                 ))}
               </div>
+
+              {/* Overs Selector for Quick Match */}
+              {gameMode === 'quick' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: 'center' }}>
+                    Select Overs
+                  </div>
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    {([1, 2, 5, 10] as const).map((overs) => (
+                      <button
+                        key={overs}
+                        onClick={() => setSelectedOvers(overs)}
+                        style={{
+                          flex: 1,
+                          padding: '7px 0',
+                          borderRadius: '5px',
+                          border: '1px solid',
+                          borderColor: selectedOvers === overs ? 'var(--primary)' : 'rgba(255,255,255,0.08)',
+                          backgroundColor: selectedOvers === overs ? 'rgba(0, 255, 135, 0.08)' : 'transparent',
+                          color: selectedOvers === overs ? 'var(--primary)' : '#FFF',
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                        }}
+                        className="interactive"
+                      >
+                        {overs} {overs === 1 ? 'Over' : 'Ov'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Difficulty */}
               <div style={{ display: 'flex', gap: '8px' }}>
@@ -1579,15 +1736,15 @@ export function CricketGame() {
               style={{
                 fontFamily: 'var(--font-headings)',
                 fontSize: '4rem',
-                color: (gameMode === 'superover' || gameMode === 'target') && score >= targetRuns ? 'var(--primary)' : '#FF3B30',
+                color: (gameMode === 'superover' || gameMode === 'target' || gameMode === 'quick') && score >= targetRuns ? 'var(--primary)' : '#FF3B30',
                 textShadow: '0 0 20px rgba(0,0,0,0.8)',
                 letterSpacing: '2px',
                 marginBottom: '15px',
               }}
             >
-              {gameMode === 'superover' || gameMode === 'target'
+              {gameMode === 'superover' || gameMode === 'target' || gameMode === 'quick'
                 ? (score >= targetRuns ? 'CHALLENGE ACCOMPLISHED! 🏆' : 'CHALLENGE FAILED! ❌')
-                : 'ALL OUT!'}
+                : gameMode === 'survival' ? 'CHALLENGE ENDED! 🏟️' : 'ALL OUT!'}
             </div>
 
             <div
@@ -1600,7 +1757,7 @@ export function CricketGame() {
               }}
             >
               <div style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: 'var(--text-secondary)', letterSpacing: '1.5px', marginBottom: '4px' }}>
-                Championship Score
+                {gameMode === 'endless' ? 'Championship Score' : gameMode === 'superover' ? 'Super Over Score' : gameMode === 'survival' ? 'Survival Score' : gameMode === 'target' ? 'Target Attack Score' : 'Quick Match Score'}
               </div>
               <div style={{ fontFamily: 'var(--font-headings)', fontSize: '3rem', color: '#FFF', lineHeight: 1 }}>
                 {score} Runs

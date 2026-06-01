@@ -78,7 +78,7 @@ export function CustomCursor() {
         top: `${position.y}px`,
         transform: `translate(-50%, -50%) scale(${isHovering ? 1.4 : 1})`,
         pointerEvents: 'none',
-        zIndex: 10000,
+        zIndex: 999999,
         transition: 'transform 0.1s ease-out',
         willChange: 'transform',
       }}

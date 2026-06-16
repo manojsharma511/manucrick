@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { getArcadeScores, getArcadeBestScoreByGame } from '../utils/arcadeStorage';
+import type { ArcadeScoreRecord } from '../utils/arcadeStorage';
 
 interface MatchLog {
   name: string;
@@ -21,6 +23,8 @@ export function LeaderboardPage() {
   const [highScores, setHighScores] = useState<HighScore[]>([]);
   const [matchLogs, setMatchLogs] = useState<MatchLog[]>([]);
   const [activeTab, setActiveTab] = useState<'all' | 'easy' | 'medium' | 'hard'>('all');
+  const [arcadeScores, setArcadeScores] = useState<ArcadeScoreRecord[]>([]);
+  const [arcadeBest, setArcadeBest] = useState<Record<string, number>>({});
 
   useEffect(() => {
     const scores = localStorage.getItem('manucrick_highscores');
@@ -40,6 +44,11 @@ export function LeaderboardPage() {
         console.error(e);
       }
     }
+    
+    // Load Arcade stats
+    setArcadeScores(getArcadeScores());
+    const bestMap = getArcadeBestScoreByGame();
+    setArcadeBest(bestMap as Record<string, number>);
   }, []);
 
   const filteredScores = highScores.filter((score) => {
@@ -204,6 +213,92 @@ export function LeaderboardPage() {
             ))}
           </div>
         )}
+      </div>
+
+      {/* Arcade Leaderboard Section */}
+      <div className="arcade-leaderboard-grid">
+        {/* Left Column: Arcade Best Scores */}
+        <div className="glass-panel" style={{ padding: '25px', cursor: 'none' }}>
+          <h3 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.9rem', color: '#FFFFFF', marginBottom: '22px', letterSpacing: '1px' }}>
+            🕹️ ARCADE HIGH SCORES
+          </h3>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontFamily: 'var(--font-body)', fontWeight: 600 }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', color: 'var(--text-secondary)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                <th style={{ padding: '10px 8px' }}>Game</th>
+                <th style={{ padding: '10px 8px', textAlign: 'right' }}>High Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style={{ padding: '12px 8px' }}>🏎️ Neon Car Racing</td>
+                <td style={{ padding: '12px 8px', textAlign: 'right', fontWeight: 700, color: '#00FF87' }}>{arcadeBest['car-racing'] ?? 0} pts</td>
+              </tr>
+              <tr>
+                <td style={{ padding: '12px 8px' }}>🏍️ Street Bike Rush</td>
+                <td style={{ padding: '12px 8px', textAlign: 'right', fontWeight: 700, color: '#10B981' }}>{arcadeBest['bike-racing'] ?? 0} pts</td>
+              </tr>
+              <tr>
+                <td style={{ padding: '12px 8px' }}>🧟 Zombie Survival Arena</td>
+                <td style={{ padding: '12px 8px', textAlign: 'right', fontWeight: 700, color: '#FFD700' }}>{arcadeBest['zombie-survival'] ?? 0} pts</td>
+              </tr>
+              <tr>
+                <td style={{ padding: '12px 8px' }}>🚓 City Heist Chase</td>
+                <td style={{ padding: '12px 8px', textAlign: 'right', fontWeight: 700, color: '#FF6B00' }}>{arcadeBest['city-heist-chase'] ?? 0} pts</td>
+              </tr>
+              <tr>
+                <td style={{ padding: '12px 8px' }}>🚙 Offroad Rally Run</td>
+                <td style={{ padding: '12px 8px', textAlign: 'right', fontWeight: 700, color: '#7DD3FC' }}>{arcadeBest['offroad-rally'] ?? 0} pts</td>
+              </tr>
+              <tr>
+                <td style={{ padding: '12px 8px' }}>🥷 Cyber Runner Ninja</td>
+                <td style={{ padding: '12px 8px', textAlign: 'right', fontWeight: 700, color: '#F472B6' }}>{arcadeBest['neon-runner'] ?? 0} pts</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Right Column: Recent Arcade Activity */}
+        <div className="glass-panel" style={{ padding: '25px', cursor: 'none' }}>
+          <h3 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.9rem', color: '#FFFFFF', marginBottom: '22px', letterSpacing: '1px' }}>
+            ⚡ RECENT ARCADE RUNS
+          </h3>
+          {arcadeScores.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--text-secondary)', fontFamily: 'var(--font-body)', fontWeight: 600 }}>
+              No runs recorded. Go play some games!
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '250px', overflowY: 'auto' }}>
+              {arcadeScores.slice(0, 5).map((play) => (
+                <div
+                  key={play.id}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    background: 'rgba(255, 255, 255, 0.015)',
+                    border: '1px solid rgba(255,255,255,0.03)',
+                    borderRadius: '8px',
+                    padding: '10px 14px',
+                    fontFamily: 'var(--font-body)',
+                    fontWeight: 600,
+                    fontSize: '0.88rem',
+                  }}
+                >
+                  <div>
+                    <span style={{ color: '#FFFFFF', fontWeight: 'bold' }}>{play.gameTitle}</span>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                      {new Date(play.createdAt).toLocaleDateString()}
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right', color: 'var(--primary)', fontWeight: 700 }}>
+                    {play.score} pts
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

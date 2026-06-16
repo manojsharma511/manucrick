@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense, lazy } from 'react';
+const ArcadeHub = lazy(() => import('./components/arcade/ArcadeHub'));
 import { useSmoothScroll } from './hooks/useSmoothScroll';
 import { useIntersectionObserver } from './hooks/useIntersectionObserver';
 import { useKonamiCode } from './hooks/useKonamiCode';
@@ -33,7 +34,7 @@ const thoughts = [
 
 function App() {
   const [loading, setLoading] = useState(true);
-  const [currentTab, setCurrentTab] = useState<'home' | 'play' | 'practice' | 'leaderboard' | 'contact' | 'academy' | 'scorer' | 'share-scorecard' | 'toss' | 'tournament' | 'players'>('home');
+  const [currentTab, setCurrentTab] = useState<'home' | 'play' | 'practice' | 'leaderboard' | 'contact' | 'academy' | 'scorer' | 'share-scorecard' | 'toss' | 'tournament' | 'players' | 'arcade'>('home');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastType, setToastType] = useState<'success' | 'info' | 'warning'>('success');
   const [scrolled, setScrolled] = useState(false);
@@ -59,7 +60,7 @@ function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.split('?')[0].replace('#', '') as any;
-      const validTabs = ['home', 'play', 'practice', 'leaderboard', 'contact', 'academy', 'scorer', 'share-scorecard', 'toss', 'tournament', 'players'];
+      const validTabs = ['home', 'play', 'practice', 'leaderboard', 'contact', 'academy', 'scorer', 'share-scorecard', 'toss', 'tournament', 'players', 'arcade'];
       if (validTabs.includes(hash)) {
         setCurrentTab(hash);
       } else {
@@ -223,7 +224,7 @@ function App() {
                 {/* Dropdown 1: Play Arena */}
                 <li className="nav-dropdown-wrapper">
                   <button 
-                    className={`interactive nav-link-btn dropdown-trigger ${(currentTab === 'play' || currentTab === 'practice') ? 'active' : ''}`}
+                    className={`interactive nav-link-btn dropdown-trigger ${(currentTab === 'play' || currentTab === 'practice' || currentTab === 'arcade') ? 'active' : ''}`}
                     style={{ cursor: 'none' }}
                   >
                     Play Arena ▾
@@ -231,6 +232,7 @@ function App() {
                   <div className="nav-dropdown-menu">
                     <button onClick={() => handleTabTransition('play')} className="dropdown-item">🏏 Play Game</button>
                     <button onClick={() => handleTabTransition('practice')} className="dropdown-item">🥎 Practice Nets</button>
+                    <button onClick={() => handleTabTransition('arcade')} className="dropdown-item">🕹️ Arcade Hub</button>
                   </div>
                 </li>
 
@@ -365,6 +367,9 @@ function App() {
                 <li className="mobile-nav-section-title">Play Arena</li>
                 <li>
                   <button onClick={() => handleTabTransition('practice')} className="mobile-nav-subitem">Practice Nets</button>
+                </li>
+                <li>
+                  <button onClick={() => handleTabTransition('arcade')} className="mobile-nav-subitem">Arcade Hub</button>
                 </li>
 
                 {/* Gully Tools Title */}
@@ -648,6 +653,14 @@ function App() {
 
                     {/* Feature Grid */}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '25px', marginBottom: '60px' }}>
+                      <div className="feature-glass-card">
+                        <div style={{ fontSize: '2.2rem' }}>🕹️</div>
+                        <h3 style={{ fontSize: '1.4rem', color: 'var(--primary)' }}>RETRO ARCADE</h3>
+                        <p style={{ fontSize: '0.92rem', lineHeight: '1.5', color: 'var(--text-secondary)' }}>
+                          Step into the Arcade! Try neon car racing, street bike rush, zombie survival, city heist, and checkpoint offroad rally. Track scores and speed stats directly.
+                        </p>
+                      </div>
+
                       <div className="feature-glass-card">
                         <div style={{ fontSize: '2.2rem' }}>🏏</div>
                         <h3 style={{ fontSize: '1.4rem', color: 'var(--primary)' }}>PLAY NOW (PLAY ARENA)</h3>
@@ -1022,6 +1035,20 @@ function App() {
                   </div>
                   <TrophyCabinet />
                 </div>
+              </div>
+            )}
+
+            {/* TAB VIEW: ARCADE */}
+            {currentTab === 'arcade' && (
+              <div style={{ padding: '60px 4%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', animation: 'tabTransition 0.5s ease-out', width: '100%' }}>
+                <Suspense fallback={
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '300px' }}>
+                    <div className="loading-spinner" style={{ width: '40px', height: '40px', borderRadius: '50%', border: '4px solid rgba(255,255,255,0.1)', borderTopColor: 'var(--primary)', animation: 'spin 1s linear infinite' }} />
+                    <p style={{ marginTop: '15px', color: 'var(--text-secondary)', fontFamily: 'var(--font-headings)', letterSpacing: '1px' }}>LOADING ARCADE ARENA...</p>
+                  </div>
+                }>
+                  <ArcadeHub />
+                </Suspense>
               </div>
             )}
 

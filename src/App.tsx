@@ -525,12 +525,16 @@ function App() {
                       THE ULTIMATE WEB CRICKET ARENA
                     </div>
 
-                    <h1 className="gradient-text-indigo-cyan" style={{ fontFamily: 'var(--font-headings)', fontSize: '4.5rem', lineHeight: '1.05', letterSpacing: '-1.5px', marginBottom: '24px', fontWeight: 800, textTransform: 'uppercase' }}>
-                      Play. Train. Analyze. Conquer.
+                    <h1 className="gradient-text-indigo-cyan" style={{ fontFamily: 'var(--font-headings)', fontSize: '4.5rem', lineHeight: '1.05', letterSpacing: '-1.5px', marginBottom: '16px', fontWeight: 800, textTransform: 'uppercase' }}>
+                      Manu Crick
                     </h1>
 
+                    <h2 style={{ fontFamily: 'var(--font-headings)', fontSize: '2.0rem', lineHeight: '1.15', letterSpacing: '-0.5px', marginBottom: '24px', fontWeight: 700, color: '#FFF', textTransform: 'uppercase' }}>
+                      Play. Train. Analyze. Conquer.
+                    </h2>
+
                     <p style={{ fontSize: '1.1rem', fontWeight: 500, color: 'var(--text-secondary)', marginBottom: '32px', lineHeight: '1.6', maxWidth: '580px' }}>
-                      Experience browser-based cricket simulated with deep physics modeling. Track match progress in real time, customize batting variables, and climb global brackets.
+                      Play Manu Crick games online. Enjoy the best cricket gaming experience with Manu Crick. Experience browser-based cricket simulated with deep physics modeling. Track match progress in real time, customize batting variables, and climb global brackets.
                     </p>
 
                     <div style={{ display: 'flex', gap: '16px', marginBottom: '40px', flexWrap: 'wrap' }}>

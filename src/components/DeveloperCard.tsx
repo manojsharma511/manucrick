@@ -3,9 +3,8 @@ import type { CSSProperties } from 'react';
 interface DeveloperCardProps {
   onToast: (msg: string, type?: 'success' | 'info' | 'warning') => void;
 }
-
 export function DeveloperCard({ onToast }: DeveloperCardProps) {
-  const email = 'manojkumarsharma27096@gmail.com';
+  const email = 'msharma27096@gmail.com';
   const phone = '6350542691';
 
   const copyToClipboard = (text: string, type: 'email' | 'phone') => {

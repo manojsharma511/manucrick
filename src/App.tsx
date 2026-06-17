@@ -9,7 +9,6 @@ import { ParticleBackground } from './components/ParticleBackground';
 import { Toast } from './components/Toast';
 import { ThreeDBat } from './components/ThreeDBat';
 import { StatsCounter } from './components/StatsCounter';
-import { FeatureCard } from './components/FeatureCard';
 import { HowToPlay } from './components/HowToPlay';
 import { DeveloperCard } from './components/DeveloperCard';
 import { CricketGame } from './components/CricketGame';
@@ -31,6 +30,26 @@ const thoughts = [
   { text: "Every ball is a new opportunity. Timing and patience turn deliveries into boundaries.", author: "Mastery Guide" },
   { text: "Where passion meets pixels, we rebuild the nostalgia of the gentleman's game.", author: "Manoj Kumar Sharma" }
 ];
+
+const CyberLogo = ({ width = 160, height = 48 }: { width?: number; height?: number }) => (
+  <svg width={width} height={height} viewBox="0 0 450 120" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block' }}>
+    <defs>
+      <linearGradient id="cyberGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" style={{ stopColor: '#6366F1', stopOpacity: 1 }} />
+        <stop offset="100%" style={{ stopColor: '#06B6D4', stopOpacity: 1 }} />
+      </linearGradient>
+      <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur stdDeviation="4" result="blur" />
+        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+      </filter>
+    </defs>
+    <text x="20" y="80" fontFamily="'Sora', sans-serif" fontSize="64" fontWeight="800" fill="url(#cyberGradient)" style={{ letterSpacing: '-2px', filter: 'url(#neonGlow)' }}>MANUCRICK</text>
+    <rect x="22" y="95" width="400" height="4" fill="url(#cyberGradient)" rx="2" opacity="0.8" />
+    <rect x="22" y="95" width="60" height="4" fill="#ffffff" rx="2" opacity="0.9">
+      <animate attributeName="x" from="22" to="362" dur="3s" repeatCount="indefinite" />
+    </rect>
+  </svg>
+);
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -70,13 +89,12 @@ function App() {
     };
 
     window.addEventListener('hashchange', handleHashChange);
-    // Initial check
     handleHashChange();
 
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  // Monitor scroll for header background frosted glass transition
+  // Monitor scroll for header background transition
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 40);
@@ -85,7 +103,6 @@ function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Trigger toast message notification
   const triggerToast = (msg: string, type: 'success' | 'info' | 'warning' = 'success') => {
     setToastMessage(msg);
     setToastType(type);
@@ -123,9 +140,9 @@ function App() {
       {loading ? (
         <Preloader onComplete={() => setLoading(false)} />
       ) : (
-        <div style={{ position: 'relative', width: '100%', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ position: 'relative', width: '100%', minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#060814', color: '#F8FAFC' }}>
           
-          {/* MULTI-PAGE NAVIGATION NAVBAR */}
+          {/* HEADER NAV */}
           <nav
             style={{
               position: 'fixed',
@@ -136,13 +153,14 @@ function App() {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              padding: '0 6%',
-              zIndex: 1000,
+              padding: scrolled ? '0 4%' : '0 6%',
+              zIndex: scrolled ? 999 : 98,
               transition: 'all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
-              background: scrolled ? 'rgba(5, 10, 24, 0.85)' : 'transparent',
-              backdropFilter: scrolled ? 'blur(16px)' : 'none',
-              WebkitBackdropFilter: scrolled ? 'blur(16px)' : 'none',
-              borderBottom: scrolled ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid transparent',
+              background: scrolled ? 'rgba(6, 8, 20, 0.85)' : 'transparent',
+              backdropFilter: scrolled ? 'blur(20px)' : 'none',
+              WebkitBackdropFilter: scrolled ? 'blur(20px)' : 'none',
+              borderBottom: scrolled ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid transparent',
+              boxShadow: scrolled ? '0 10px 30px rgba(0, 0, 0, 0.3)' : 'none',
             }}
           >
             <div
@@ -155,150 +173,90 @@ function App() {
               }}
               className="interactive"
             >
-              {/* Rotating Cricket Ball SVG Logo */}
-              <svg
-                width="38"
-                height="38"
-                viewBox="0 0 100 100"
-                style={{
-                  marginRight: '12px',
-                  filter: 'drop-shadow(0 0 8px var(--primary))',
-                  display: 'block',
+              <CyberLogo width={150} height={44} />
+              
+              <span 
+                style={{ 
+                  fontFamily: 'var(--font-data)', 
+                  fontSize: '0.68rem', 
+                  color: 'var(--primary)', 
+                  border: '1px solid rgba(99, 102, 241, 0.3)',
+                  padding: '2px 8px',
+                  borderRadius: '6px',
+                  marginLeft: '15px',
+                  letterSpacing: '1px',
+                  background: 'rgba(99, 102, 241, 0.06)'
                 }}
-                className="spin-logo"
+                className="desktop-only"
               >
-                <circle cx="50" cy="50" r="45" fill="url(#logoBallGrad)" />
-                <path d="M 50,5 A 45,45 0 0,1 50,95" fill="none" stroke="#FFFFFF" strokeWidth="4" strokeDasharray="8,5" />
-                <path d="M 5,50 A 45,45 0 0,1 95,50" fill="none" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="2" />
-                <defs>
-                  <linearGradient id="logoBallGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="var(--primary)" />
-                    <stop offset="100%" stopColor="var(--secondary)" />
-                  </linearGradient>
-                </defs>
-              </svg>
-
-              <div
-                style={{
-                  fontFamily: 'var(--font-headings)',
-                  fontSize: '2.2rem',
-                  letterSpacing: '2.5px',
-                  color: '#FFFFFF',
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-              >
-                <span style={{ color: '#FFFFFF' }}>MANU</span>
-                <span style={{ color: 'var(--primary)', textShadow: '0 0 10px rgba(0, 255, 135, 0.5)' }}>CRICK</span>
-              </div>
+                STADIUM OS
+              </span>
             </div>
 
-            {/* Desktop Navigation */}
+            {/* Desktop Quick Tools */}
             <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '25px',
+                gap: '20px',
               }}
-              className="desktop-nav"
+              className="desktop-only"
             >
-              <ul
-                style={{
-                  display: 'flex',
-                  gap: '24px',
-                  listStyle: 'none',
-                  alignItems: 'center',
+              {/* Technical Search Field */}
+              <div 
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  backgroundColor: 'rgba(255,255,255,0.02)',
+                  padding: '8px 16px',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(255, 255, 255, 0.06)',
                 }}
               >
-                {/* Home */}
-                <li>
-                  <button
-                    onClick={() => handleTabTransition('home')}
-                    className={`interactive nav-link-btn ${currentTab === 'home' ? 'active' : ''}`}
-                    style={{ cursor: 'none' }}
-                  >
-                    Home
-                  </button>
-                </li>
+                <span className="material-symbols-outlined" style={{ fontSize: '16px', color: 'var(--accent)', marginRight: '8px' }}>search</span>
+                <input 
+                  type="text" 
+                  placeholder="FIND MATCH..."
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    outline: 'none',
+                    color: '#FFF',
+                    fontFamily: 'var(--font-data)',
+                    fontSize: '0.72rem',
+                    width: '120px',
+                    letterSpacing: '1px'
+                  }}
+                  className="interactive"
+                  readOnly
+                  onClick={() => triggerToast('Search system online. Searching current active servers...', 'info')}
+                />
+              </div>
 
-                {/* Dropdown 1: Play Arena */}
-                <li className="nav-dropdown-wrapper">
-                  <button 
-                    className={`interactive nav-link-btn dropdown-trigger ${(currentTab === 'play' || currentTab === 'practice' || currentTab === 'arcade') ? 'active' : ''}`}
-                    style={{ cursor: 'none' }}
-                  >
-                    Play Arena ▾
-                  </button>
-                  <div className="nav-dropdown-menu">
-                    <button onClick={() => handleTabTransition('play')} className="dropdown-item">🏏 Play Game</button>
-                    <button onClick={() => handleTabTransition('practice')} className="dropdown-item">🥎 Practice Nets</button>
-                    <button onClick={() => handleTabTransition('arcade')} className="dropdown-item">🕹️ Arcade Hub</button>
-                  </div>
-                </li>
-
-                {/* Dropdown 2: Gully Tools */}
-                <li className="nav-dropdown-wrapper">
-                  <button 
-                    className={`interactive nav-link-btn dropdown-trigger ${(currentTab === 'toss' || currentTab === 'scorer' || currentTab === 'tournament' || currentTab === 'players') ? 'active' : ''}`}
-                    style={{ cursor: 'none' }}
-                  >
-                    Gully Tools ▾
-                  </button>
-                  <div className="nav-dropdown-menu">
-                    <button onClick={() => handleTabTransition('toss')} className="dropdown-item">🪙 Coin Flip & Rules</button>
-                    <button onClick={() => handleTabTransition('scorer')} className="dropdown-item">📊 Live Scorer</button>
-                    <button onClick={() => handleTabTransition('tournament')} className="dropdown-item">🏆 Bracket Builder</button>
-                    <button onClick={() => handleTabTransition('players')} className="dropdown-item">👤 Player Stats</button>
-                  </div>
-                </li>
-
-                {/* Dropdown 3: Standings */}
-                <li className="nav-dropdown-wrapper">
-                  <button 
-                    className={`interactive nav-link-btn dropdown-trigger ${(currentTab === 'academy' || currentTab === 'leaderboard') ? 'active' : ''}`}
-                    style={{ cursor: 'none' }}
-                  >
-                    Clubhouse ▾
-                  </button>
-                  <div className="nav-dropdown-menu">
-                    <button onClick={() => handleTabTransition('academy')} className="dropdown-item">🎖️ Trophy Cabinet</button>
-                    <button onClick={() => handleTabTransition('leaderboard')} className="dropdown-item">📈 Global Leaderboard</button>
-                  </div>
-                </li>
-
-                {/* Contact */}
-                <li>
-                  <button
-                    onClick={() => handleTabTransition('contact')}
-                    className={`interactive nav-link-btn ${currentTab === 'contact' ? 'active' : ''}`}
-                    style={{ cursor: 'none' }}
-                  >
-                    Contact
-                  </button>
-                </li>
-              </ul>
-
-              {/* Bold highlighted CTA button */}
+              {/* Bold premium CTA button */}
               <button
                 onClick={() => handleTabTransition('play')}
                 className="interactive nav-play-now-btn"
-                style={{ cursor: 'none' }}
+                style={{ cursor: 'none', borderRadius: '12px' }}
               >
-                PLAY GAME 🏏
+                PLAY NOW
               </button>
             </div>
 
-            {/* Hamburger mobile toggle */}
+            {/* Hamburger mobile toggle (Visible on screens <= 1024px) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               style={{
-                background: 'none',
-                border: 'none',
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.08)',
                 display: 'none',
                 flexDirection: 'column',
-                justifyContent: 'space-between',
-                width: '28px',
-                height: '18px',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '5px',
+                width: '42px',
+                height: '42px',
+                borderRadius: '10px',
                 cursor: 'none',
                 zIndex: 1002,
                 padding: 0,
@@ -306,183 +264,297 @@ function App() {
               className="hamburger-btn interactive"
               aria-label="Toggle Menu"
             >
-              <span style={{ width: '100%', height: '2px', backgroundColor: '#FFFFFF', transition: 'transform 0.3s', transform: mobileMenuOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none' }} />
-              <span style={{ width: '100%', height: '2px', backgroundColor: '#FFFFFF', transition: 'opacity 0.3s', opacity: mobileMenuOpen ? 0 : 1 }} />
-              <span style={{ width: '100%', height: '2px', backgroundColor: '#FFFFFF', transition: 'transform 0.3s', transform: mobileMenuOpen ? 'rotate(-45deg) translate(5px, -5px)' : 'none' }} />
+              <div style={{ width: '18px', height: '2px', backgroundColor: '#FFFFFF', transition: 'all 0.3s', transform: mobileMenuOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none' }} />
+              <div style={{ width: '18px', height: '2px', backgroundColor: '#FFFFFF', transition: 'all 0.3s', opacity: mobileMenuOpen ? 0 : 1 }} />
+              <div style={{ width: '18px', height: '2px', backgroundColor: '#FFFFFF', transition: 'all 0.3s', transform: mobileMenuOpen ? 'rotate(-45deg) translate(5px, -5px)' : 'none' }} />
             </button>
+          </nav>
 
-            {/* Mobile menu overlay */}
-            <div
-              style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                width: '100vw',
-                height: '100vh',
-                backgroundColor: 'rgba(5, 10, 24, 0.98)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                zIndex: 1001,
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-                transform: mobileMenuOpen ? 'translateY(0)' : 'translateY(-100%)',
-                transition: 'transform 0.5s cubic-bezier(0.77, 0, 0.175, 1)',
-                overflowY: 'auto',
-                padding: '100px 0 40px',
+          {/* FLOATING DESKTOP SIDEBAR DOCK */}
+          <aside className="sidebar-hud desktop-only">
+            <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+              <div style={{ marginBottom: '30px', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '20px' }}>
+                <h2 style={{ fontFamily: 'var(--font-headings)', color: '#FFF', fontSize: '1.25rem', margin: '0 0 4px 0', fontWeight: 800, letterSpacing: '1px' }}>Stadium OS</h2>
+                <p style={{ fontFamily: 'var(--font-data)', fontSize: '0.62rem', color: 'var(--accent)', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--accent)', display: 'inline-block', boxShadow: '0 0 8px var(--accent)' }}></span>
+                  SYSTEM ONLINE • V2.5
+                </p>
+              </div>
+
+              {/* Navigation Items grouped */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', flexGrow: 1, overflowY: 'auto', paddingRight: '4px' }} className="table-scroll-container">
+                <div>
+                  <span style={{ fontFamily: 'var(--font-data)', fontSize: '0.66rem', color: 'var(--primary)', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, display: 'block', marginBottom: '8px', paddingLeft: '8px' }}>Play Arena</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <button onClick={() => handleTabTransition('play')} className={`sidebar-btn interactive ${currentTab === 'play' ? 'active' : ''}`}>
+                      <span className="material-symbols-outlined">sports_cricket</span>
+                      Play Game
+                    </button>
+                    <button onClick={() => handleTabTransition('practice')} className={`sidebar-btn interactive ${currentTab === 'practice' ? 'active' : ''}`}>
+                      <span className="material-symbols-outlined">sports_baseball</span>
+                      Practice Nets
+                    </button>
+                    <button onClick={() => handleTabTransition('arcade')} className={`sidebar-btn interactive ${currentTab === 'arcade' ? 'active' : ''}`}>
+                      <span className="material-symbols-outlined">videogame_asset</span>
+                      Arcade Hub
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <span style={{ fontFamily: 'var(--font-data)', fontSize: '0.66rem', color: 'var(--secondary)', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, display: 'block', marginBottom: '8px', paddingLeft: '8px' }}>Gully Tools</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <button onClick={() => handleTabTransition('toss')} className={`sidebar-btn interactive ${currentTab === 'toss' ? 'active' : ''}`}>
+                      <span className="material-symbols-outlined">monetization_on</span>
+                      Coin Flipper
+                    </button>
+                    <button onClick={() => handleTabTransition('scorer')} className={`sidebar-btn interactive ${currentTab === 'scorer' ? 'active' : ''}`}>
+                      <span className="material-symbols-outlined">analytics</span>
+                      Live Scorer
+                    </button>
+                    <button onClick={() => handleTabTransition('tournament')} className={`sidebar-btn interactive ${currentTab === 'tournament' ? 'active' : ''}`}>
+                      <span className="material-symbols-outlined">account_tree</span>
+                      Bracket Builder
+                    </button>
+                    <button onClick={() => handleTabTransition('players')} className={`sidebar-btn interactive ${currentTab === 'players' ? 'active' : ''}`}>
+                      <span className="material-symbols-outlined">monitoring</span>
+                      Player Stats
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <span style={{ fontFamily: 'var(--font-data)', fontSize: '0.66rem', color: 'var(--accent)', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, display: 'block', marginBottom: '8px', paddingLeft: '8px' }}>Clubhouse</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <button onClick={() => handleTabTransition('academy')} className={`sidebar-btn interactive ${currentTab === 'academy' ? 'active' : ''}`}>
+                      <span className="material-symbols-outlined">military_tech</span>
+                      Trophy Cabinet
+                    </button>
+                    <button onClick={() => handleTabTransition('leaderboard')} className={`sidebar-btn interactive ${currentTab === 'leaderboard' ? 'active' : ''}`}>
+                      <span className="material-symbols-outlined">leaderboard</span>
+                      Leaderboard
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <span style={{ fontFamily: 'var(--font-data)', fontSize: '0.66rem', color: 'rgba(255,255,255,0.4)', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, display: 'block', marginBottom: '8px', paddingLeft: '8px' }}>Info</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <button onClick={() => handleTabTransition('contact')} className={`sidebar-btn interactive ${currentTab === 'contact' ? 'active' : ''}`}>
+                      <span className="material-symbols-outlined">contact_page</span>
+                      Contact & Bio
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sidebar Profile Card */}
+              <div 
+                style={{ 
+                  borderTop: '1px solid rgba(255,255,255,0.06)', 
+                  paddingTop: '15px', 
+                  marginTop: '15px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px'
+                }}
+              >
+                <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--primary), var(--secondary))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#FFF', fontSize: '0.8rem', flexShrink: 0 }}>
+                  MS
+                </div>
+                <div style={{ overflow: 'hidden' }}>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 'bold', color: '#FFF', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>Manoj K. Sharma</div>
+                  <a href="https://manojkumarsharma.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.68rem', color: 'var(--accent)', cursor: 'none', display: 'block' }} className="interactive hover-underline">
+                    View Portfolio
+                  </a>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          {/* APP BOTTOM NAVIGATION FOR MOBILE */}
+          <nav className="bottom-nav-dock">
+            <button onClick={() => handleTabTransition('home')} className={`bottom-nav-btn interactive ${currentTab === 'home' ? 'active' : ''}`}>
+              <span className="material-symbols-outlined">home</span>
+              Home
+            </button>
+            <button onClick={() => handleTabTransition('play')} className={`bottom-nav-btn interactive ${currentTab === 'play' ? 'active' : ''}`}>
+              <span className="material-symbols-outlined">sports_cricket</span>
+              Play
+            </button>
+            <button onClick={() => handleTabTransition('practice')} className={`bottom-nav-btn interactive ${currentTab === 'practice' ? 'active' : ''}`}>
+              <span className="material-symbols-outlined">sports_baseball</span>
+              Nets
+            </button>
+            <button onClick={() => handleTabTransition('scorer')} className={`bottom-nav-btn interactive ${currentTab === 'scorer' ? 'active' : ''}`}>
+              <span className="material-symbols-outlined">analytics</span>
+              Scorer
+            </button>
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className={`bottom-nav-btn interactive ${mobileMenuOpen ? 'active' : ''}`}>
+              <span className="material-symbols-outlined">menu_open</span>
+              More
+            </button>
+          </nav>
+
+          {/* MOBILE DRAWER NAVIGATION MENU */}
+          {mobileMenuOpen && (
+            <div 
+              style={{ 
+                position: 'fixed', 
+                top: 0, 
+                left: 0, 
+                width: '100vw', 
+                height: '100vh', 
+                background: 'rgba(6, 8, 20, 0.96)', 
+                backdropFilter: 'blur(30px)', 
+                WebkitBackdropFilter: 'blur(30px)', 
+                zIndex: 998, 
+                display: 'flex', 
+                flexDirection: 'column', 
+                padding: '100px 30px 50px',
+                animation: 'tabTransition 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)'
               }}
             >
-              <ul style={{ listStyle: 'none', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', width: '100%', maxWidth: '300px' }}>
-                <li>
-                  <button
-                    onClick={() => handleTabTransition('play')}
-                    style={{
-                      background: 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)',
-                      border: 'none',
-                      color: '#050A18',
-                      fontFamily: 'var(--font-headings)',
-                      fontSize: '1.6rem',
-                      fontWeight: 'bold',
-                      letterSpacing: '2px',
-                      textTransform: 'uppercase',
-                      padding: '10px 24px',
-                      borderRadius: '8px',
-                      cursor: 'none',
-                      boxShadow: '0 0 15px rgba(0, 255, 135, 0.4)',
-                      marginBottom: '15px',
-                    }}
-                    className="interactive"
-                  >
-                    PLAY GAME 🏏
-                  </button>
-                </li>
-                
-                {/* Home */}
-                <li>
-                  <button onClick={() => handleTabTransition('home')} className="mobile-nav-item">Home</button>
-                </li>
+              <h3 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.4rem', color: '#FFF', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '10px', marginBottom: '20px' }}>
+                NAVIGATE STADIUM
+              </h3>
 
-                {/* Play Arena Title */}
-                <li className="mobile-nav-section-title">Play Arena</li>
-                <li>
-                  <button onClick={() => handleTabTransition('practice')} className="mobile-nav-subitem">Practice Nets</button>
-                </li>
-                <li>
-                  <button onClick={() => handleTabTransition('arcade')} className="mobile-nav-subitem">Arcade Hub</button>
-                </li>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', flexGrow: 1, overflowY: 'auto' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <span style={{ fontSize: '0.75rem', fontFamily: 'var(--font-data)', color: 'var(--primary)', letterSpacing: '1px', textTransform: 'uppercase' }}>Play Arena</span>
+                  <button onClick={() => handleTabTransition('play')} className="mobile-nav-subitem" style={{ textAlign: 'left', fontSize: '1.15rem' }}>🏏 Play Game</button>
+                  <button onClick={() => handleTabTransition('practice')} className="mobile-nav-subitem" style={{ textAlign: 'left', fontSize: '1.15rem' }}>🥎 Practice Nets</button>
+                  <button onClick={() => handleTabTransition('arcade')} className="mobile-nav-subitem" style={{ textAlign: 'left', fontSize: '1.15rem' }}>🕹️ Arcade Hub</button>
+                </div>
 
-                {/* Gully Tools Title */}
-                <li className="mobile-nav-section-title">Gully Tools</li>
-                <li>
-                  <button onClick={() => handleTabTransition('toss')} className="mobile-nav-subitem">Coin Toss & Rules</button>
-                </li>
-                <li>
-                  <button onClick={() => handleTabTransition('scorer')} className="mobile-nav-subitem">Live Scorer</button>
-                </li>
-                <li>
-                  <button onClick={() => handleTabTransition('tournament')} className="mobile-nav-subitem">Bracket Builder</button>
-                </li>
-                <li>
-                  <button onClick={() => handleTabTransition('players')} className="mobile-nav-subitem">Player Stats</button>
-                </li>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <span style={{ fontSize: '0.75rem', fontFamily: 'var(--font-data)', color: 'var(--secondary)', letterSpacing: '1px', textTransform: 'uppercase' }}>Gully Tools</span>
+                  <button onClick={() => handleTabTransition('toss')} className="mobile-nav-subitem" style={{ textAlign: 'left', fontSize: '1.15rem' }}>🪙 Coin Flipper</button>
+                  <button onClick={() => handleTabTransition('scorer')} className="mobile-nav-subitem" style={{ textAlign: 'left', fontSize: '1.15rem' }}>📊 Live Scorer</button>
+                  <button onClick={() => handleTabTransition('tournament')} className="mobile-nav-subitem" style={{ textAlign: 'left', fontSize: '1.15rem' }}>🏆 Tournament</button>
+                  <button onClick={() => handleTabTransition('players')} className="mobile-nav-subitem" style={{ textAlign: 'left', fontSize: '1.15rem' }}>👤 Player Stats</button>
+                </div>
 
-                {/* Clubhouse Title */}
-                <li className="mobile-nav-section-title">Clubhouse</li>
-                <li>
-                  <button onClick={() => handleTabTransition('academy')} className="mobile-nav-subitem">Trophy Cabinet</button>
-                </li>
-                <li>
-                  <button onClick={() => handleTabTransition('leaderboard')} className="mobile-nav-subitem">Leaderboard</button>
-                </li>
-                {/* Contact */}
-                <li>
-                  <button onClick={() => handleTabTransition('contact')} className="mobile-nav-item" style={{ marginTop: '15px' }}>Contact</button>
-                </li>
-              </ul>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <span style={{ fontSize: '0.75rem', fontFamily: 'var(--font-data)', color: 'var(--accent)', letterSpacing: '1px', textTransform: 'uppercase' }}>Clubhouse</span>
+                  <button onClick={() => handleTabTransition('academy')} className="mobile-nav-subitem" style={{ textAlign: 'left', fontSize: '1.15rem' }}>🎖️ Cabinet</button>
+                  <button onClick={() => handleTabTransition('leaderboard')} className="mobile-nav-subitem" style={{ textAlign: 'left', fontSize: '1.15rem' }}>📈 Leaderboard</button>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <span style={{ fontSize: '0.75rem', fontFamily: 'var(--font-data)', color: 'rgba(255,255,255,0.4)', letterSpacing: '1px', textTransform: 'uppercase' }}>General</span>
+                  <button onClick={() => handleTabTransition('home')} className="mobile-nav-subitem" style={{ textAlign: 'left', fontSize: '1.15rem' }}>🏠 Dashboard</button>
+                  <button onClick={() => handleTabTransition('contact')} className="mobile-nav-subitem" style={{ textAlign: 'left', fontSize: '1.15rem' }}>📬 Contact</button>
+                </div>
+              </div>
+
+              {/* Mobile Drawer Footer */}
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Manoj Kumar Sharma &copy; 2026</span>
+                <a 
+                  href="https://manojkumarsharma.vercel.app/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  style={{ 
+                    fontSize: '0.78rem', 
+                    color: 'var(--primary)', 
+                    fontWeight: 'bold', 
+                    border: '1px solid var(--primary)', 
+                    padding: '6px 12px', 
+                    borderRadius: '8px',
+                    cursor: 'none'
+                  }}
+                  className="interactive"
+                >
+                  Portfolio
+                </a>
+              </div>
             </div>
-          </nav>
+          )}
 
           {/* Global Toast Alert */}
           {toastMessage && (
             <Toast message={toastMessage} type={toastType} onClose={() => setToastMessage(null)} />
           )}
 
-          {/* PAGE ROUTER RENDERING AREA */}
-          <div style={{ marginTop: '80px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-
+          {/* MAIN CONTENT CANVAS */}
+          <main className="main-canvas-hud">
+            
             {/* TAB VIEW 1: HOME PAGE */}
             {currentTab === 'home' && (
-              <div style={{ animation: 'tabTransition 0.5s ease-out' }}>
+              <div style={{ animation: 'tabTransition 0.5s ease-out', position: 'relative' }}>
+                <div className="cyber-grid-overlay" />
+                <div className="aurora-container">
+                  <div className="aurora-spotlight-1" />
+                  <div className="aurora-spotlight-2" />
+                </div>
+
+                {/* HERO SECTION */}
                 <section
                   style={{
-                    minHeight: 'calc(100vh - 80px)',
+                    minHeight: '80vh',
                     width: '100%',
                     display: 'flex',
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    padding: '60px 8%',
+                    padding: '40px 4%',
                     position: 'relative',
                     flexWrap: 'wrap',
                     gap: '40px',
-                    background: 'radial-gradient(circle at 80% 40%, rgba(0, 255, 135, 0.04) 0%, transparent 60%)',
+                    zIndex: 5
                   }}
                 >
-                  {/* Spotlights */}
-                  <div style={{ position: 'absolute', top: 0, left: '20%', width: '2px', height: '100%', background: 'linear-gradient(rgba(0,255,135,0.1), transparent)', transform: 'rotate(25deg)', transformOrigin: 'top', animation: 'lightSweep1 10s infinite ease-in-out' }} />
-                  <div style={{ position: 'absolute', top: 0, right: '20%', width: '2px', height: '100%', background: 'linear-gradient(rgba(255,107,0,0.1), transparent)', transform: 'rotate(-25deg)', transformOrigin: 'top', animation: 'lightSweep2 10s infinite ease-in-out' }} />
-
                   {/* Left Hero side */}
-                  <div style={{ flex: '1.2', minWidth: '320px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', zIndex: 5 }}>
-                    <div style={{ fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.95rem', letterSpacing: '5px', color: 'var(--secondary)', marginBottom: '8px', textTransform: 'uppercase' }}>
-                      WELCOME TO
+                  <div style={{ flex: '1.2', minWidth: '320px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', zIndex: 5, textAlign: 'left' }}>
+                    <div 
+                      style={{ 
+                        fontFamily: 'var(--font-data)', 
+                        fontWeight: 700, 
+                        fontSize: '0.72rem', 
+                        letterSpacing: '4px', 
+                        color: 'var(--accent)', 
+                        marginBottom: '18px', 
+                        textTransform: 'uppercase',
+                        border: '1px solid rgba(6, 182, 212, 0.3)',
+                        padding: '6px 14px',
+                        borderRadius: '20px',
+                        backgroundColor: 'rgba(6, 182, 212, 0.04)'
+                      }}
+                    >
+                      THE ULTIMATE WEB CRICKET ARENA
                     </div>
 
-                    <h1 style={{ fontFamily: 'var(--font-headings)', fontSize: '6rem', lineHeight: '0.9', letterSpacing: '3px', marginBottom: '18px', display: 'flex', gap: '1px', userSelect: 'none' }}>
-                      {'ManucricK'.split('').map((char, index) => (
-                        <span
-                          key={index}
-                          style={{
-                            display: 'inline-block',
-                            animation: 'charEntrance 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
-                            animationDelay: `${0.1 + index * 0.07}s`,
-                            opacity: 0,
-                            transform: 'translateY(25px) scale(0.7)',
-                            color: char === 'K' ? 'var(--secondary)' : '#FFFFFF',
-                            textShadow: '0 0 12px rgba(0, 255, 135, 0.2)',
-                          }}
-                        >
-                          {char}
-                        </span>
-                      ))}
+                    <h1 className="gradient-text-indigo-cyan" style={{ fontFamily: 'var(--font-headings)', fontSize: '4.5rem', lineHeight: '1.05', letterSpacing: '-1.5px', marginBottom: '24px', fontWeight: 800, textTransform: 'uppercase' }}>
+                      Play. Train. Analyze. Conquer.
                     </h1>
 
-                    <p style={{ fontSize: '1.2rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '32px', letterSpacing: '0.8px' }}>
-                      The Ultimate Arena Cricket Batter & Runner Simulator
+                    <p style={{ fontSize: '1.1rem', fontWeight: 500, color: 'var(--text-secondary)', marginBottom: '32px', lineHeight: '1.6', maxWidth: '580px' }}>
+                      Experience browser-based cricket simulated with deep physics modeling. Track match progress in real time, customize batting variables, and climb global brackets.
                     </p>
 
-                    <div style={{ display: 'flex', gap: '20px', marginBottom: '45px', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', gap: '16px', marginBottom: '40px', flexWrap: 'wrap' }}>
                       <button
                         onClick={() => handleTabTransition('play')}
                         onMouseMove={handleMagneticMove}
                         onMouseLeave={handleMagneticLeave}
                         style={{
-                          padding: '14px 34px',
-                          borderRadius: '8px',
+                          padding: '16px 36px',
                           border: 'none',
-                          backgroundColor: 'var(--primary)',
-                          color: '#050A18',
+                          background: 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)',
+                          color: '#FFFFFF',
                           fontFamily: 'var(--font-headings)',
-                          fontSize: '1.4rem',
-                          letterSpacing: '2px',
+                          fontSize: '1.0rem',
+                          fontWeight: 800,
+                          letterSpacing: '1.5px',
                           cursor: 'none',
-                          animation: 'buttonPulseGlow 1.8s infinite alternate ease-in-out',
+                          borderRadius: '14px',
+                          boxShadow: '0 10px 25px rgba(99, 102, 241, 0.35)',
                           transition: 'transform 0.1s ease',
                         }}
-                        className="interactive magnetic-btn"
+                        className="interactive magnetic-btn btn-pulse"
                       >
-                        🏏 ENTER STADIUM
+                        ⚡ ENTER ARENA
                       </button>
 
                       <button
@@ -490,15 +562,16 @@ function App() {
                         onMouseMove={handleMagneticMove}
                         onMouseLeave={handleMagneticLeave}
                         style={{
-                          padding: '13px 31px',
-                          borderRadius: '8px',
-                          border: '1.5px solid rgba(255, 255, 255, 0.18)',
-                          backgroundColor: 'transparent',
+                          padding: '15px 33px',
+                          border: '1.5px solid rgba(255, 255, 255, 0.08)',
+                          backgroundColor: 'rgba(255, 255, 255, 0.02)',
                           color: '#FFFFFF',
-                          fontFamily: 'var(--font-headings)',
-                          fontSize: '1.4rem',
-                          letterSpacing: '2px',
+                          fontFamily: 'var(--font-body)',
+                          fontWeight: 700,
+                          fontSize: '1.0rem',
+                          letterSpacing: '1px',
                           cursor: 'none',
+                          borderRadius: '14px',
                           transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
                         }}
                         className="interactive magnetic-btn learn-more-btn"
@@ -508,126 +581,307 @@ function App() {
                     </div>
 
                     {/* Stats counters */}
-                    <div style={{ display: 'flex', gap: '30px', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '22px', width: '100%', maxWidth: '500px', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', gap: '30px', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '24px', width: '100%', maxWidth: '500px', flexWrap: 'wrap' }}>
                       <div style={{ flex: 1, minWidth: '100px' }}>
-                        <div style={{ fontFamily: 'var(--font-headings)', fontSize: '1.8rem', color: '#FFF', display: 'flex', gap: '3px' }}>
-                          🏆 <StatsCounter targetValue={500} suffix="+" />
+                        <div style={{ fontFamily: 'var(--font-headings)', fontSize: '1.8rem', color: 'var(--primary)', display: 'flex', gap: '3px', fontWeight: 800 }}>
+                          <StatsCounter targetValue={500} suffix="+" />
                         </div>
-                        <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.5px' }}>Batsmen Active</div>
+                        <div style={{ fontSize: '0.62rem', color: 'var(--text-secondary)', textTransform: 'uppercase', fontFamily: 'var(--font-data)', fontWeight: 700, letterSpacing: '1.5px', marginTop: '4px' }}>Batsmen Active</div>
                       </div>
                       <div style={{ flex: 1, minWidth: '100px' }}>
-                        <div style={{ fontFamily: 'var(--font-headings)', fontSize: '1.8rem', color: '#FFF', display: 'flex', gap: '3px' }}>
-                          ⚡ <StatsCounter targetValue={10000} suffix="+" />
+                        <div style={{ fontFamily: 'var(--font-headings)', fontSize: '1.8rem', color: 'var(--accent)', display: 'flex', gap: '3px', fontWeight: 800 }} className="cyber-glow-cyan">
+                          <StatsCounter targetValue={10000} suffix="+" />
                         </div>
-                        <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.5px' }}>Deliveries Faced</div>
+                        <div style={{ fontSize: '0.62rem', color: 'var(--text-secondary)', textTransform: 'uppercase', fontFamily: 'var(--font-data)', fontWeight: 700, letterSpacing: '1.5px', marginTop: '4px' }}>Deliveries Faced</div>
                       </div>
                       <div style={{ flex: 1, minWidth: '100px' }}>
-                        <div style={{ fontFamily: 'var(--font-headings)', fontSize: '1.8rem', color: '#FFF', display: 'flex', gap: '3px' }}>
-                          🌍 <StatsCounter targetValue={50} suffix="+" />
+                        <div style={{ fontFamily: 'var(--font-headings)', fontSize: '1.8rem', color: '#FFF', display: 'flex', gap: '3px', fontWeight: 800 }}>
+                          <StatsCounter targetValue={50} suffix="+" />
                         </div>
-                        <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.5px' }}>Global Stadiums</div>
+                        <div style={{ fontSize: '0.62rem', color: 'var(--text-secondary)', textTransform: 'uppercase', fontFamily: 'var(--font-data)', fontWeight: 700, letterSpacing: '1.5px', marginTop: '4px' }}>Global Stadiums</div>
                       </div>
                     </div>
                   </div>
 
                   {/* Right 3D Scene */}
-                  <div style={{ flex: '1', display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative', minWidth: '320px', height: '400px' }}>
+                  <div style={{ flex: '1', display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative', minWidth: '320px', height: '420px', zIndex: 4 }}>
                     <div
                       style={{
                         position: 'absolute',
-                        width: '24px',
-                        height: '24px',
+                        width: '20px',
+                        height: '20px',
                         borderRadius: '50%',
-                        backgroundColor: 'var(--secondary)',
-                        boxShadow: '0 0 15px var(--secondary)',
+                        backgroundColor: 'var(--accent)',
+                        boxShadow: '0 0 20px var(--accent)',
                         animation: 'heroBallFly 5s infinite cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                         zIndex: 6,
                         pointerEvents: 'none',
                       }}
                     />
                     <ThreeDBat />
-                    <div style={{ position: 'absolute', bottom: '10px', width: '180px', height: '60px', background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(0,255,135,0.15)', transform: 'perspective(120px) rotateX(60deg)' }} />
+                    <div style={{ position: 'absolute', bottom: '10px', width: '180px', height: '60px', background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(99,102,241,0.1)', transform: 'perspective(120px) rotateX(60deg)', borderRadius: '50%' }} />
                   </div>
                 </section>
-                <section style={{ width: '100%', backgroundColor: '#040915', padding: '80px 8%' }}>
+
+                {/* BENTO GRID: FEATURES */}
+                <section style={{ width: '100%', padding: '80px 4%', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                   <div style={{ width: '100%', maxWidth: '1100px', margin: '0 auto' }}>
-                    <div className="section-title-wrapper">
-                      <h2 ref={observeRef} className="reveal-text" style={{ fontFamily: 'var(--font-headings)', fontSize: '3rem', color: '#FFF', position: 'relative' }}>
-                        THE STADIUM OVERVIEW
-                        <span style={{ position: 'absolute', bottom: '-8px', left: '50%', transform: 'translateX(-50%)', width: '60px', height: '3px', backgroundColor: 'var(--primary)' }} />
+                    <div className="section-title-wrapper" style={{ marginBottom: '50px' }}>
+                      <h2 ref={observeRef} className="reveal-text" style={{ fontFamily: 'var(--font-headings)', fontSize: '2.5rem', color: '#FFF', position: 'relative', margin: 0, fontWeight: 800 }}>
+                        Engine Mechanics
                       </h2>
+                      <p style={{ color: 'var(--text-secondary)', marginTop: '15px', fontSize: '0.96rem' }}>Every module is engineered for maximum precision, providing instant feedback for competitive players.</p>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '30px', marginTop: '50px', flexWrap: 'wrap' }}>
-                      <FeatureCard icon="🏃" title="Interactive Running" description="Hit in gaps and trigger runs manually. Slide home or stop in creases to prevent run-out wickets from fielding throws!" />
-                      <FeatureCard icon="🎯" title="Steering Aim Arc" description="Position targeted sweeps and cover drives. Guide hits away from fielders to prevent high catches." />
-                      <FeatureCard icon="🥎" title="Delivery Variations" description="Refining batting accuracy against Fast, Outswinger curves, high Bouncers, and sharp Spin breaks." />
+                    {/* Bento Grid */}
+                    <div className="bento-features-grid">
+                      {/* Grid Item 1: Running */}
+                      <div className="glass-panel bento-card-7" style={{ minHeight: '260px', padding: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', textAlign: 'left', borderRadius: '20px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <div style={{ width: '48px', height: '48px', backgroundColor: 'rgba(99, 102, 241, 0.08)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(99, 102, 241, 0.15)' }}>
+                            <span className="material-symbols-outlined" style={{ fontSize: '26px', color: 'var(--primary)' }}>directions_run</span>
+                          </div>
+                          <span style={{ fontSize: '0.68rem', fontFamily: 'var(--font-data)', color: 'var(--primary)', border: '1px solid rgba(99, 102, 241, 0.2)', padding: '2px 8px', borderRadius: '6px' }}>MANUAL RUNNING</span>
+                        </div>
+                        <div>
+                          <h3 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.25rem', margin: '15px 0 8px 0', fontWeight: 'bold' }}>Interactive Running</h3>
+                          <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.88rem', color: 'var(--text-secondary)', margin: 0, lineHeight: '1.6' }}>
+                            Hit in gaps and trigger runs manually. Slide home or stop in creases to prevent run-out wickets from fielding throws with high-fidelity control.
+                          </p>
+                        </div>
+                        <button onClick={() => handleTabTransition('play')} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontFamily: 'var(--font-data)', fontSize: '0.72rem', fontWeight: 'bold', background: 'none', border: 'none', padding: 0, cursor: 'none', marginTop: '15px' }} className="interactive">
+                          LAUNCH ARENA <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>arrow_forward</span>
+                        </button>
+                      </div>
+
+                      {/* Grid Item 2: Steer */}
+                      <div className="glass-panel bento-card-5" style={{ minHeight: '260px', padding: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', textAlign: 'left', borderRadius: '20px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <div style={{ width: '48px', height: '48px', backgroundColor: 'rgba(6, 182, 212, 0.08)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(6, 182, 212, 0.15)' }}>
+                            <span className="material-symbols-outlined" style={{ fontSize: '26px', color: 'var(--accent)' }}>target</span>
+                          </div>
+                          <span style={{ fontSize: '0.68rem', fontFamily: 'var(--font-data)', color: 'var(--accent)', border: '1px solid rgba(6, 182, 212, 0.2)', padding: '2px 8px', borderRadius: '6px' }}>PHYSICS AIM</span>
+                        </div>
+                        <div>
+                          <h3 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.25rem', margin: '15px 0 8px 0', fontWeight: 'bold' }}>Steering Aim Arc</h3>
+                          <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.88rem', color: 'var(--text-secondary)', margin: 0, lineHeight: '1.6' }}>
+                            Calibrate shot directions precisely to find gaps and steer clear of catches.
+                          </p>
+                        </div>
+                        <button onClick={() => handleTabTransition('play')} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--accent)', fontFamily: 'var(--font-data)', fontSize: '0.72rem', fontWeight: 'bold', background: 'none', border: 'none', padding: 0, cursor: 'none', marginTop: '15px' }} className="interactive">
+                          AIM ARC <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>arrow_forward</span>
+                        </button>
+                      </div>
+
+                      {/* Grid Item 3: Scorer */}
+                      <div className="glass-panel bento-card-5" style={{ minHeight: '260px', padding: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', textAlign: 'left', borderRadius: '20px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <div style={{ width: '48px', height: '48px', backgroundColor: 'rgba(168, 85, 247, 0.08)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(168, 85, 247, 0.15)' }}>
+                            <span className="material-symbols-outlined" style={{ fontSize: '26px', color: 'var(--secondary)' }}>analytics</span>
+                          </div>
+                          <span style={{ fontSize: '0.68rem', fontFamily: 'var(--font-data)', color: 'var(--secondary)', border: '1px solid rgba(168, 85, 247, 0.2)', padding: '2px 8px', borderRadius: '6px' }}>STATS RUN</span>
+                        </div>
+                        <div>
+                          <h3 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.25rem', margin: '15px 0 8px 0', fontWeight: 'bold' }}>Live Scorer Engine</h3>
+                          <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.88rem', color: 'var(--text-secondary)', margin: 0, lineHeight: '1.6' }}>
+                            Full scorecard builder, run logs, and PDF scorecard download.
+                          </p>
+                        </div>
+                        <button onClick={() => handleTabTransition('scorer')} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--secondary)', fontFamily: 'var(--font-data)', fontSize: '0.72rem', fontWeight: 'bold', background: 'none', border: 'none', padding: 0, cursor: 'none', marginTop: '15px' }} className="interactive">
+                          OPEN SCORER <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>arrow_forward</span>
+                        </button>
+                      </div>
+
+                      {/* Grid Item 4: Training */}
+                      <div className="glass-panel bento-card-7" style={{ minHeight: '260px', padding: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', textAlign: 'left', borderRadius: '20px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <div style={{ width: '48px', height: '48px', backgroundColor: 'rgba(255, 255, 255, 0.03)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                            <span className="material-symbols-outlined" style={{ fontSize: '26px', color: '#FFF' }}>sports_baseball</span>
+                          </div>
+                          <span style={{ fontSize: '0.68rem', fontFamily: 'var(--font-data)', color: '#FFF', border: '1px solid rgba(255, 255, 255, 0.15)', padding: '2px 8px', borderRadius: '6px' }}>NETS</span>
+                        </div>
+                        <div>
+                          <h3 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.25rem', margin: '15px 0 8px 0', fontWeight: 'bold' }}>Nets Training Complex</h3>
+                          <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.88rem', color: 'var(--text-secondary)', margin: 0, lineHeight: '1.6' }}>
+                            Refine swings against Fast seamers, curve Outswingers, high Bouncers, and Offspin breaks. Review release intervals and batting sweet-spot hits.
+                          </p>
+                        </div>
+                        <button onClick={() => handleTabTransition('practice')} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#FFF', fontFamily: 'var(--font-data)', fontSize: '0.72rem', fontWeight: 'bold', background: 'none', border: 'none', padding: 0, cursor: 'none', marginTop: '15px' }} className="interactive">
+                          START TRAINING <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>arrow_forward</span>
+                        </button>
+                      </div>
                     </div>
 
+                    {/* How to Play Section */}
                     <HowToPlay />
                   </div>
                 </section>
 
-                <section style={{ width: '100%', backgroundColor: '#050a18', padding: '80px 8%', borderTop: '1px solid rgba(255,255,255,0.03)' }}>
+                {/* LEGENDS VAULT */}
+                <section style={{ width: '100%', background: 'rgba(255,255,255,0.01)', padding: '80px 4%', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                   <div style={{ width: '100%', maxWidth: '1100px', margin: '0 auto' }}>
-                    <div className="section-title-wrapper" style={{ marginBottom: '50px' }}>
-                      <h2 className="reveal-text visible" style={{ fontFamily: 'var(--font-headings)', fontSize: '3rem', color: '#FFF', position: 'relative' }}>
-                        THE STORY OF MANUCRICK
-                        <span style={{ position: 'absolute', bottom: '-8px', left: '50%', transform: 'translateX(-50%)', width: '60px', height: '3px', backgroundColor: 'var(--primary)' }} />
-                      </h2>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '50px', flexWrap: 'wrap', gap: '24px', textAlign: 'left' }}>
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', marginBottom: '8px' }}>
+                          <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>military_tech</span>
+                          <span style={{ fontFamily: 'var(--font-data)', fontSize: '0.72rem', letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 'bold' }}>PREMIUM ACHIEVEMENTS</span>
+                        </div>
+                        <h2 style={{ fontFamily: 'var(--font-headings)', fontSize: '2.5rem', textTransform: 'uppercase', margin: 0, fontWeight: 800 }}>Legends Vault</h2>
+                        <p style={{ fontFamily: 'var(--font-body)', color: 'var(--text-secondary)', fontSize: '0.96rem', marginTop: '6px' }}>
+                          Track match achievements to unlock premium bat designs, gloves, and virtual stickers.
+                        </p>
+                      </div>
+                      <button 
+                        onClick={() => handleTabTransition('academy')}
+                        style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 24px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.08)', color: '#FFF', fontFamily: 'var(--font-data)', fontSize: '0.78rem', fontWeight: 'bold', letterSpacing: '1px', borderRadius: '10px', cursor: 'none' }}
+                        className="interactive"
+                      >
+                        VIEW CABINET
+                        <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>arrow_forward</span>
+                      </button>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '50px', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
+                      {/* Achievement 1 */}
+                      <div className="glass-panel hazard-tag" style={{ padding: '24px', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '18px', borderRadius: '16px' }}>
+                        <div style={{ width: '44px', height: '44px', borderRadius: '50%', backgroundColor: 'rgba(6, 182, 212, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <span className="material-symbols-outlined" style={{ color: 'var(--accent)', fontSize: '22px' }}>workspace_premium</span>
+                        </div>
+                        <div>
+                          <h4 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.1rem', margin: '0 0 4px 0', fontWeight: 'bold', color: '#FFF' }}>CENTURION</h4>
+                          <span style={{ fontFamily: 'var(--font-data)', fontSize: '0.62rem', color: 'var(--text-secondary)', letterSpacing: '1px' }}>SCORE 100+ RUNS IN A MATCH</span>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          <div style={{ width: '100%', height: '4px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '2px', overflow: 'hidden' }}>
+                            <div style={{ width: '75%', height: '100%', backgroundColor: 'var(--accent)' }} />
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-data)', fontSize: '0.62rem' }}>
+                            <span style={{ color: 'var(--text-secondary)' }}>75/100 Runs</span>
+                            <span style={{ color: 'var(--accent)', fontWeight: 'bold' }}>75%</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Achievement 2 */}
+                      <div className="glass-panel hazard-tag" style={{ padding: '24px', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '18px', borderRadius: '16px' }}>
+                        <div style={{ width: '44px', height: '44px', borderRadius: '50%', backgroundColor: 'rgba(99, 102, 241, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <span className="material-symbols-outlined" style={{ color: 'var(--primary)', fontSize: '22px' }}>stars</span>
+                        </div>
+                        <div>
+                          <h4 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.1rem', margin: '0 0 4px 0', fontWeight: 'bold', color: '#FFF' }}>STADIUM ACE</h4>
+                          <span style={{ fontFamily: 'var(--font-data)', fontSize: '0.62rem', color: 'var(--text-secondary)', letterSpacing: '1px' }}>WIN 10 MATCHES IN ARENA</span>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          <div style={{ width: '100%', height: '4px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '2px', overflow: 'hidden' }}>
+                            <div style={{ width: '40%', height: '100%', backgroundColor: 'var(--primary)' }} />
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-data)', fontSize: '0.62rem' }}>
+                            <span style={{ color: 'var(--text-secondary)' }}>4/10 Ws</span>
+                            <span style={{ color: 'var(--primary)', fontWeight: 'bold' }}>40%</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Achievement 3 */}
+                      <div className="glass-panel hazard-tag" style={{ padding: '24px', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '18px', borderRadius: '16px' }}>
+                        <div style={{ width: '44px', height: '44px', borderRadius: '50%', backgroundColor: 'rgba(168, 85, 247, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <span className="material-symbols-outlined" style={{ color: 'var(--secondary)', fontSize: '22px' }}>bolt</span>
+                        </div>
+                        <div>
+                          <h4 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.1rem', margin: '0 0 4px 0', fontWeight: 'bold', color: '#FFF' }}>WARP SPEED</h4>
+                          <span style={{ fontFamily: 'var(--font-data)', fontSize: '0.62rem', color: 'var(--text-secondary)', letterSpacing: '1px' }}>DELIVER 140+ KM/H BALL</span>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          <div style={{ width: '100%', height: '4px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '2px', overflow: 'hidden' }}>
+                            <div style={{ width: '100%', height: '100%', backgroundColor: 'var(--secondary)' }} />
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-data)', fontSize: '0.62rem' }}>
+                            <span style={{ color: 'var(--text-secondary)' }}>COMPLETED</span>
+                            <span style={{ color: 'var(--secondary)', fontWeight: 'bold' }}>100%</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Achievement 4 */}
+                      <div className="glass-panel hazard-tag" style={{ padding: '24px', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '18px', borderRadius: '16px', opacity: 0.5 }}>
+                        <div style={{ width: '44px', height: '44px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <span className="material-symbols-outlined" style={{ color: 'var(--text-secondary)', fontSize: '22px' }}>lock</span>
+                        </div>
+                        <div>
+                          <h4 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.1rem', margin: '0 0 4px 0', fontWeight: 'bold', color: '#FFF' }}>GULLY KING</h4>
+                          <span style={{ fontFamily: 'var(--font-data)', fontSize: '0.62rem', color: 'var(--text-secondary)', letterSpacing: '1px' }}>SECRET ACHIEVEMENT</span>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          <div style={{ width: '100%', height: '4px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '2px', overflow: 'hidden' }}>
+                            <div style={{ width: '0%', height: '100%', backgroundColor: 'rgba(255,255,255,0.1)' }} />
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-data)', fontSize: '0.62rem' }}>
+                            <span style={{ color: 'var(--text-secondary)' }}>LOCKED</span>
+                            <span style={{ color: 'var(--text-secondary)' }}>0%</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                {/* THE STORY OF MANUCRICK */}
+                <section style={{ width: '100%', padding: '80px 4%', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                  <div style={{ width: '100%', maxWidth: '1100px', margin: '0 auto' }}>
+                    <div style={{ display: 'flex', gap: '50px', alignItems: 'center', flexWrap: 'wrap', textAlign: 'left' }}>
                       <div style={{ flex: '1.2', minWidth: '320px' }}>
-                        <h3 style={{ fontSize: '1.8rem', color: 'var(--primary)', marginBottom: '15px' }}>Where Passion Meets Pixels</h3>
-                        <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', lineHeight: '1.7', marginBottom: '20px' }}>
-                          Born from a deep love for gully cricket and state-of-the-art frontend engineering, <strong>ManucricK</strong> is the ultimate virtual stadium built directly in your browser. Whether you are timing sweet sweeps in the <strong>Play Arena</strong>, training your reflexes in the <strong>Practice Nets</strong>, or tracking matches with our robust <strong>Local Scorer</strong>, every module is designed to feel fast, responsive, and tactile.
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', marginBottom: '8px' }}>
+                          <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>history_edu</span>
+                          <span style={{ fontFamily: 'var(--font-data)', fontSize: '0.72rem', letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700 }}>THE CHRONICLES</span>
+                        </div>
+                        <h2 style={{ fontFamily: 'var(--font-headings)', fontSize: '2.5rem', fontWeight: 800, marginBottom: '18px', color: '#FFF' }}>Where Passion Meets Pixels</h2>
+                        <p style={{ fontSize: '#0.96rem', color: 'var(--text-secondary)', lineHeight: '1.7', marginBottom: '20px' }}>
+                          Born from a deep love for gully cricket and modern web engineering, <strong>ManucricK</strong> is the ultimate virtual stadium built directly in your browser. Whether you are timing sweet sweeps in the <strong>Play Arena</strong>, training your reflexes in the <strong>Practice Nets</strong>, or tracking matches with our robust <strong>Local Scorer</strong>, every module is designed to feel fast, responsive, and tactile.
                         </p>
-                        <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', lineHeight: '1.7', marginBottom: '25px' }}>
+                        <p style={{ fontSize: '#0.96rem', color: 'var(--text-secondary)', lineHeight: '1.7', marginBottom: '25px' }}>
                           Built using <strong>React</strong>, <strong>TypeScript</strong>, and premium custom CSS animations, the site leverages advanced browser APIs—like the <strong>Web Audio API</strong> for programmatic sound synthesis—to provide an immersive soundscape without loading heavy media assets.
                         </p>
                         
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                        <div className="responsive-grid-2">
                           <div style={{ borderLeft: '3px solid var(--secondary)', paddingLeft: '15px' }}>
-                            <h4 style={{ fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '1.1rem', color: '#FFF' }}>Pure Performance</h4>
-                            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)' }}>No heavy WebGL engines or bloated assets. Just lightweight, custom-optimized rendering.</p>
+                            <h4 style={{ fontFamily: 'var(--font-headings)', fontWeight: 700, fontSize: '1.05rem', color: '#FFF', margin: '0 0 4px 0' }}>Pure Performance</h4>
+                            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>No heavy WebGL engines or bloated assets. Just lightweight, custom-optimized rendering.</p>
                           </div>
                           <div style={{ borderLeft: '3px solid var(--primary)', paddingLeft: '15px' }}>
-                            <h4 style={{ fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '1.1rem', color: '#FFF' }}>Tactile Experience</h4>
-                            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)' }}>Features satisfying hover offsets, magnetic buttons, and dynamic cursor states.</p>
+                            <h4 style={{ fontFamily: 'var(--font-headings)', fontWeight: 700, fontSize: '1.05rem', color: '#FFF', margin: '0 0 4px 0' }}>Tactile Experience</h4>
+                            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>Features satisfying hover offsets, magnetic buttons, and dynamic cursor states.</p>
                           </div>
                         </div>
                       </div>
 
                       <div style={{ flex: '0.8', minWidth: '280px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <div className="glass-panel" style={{ padding: '30px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-                          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: 'linear-gradient(90deg, var(--primary), var(--secondary))' }} />
-                          
-                          <span style={{ fontSize: '2.5rem', marginBottom: '10px' }}>🪙</span>
-                          <h4 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.4rem', color: '#FFF', marginBottom: '8px' }}>QUICK COIN FLIPPER</h4>
-                          <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: '1.4' }}>
-                            Need a quick decision on who plays first? Test our 100% fair 50/50 probability coin flipper below!
+                        <div className="glass-panel" style={{ padding: '40px 30px', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative', overflow: 'hidden', borderLeft: '4px solid var(--primary)', borderRadius: '20px' }}>
+                          <span style={{ fontSize: '2.5rem', marginBottom: '15px' }}>🪙</span>
+                          <h4 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.25rem', color: '#FFF', marginBottom: '8px', fontWeight: 'bold' }}>QUICK COIN FLIPPER</h4>
+                          <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: '1.5' }}>
+                            Need a quick decision on who plays first? Test our 100% fair 50/50 probability coin tosser!
                           </p>
 
-                          <div style={{ marginBottom: '20px' }}>
-                            <div style={{ width: '90px', height: '90px', borderRadius: '50%', background: 'var(--gold-metal)', border: '3.5px solid #F39C12', boxShadow: 'inset 0 0 10px rgba(0,0,0,0.3), 0 0 15px rgba(241,196,15,0.4)', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center', animation: 'logoEntrance 1.5s infinite alternate ease-in-out' }}>
-                              <span style={{ fontSize: '2rem', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>🏆</span>
+                          <div style={{ marginBottom: '24px' }}>
+                            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'var(--gold-metal)', border: '3px solid #F59E0B', boxShadow: 'inset 0 0 10px rgba(0,0,0,0.3), 0 0 15px rgba(245,158,11,0.4)', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center', animation: 'logoEntrance 1.5s infinite alternate ease-in-out' }}>
+                              <span style={{ fontSize: '1.8rem', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>🏆</span>
                             </div>
                           </div>
 
                           <button
                             onClick={() => handleTabTransition('toss')}
                             style={{
-                              padding: '10px 22px',
-                              borderRadius: '6px',
+                              padding: '12px 24px',
                               border: 'none',
                               backgroundColor: 'var(--primary)',
-                              color: '#050A18',
-                              fontFamily: 'var(--font-headings)',
-                              fontSize: '1.1rem',
+                              color: '#FFF',
+                              fontFamily: 'var(--font-data)',
+                              fontSize: '0.82rem',
+                              fontWeight: 'bold',
                               letterSpacing: '1px',
                               cursor: 'none',
-                              boxShadow: '0 0 12px rgba(0,255,135,0.2)',
+                              borderRadius: '8px',
+                              boxShadow: '0 0 12px rgba(99,102,241,0.2)',
                             }}
                             className="interactive"
                           >
@@ -639,85 +893,16 @@ function App() {
                   </div>
                 </section>
 
-                <section style={{ width: '100%', backgroundColor: '#040814', padding: '80px 8%', borderTop: '1px solid rgba(255,255,255,0.03)' }}>
+                {/* THOUGHTS SLIDER */}
+                <section style={{ width: '100%', padding: '60px 4%', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                   <div style={{ width: '100%', maxWidth: '1100px', margin: '0 auto' }}>
-                    <div className="section-title-wrapper" style={{ marginBottom: '55px' }}>
-                      <h2 className="reveal-text visible" style={{ fontFamily: 'var(--font-headings)', fontSize: '3rem', color: '#FFF', position: 'relative' }}>
-                        WELCOME TO MANUCRICK
-                        <span style={{ position: 'absolute', bottom: '-8px', left: '50%', transform: 'translateX(-50%)', width: '60px', height: '3px', backgroundColor: 'var(--primary)' }} />
-                      </h2>
-                      <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', marginTop: '10px', letterSpacing: '0.8px', textTransform: 'uppercase' }}>
-                        YOUR ULTIMATE HUB FOR VIRTUAL CRICKET & GULLY MATCH SCORING
-                      </p>
-                    </div>
-
-                    {/* Feature Grid */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '25px', marginBottom: '60px' }}>
-                      <div className="feature-glass-card">
-                        <div style={{ fontSize: '2.2rem' }}>🕹️</div>
-                        <h3 style={{ fontSize: '1.4rem', color: 'var(--primary)' }}>RETRO ARCADE</h3>
-                        <p style={{ fontSize: '0.92rem', lineHeight: '1.5', color: 'var(--text-secondary)' }}>
-                          Step into the Arcade! Try neon car racing, street bike rush, zombie survival, city heist, and checkpoint offroad rally. Track scores and speed stats directly.
-                        </p>
-                      </div>
-
-                      <div className="feature-glass-card">
-                        <div style={{ fontSize: '2.2rem' }}>🏏</div>
-                        <h3 style={{ fontSize: '1.4rem', color: 'var(--primary)' }}>PLAY NOW (PLAY ARENA)</h3>
-                        <p style={{ fontSize: '0.92rem', lineHeight: '1.5', color: 'var(--text-secondary)' }}>
-                          Step into the Championship Stadium! Choose your challenge format (Championship, Super Over, Wicket Survival, or Target Attack). Swing with precision aiming overlays and control your batsman run-crease manually.
-                        </p>
-                      </div>
-
-                      <div className="feature-glass-card">
-                        <div style={{ fontSize: '2.2rem' }}>🥎</div>
-                        <h3 style={{ fontSize: '1.4rem', color: 'var(--primary)' }}>PRACTICE NETS</h3>
-                        <p style={{ fontSize: '0.92rem', lineHeight: '1.5', color: 'var(--text-secondary)' }}>
-                          Hone your timing reflexes against Fast, Curve Outswingers, high Bouncers, and sharp Spin breaks. Analyze your bat alignment offset in milliseconds after every shot to reach peak performance.
-                        </p>
-                      </div>
-
-                      <div className="feature-glass-card">
-                        <div style={{ fontSize: '2.2rem' }}>🪙</div>
-                        <h3 style={{ fontSize: '1.4rem', color: 'var(--primary)' }}>3D FLIP COIN</h3>
-                        <p style={{ fontSize: '0.92rem', lineHeight: '1.5', color: 'var(--text-secondary)' }}>
-                          Need a quick match decision? Access our Flip Coin arena featuring a 100% fair, mathematically simulated 50/50 probability coin tosser with rich 3D graphics, sound effects, and a smooth metallic spin.
-                        </p>
-                      </div>
-
-                      <div className="feature-glass-card">
-                        <div style={{ fontSize: '2.2rem' }}>📊</div>
-                        <h3 style={{ fontSize: '1.4rem', color: 'var(--primary)' }}>LOCAL SCORER</h3>
-                        <p style={{ fontSize: '0.92rem', lineHeight: '1.5', color: 'var(--text-secondary)' }}>
-                          Ditch the notebook! Keep score for your real-world gully matches with our comprehensive scorer tool. Log batsman records, extra runs, overs, wickets, view dynamic charts, and generate shareable scorecards.
-                        </p>
-                      </div>
-
-                      <div className="feature-glass-card">
-                        <div style={{ fontSize: '2.2rem' }}>🏆</div>
-                        <h3 style={{ fontSize: '1.4rem', color: 'var(--primary)' }}>LEGENDS VAULT & TROPHY CABINET</h3>
-                        <p style={{ fontSize: '0.92rem', lineHeight: '1.5', color: 'var(--text-secondary)' }}>
-                          Unleash special powers! Track achievements like matches played, runs scored, and sixes hit. Unlock premium equipment including the carbon Cyber-Carbon bat or Manoj's explosive Helicopter Special bat.
-                        </p>
-                      </div>
-
-                      <div className="feature-glass-card">
-                        <div style={{ fontSize: '2.2rem' }}>🎖️</div>
-                        <h3 style={{ fontSize: '1.4rem', color: 'var(--primary)' }}>GLOBAL LEADERBOARDS</h3>
-                        <p style={{ fontSize: '0.92rem', lineHeight: '1.5', color: 'var(--text-secondary)' }}>
-                          Pit your skills against other batsmen. Check out the top scores, delivery faced stats, and global player rankings to see who dominates the virtual turf.
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Thoughts / Quotes Slider */}
                     <div className="quote-slider-card">
                       <span className="quote-decor open">“</span>
-                      <div style={{ minHeight: '80px', display: 'flex', flexDirection: 'column', justifyContent: 'center', transition: 'all 0.5s ease' }}>
-                        <p style={{ fontFamily: 'var(--font-body)', fontSize: '1.4rem', fontWeight: 600, color: '#FFF', fontStyle: 'italic', marginBottom: '15px', lineHeight: '1.5' }}>
+                      <div style={{ minHeight: '100px', display: 'flex', flexDirection: 'column', justifyContent: 'center', transition: 'all 0.5s ease' }}>
+                        <p style={{ fontFamily: 'var(--font-headings)', fontSize: '1.3rem', fontWeight: 600, color: '#FFF', fontStyle: 'italic', marginBottom: '15px', lineHeight: '1.6' }}>
                           {thoughts[activeThoughtIdx].text}
                         </p>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--secondary)', textTransform: 'uppercase', letterSpacing: '2px' }}>
+                        <span style={{ fontSize: '0.78rem', fontFamily: 'var(--font-data)', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '2px' }}>
                           — {thoughts[activeThoughtIdx].author === "Manoj Kumar Sharma" ? (
                             <a href="https://manojkumarsharma.vercel.app/" target="_blank" rel="noopener noreferrer" className="interactive" style={{ color: 'inherit', textDecoration: 'underline', cursor: 'none' }}>
                               Manoj Kumar Sharma
@@ -727,15 +912,14 @@ function App() {
                       </div>
                       <span className="quote-decor close">”</span>
 
-                      {/* Indicators */}
                       <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '25px' }}>
                         {thoughts.map((_, idx) => (
                           <button
                             key={idx}
                             onClick={() => setActiveThoughtIdx(idx)}
                             style={{
-                              width: '10px',
-                              height: '10px',
+                              width: '8px',
+                              height: '8px',
                               borderRadius: '50%',
                               backgroundColor: activeThoughtIdx === idx ? 'var(--primary)' : 'rgba(255,255,255,0.15)',
                               border: 'none',
@@ -751,77 +935,73 @@ function App() {
                   </div>
                 </section>
 
-                <section style={{ width: '100%', backgroundColor: '#03060F', padding: '80px 8%', borderTop: '1px solid rgba(255,255,255,0.03)' }}>
+                {/* MEET THE ARCHITECT */}
+                <section style={{ width: '100%', padding: '80px 4%', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                   <div style={{ width: '100%', maxWidth: '1100px', margin: '0 auto' }}>
                     <div className="section-title-wrapper" style={{ marginBottom: '50px' }}>
-                      <h2 className="reveal-text visible" style={{ fontFamily: 'var(--font-headings)', fontSize: '3rem', color: '#FFF', position: 'relative' }}>
-                        MEET THE ARCHITECT
-                        <span style={{ position: 'absolute', bottom: '-8px', left: '50%', transform: 'translateX(-50%)', width: '60px', height: '3px', backgroundColor: 'var(--primary)' }} />
+                      <h2 className="reveal-text visible" style={{ fontFamily: 'var(--font-headings)', fontSize: '2.5rem', color: '#FFF', position: 'relative', margin: 0, fontWeight: 800 }}>
+                        Meet the Architect
                       </h2>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '40px', alignItems: 'stretch', flexWrap: 'wrap' }}>
-                      
-                      <div className="glass-panel" style={{ flex: '1.4', minWidth: '320px', padding: '40px', display: 'flex', flexDirection: 'column', gap: '25px', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', gap: '30px', alignItems: 'stretch', flexWrap: 'wrap', textAlign: 'left' }}>
+                      <div className="glass-panel" style={{ flex: '1.4', minWidth: '320px', padding: '36px', display: 'flex', flexDirection: 'column', gap: '20px', justifyContent: 'space-between', borderLeft: '4px solid var(--primary)', borderRadius: '20px' }}>
                         <div>
-                          <span style={{ fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.85rem', color: 'var(--secondary)', textTransform: 'uppercase', letterSpacing: '3px' }}>
-                            DESIGNER & DEVELOPER
+                          <span style={{ fontFamily: 'var(--font-data)', fontWeight: 700, fontSize: '0.72rem', color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '2.5px' }}>
+                            ENTERPRISE FULL STACK ENGINEER
                           </span>
-                          <h3 style={{ fontSize: '2.6rem', color: '#FFFFFF', marginTop: '5px', marginBottom: '15px' }}>
-                            <a href="https://manojkumarsharma.vercel.app/" target="_blank" rel="noopener noreferrer" className="interactive" style={{ color: 'inherit', textDecoration: 'underline', transition: 'color 0.2s', cursor: 'none' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary)'} onMouseLeave={(e) => e.currentTarget.style.color = '#FFF'}>
+                          <h3 style={{ fontSize: '2.1rem', color: '#FFFFFF', marginTop: '5px', marginBottom: '12px', fontWeight: 800 }}>
+                            <a href="https://manojkumarsharma.vercel.app/" target="_blank" rel="noopener noreferrer" className="interactive" style={{ color: 'inherit', textDecoration: 'underline', transition: 'color 0.2s', cursor: 'none' }}>
                               Manoj Kumar Sharma
                             </a>
                           </h3>
-                          <p style={{ fontSize: '1.02rem', color: 'var(--text-secondary)', lineHeight: '1.6', marginBottom: '15px' }}>
-                            Hello! I am a Full Stack Developer dedicated to merging cutting-edge architectural backend design with polished, high-fidelity user interfaces. My design philosophy revolves around clean semantics, performance-oriented UI states, and robust enterprise patterns.
+                          <p style={{ fontSize: '0.94rem', color: 'var(--text-secondary)', lineHeight: '1.6', marginBottom: '20px' }}>
+                            Enterprise Full Stack Software Engineer specializing in scalable retail operating systems, HRMS suites, and production-grade architectures. Currently engineering <strong>EnolaTech Retail OS</strong>, designing offline-first POS systems and robust database layers.
                           </p>
-                          <p style={{ fontSize: '1.02rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
-                            Through projects like <strong>ManucricK</strong>, I push the limits of modern web engines to deliver rich interactive experiences that run smoothly on every screen size.
-                          </p>
-                        </div>
-
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                          <h4 style={{ fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.95rem', color: '#FFF', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                            Technical Expertise
+                          
+                          <h4 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.1rem', color: '#FFF', marginTop: '20px', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 'bold' }}>
+                            Core Expertise
                           </h4>
                           
-                          <div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 700, marginBottom: '4px' }}>
-                              <span>JAVA & ENTERPRISE ARCHITECTURE</span>
-                              <span style={{ color: 'var(--primary)' }}>95%</span>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            <div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', fontWeight: 700, marginBottom: '4px', fontFamily: 'var(--font-data)' }}>
+                                <span>JAVA 21 & SPRING BOOT</span>
+                                <span style={{ color: 'var(--primary)' }}>95%</span>
+                              </div>
+                              <div style={{ width: '100%', height: '4px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '2px', overflow: 'hidden' }}>
+                                <div style={{ width: '95%', height: '100%', background: 'linear-gradient(90deg, var(--primary), var(--secondary))' }} />
+                              </div>
                             </div>
-                            <div style={{ width: '100%', height: '6px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
-                              <div style={{ width: '95%', height: '100%', background: 'linear-gradient(90deg, var(--secondary), var(--primary))', boxShadow: '0 0 6px var(--primary)' }} />
-                            </div>
-                          </div>
 
-                          <div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 700, marginBottom: '4px' }}>
-                              <span>SPRING BOOT & MICROSERVICES</span>
-                              <span style={{ color: 'var(--primary)' }}>95%</span>
+                            <div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', fontWeight: 700, marginBottom: '4px', fontFamily: 'var(--font-data)' }}>
+                                <span>REACT & NEXT.JS PLATFORMS</span>
+                                <span style={{ color: 'var(--primary)' }}>90%</span>
+                              </div>
+                              <div style={{ width: '100%', height: '4px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '2px', overflow: 'hidden' }}>
+                                <div style={{ width: '90%', height: '100%', background: 'linear-gradient(90deg, var(--primary), var(--secondary))' }} />
+                              </div>
                             </div>
-                            <div style={{ width: '100%', height: '6px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
-                              <div style={{ width: '95%', height: '100%', background: 'linear-gradient(90deg, var(--secondary), var(--primary))', boxShadow: '0 0 6px var(--primary)' }} />
-                            </div>
-                          </div>
 
-                          <div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 700, marginBottom: '4px' }}>
-                              <span>REACT.JS & ANIMATION ENGINES</span>
-                              <span style={{ color: 'var(--primary)' }}>90%</span>
+                            <div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', fontWeight: 700, marginBottom: '4px', fontFamily: 'var(--font-data)' }}>
+                                <span>POSTGRESQL & SCHEMAS ARCHITECTURE</span>
+                                <span style={{ color: 'var(--primary)' }}>92%</span>
+                              </div>
+                              <div style={{ width: '100%', height: '4px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '2px', overflow: 'hidden' }}>
+                                <div style={{ width: '92%', height: '100%', background: 'linear-gradient(90deg, var(--primary), var(--secondary))' }} />
+                              </div>
                             </div>
-                            <div style={{ width: '100%', height: '6px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
-                              <div style={{ width: '90%', height: '100%', background: 'linear-gradient(90deg, var(--secondary), var(--primary))', boxShadow: '0 0 6px var(--primary)' }} />
-                            </div>
-                          </div>
 
-                          <div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 700, marginBottom: '4px' }}>
-                              <span>LIFERAY DXP PORTAL DEVELOPMENT</span>
-                              <span style={{ color: 'var(--primary)' }}>88%</span>
-                            </div>
-                            <div style={{ width: '100%', height: '6px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
-                              <div style={{ width: '88%', height: '100%', background: 'linear-gradient(90deg, var(--secondary), var(--primary))', boxShadow: '0 0 6px var(--primary)' }} />
+                            <div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', fontWeight: 700, marginBottom: '4px', fontFamily: 'var(--font-data)' }}>
+                                <span>LIFERAY DXP & VAADIN ENTERPRISE</span>
+                                <span style={{ color: 'var(--primary)' }}>88%</span>
+                              </div>
+                              <div style={{ width: '100%', height: '4px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '2px', overflow: 'hidden' }}>
+                                <div style={{ width: '88%', height: '100%', background: 'linear-gradient(90deg, var(--primary), var(--secondary))' }} />
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -841,11 +1021,11 @@ function App() {
             {currentTab === 'play' && (
               <div style={{ padding: '20px 2%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', animation: 'tabTransition 0.5s ease-out', width: '100%' }}>
                 <div style={{ width: '100%', maxWidth: '1200px', textAlign: 'center', marginBottom: '20px' }}>
-                  <div className="section-title-wrapper" style={{ marginBottom: '40px' }}>
-                    <h2 style={{ fontFamily: 'var(--font-headings)', fontSize: '3rem', color: '#FFF' }}>
+                  <div className="section-title-wrapper" style={{ marginBottom: '30px' }}>
+                    <h2 style={{ fontFamily: 'var(--font-headings)', fontSize: '2.5rem', color: '#FFF', fontWeight: 800 }}>
                       MANUCRICK PLAY NOW
                     </h2>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', marginTop: '4px', letterSpacing: '1px', textTransform: 'uppercase' }}>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.82rem', marginTop: '4px', letterSpacing: '1px', textTransform: 'uppercase', fontFamily: 'var(--font-data)' }}>
                       OPERATED BY <a href="https://manojkumarsharma.vercel.app/" target="_blank" rel="noopener noreferrer" className="interactive" style={{ color: 'var(--primary)', textDecoration: 'underline', cursor: 'none' }}>MANOJ KUMAR SHARMA</a> &bull; THE ULTIMATE ARENA
                     </p>
                   </div>
@@ -866,17 +1046,17 @@ function App() {
                     {/* Right side: Bold Control & Branding Panel */}
                     <div className="neon-brand-panel">
                       <div>
-                        <h3 style={{ fontSize: '1.8rem', color: 'var(--primary)', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <h3 style={{ fontSize: '1.4rem', color: 'var(--primary)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold' }}>
                           🏟️ ARENA DASHBOARD
                         </h3>
-                        <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
                           Welcome to the official arena of <a href="https://manojkumarsharma.vercel.app/" target="_blank" rel="noopener noreferrer" className="interactive" style={{ color: 'var(--primary)', textDecoration: 'underline', cursor: 'none' }}>Manoj Kumar Sharma</a>. Equip your gear, review guidelines, and take your stance.
                         </p>
                       </div>
 
                       {/* Quick Gear Customization */}
                       <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '15px' }}>
-                        <h4 style={{ fontSize: '1.05rem', color: '#FFF', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        <h4 style={{ fontSize: '0.96rem', color: '#FFF', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 'bold' }}>
                           🏏 Select Active Bat
                         </h4>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -891,8 +1071,8 @@ function App() {
                           >
                             <span style={{ fontSize: '1.2rem' }}>🪵</span>
                             <div style={{ textAlign: 'left' }}>
-                              <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: '#FFF' }}>Kashmir Willow Pro</div>
-                              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Standard wood bat, balanced swing speed.</div>
+                              <div style={{ fontWeight: 'bold', fontSize: '0.88rem', color: '#FFF' }}>Kashmir Willow Pro</div>
+                              <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>Standard wood bat, balanced swing speed.</div>
                             </div>
                           </button>
 
@@ -907,8 +1087,8 @@ function App() {
                           >
                             <span style={{ fontSize: '1.2rem' }}>⚡</span>
                             <div style={{ textAlign: 'left' }}>
-                              <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: 'var(--primary)' }}>Cyber-Carbon Neon</div>
-                              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Lightweight cyber chassis with glowing tracer seam.</div>
+                              <div style={{ fontWeight: 'bold', fontSize: '0.88rem', color: 'var(--primary)' }}>Cyber-Carbon Neon</div>
+                              <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>Lightweight cyber chassis with glowing tracer seam.</div>
                             </div>
                           </button>
 
@@ -923,16 +1103,16 @@ function App() {
                           >
                             <span style={{ fontSize: '1.2rem' }}>🔥</span>
                             <div style={{ textAlign: 'left' }}>
-                              <div style={{ fontWeight: 'bold', fontSize: '0.9rem', color: 'var(--secondary)' }}>Manoj's Helicopter Special</div>
-                              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Heavy profile custom wood. Unlocks explosive power!</div>
+                              <div style={{ fontWeight: 'bold', fontSize: '0.88rem', color: 'var(--secondary)' }}>Manoj's Helicopter Special</div>
+                              <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>Heavy profile custom wood. Unlocks explosive power!</div>
                             </div>
                           </button>
                         </div>
                       </div>
 
-                      {/* Jersey & Match Gear */}
+                      {/* Jersey Settings */}
                       <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '15px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                        <h4 style={{ fontSize: '1.05rem', color: '#FFF', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        <h4 style={{ fontSize: '0.96rem', color: '#FFF', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 'bold' }}>
                           👕 Jersey Settings
                         </h4>
                         <button
@@ -940,12 +1120,12 @@ function App() {
                           style={{
                             width: '100%',
                             padding: '12px',
-                            borderRadius: '8px',
+                            borderRadius: '10px',
                             border: '1.5px solid var(--primary)',
-                            backgroundColor: customizingPlayer ? 'rgba(0, 255, 135, 0.08)' : 'rgba(0, 255, 135, 0.03)',
+                            backgroundColor: customizingPlayer ? 'rgba(99, 102, 241, 0.1)' : 'rgba(99, 102, 241, 0.03)',
                             color: 'var(--primary)',
                             fontFamily: 'var(--font-headings)',
-                            fontSize: '1.1rem',
+                            fontSize: '1.0rem',
                             letterSpacing: '1px',
                             textTransform: 'uppercase',
                             cursor: 'none',
@@ -959,10 +1139,10 @@ function App() {
 
                       {/* Playbook / Instructions */}
                       <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '15px' }}>
-                        <h4 style={{ fontSize: '1.05rem', color: '#FFF', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        <h4 style={{ fontSize: '0.96rem', color: '#FFF', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 'bold' }}>
                           📖 Stadium Guidelines
                         </h4>
-                        <ul style={{ paddingLeft: '18px', fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '6px', lineHeight: '1.4' }}>
+                        <ul style={{ paddingLeft: '18px', fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '6px', lineHeight: '1.4', textAlign: 'left' }}>
                           <li><strong>Shot Timing:</strong> Watch the ball curve carefully. Wait for it to enter the batting crease before clicking.</li>
                           <li><strong>Manual Running:</strong> Click <strong>RUN CREASE</strong> after hitting into gaps. Click again or <strong>STOP RUNNING</strong> to ground your batsman.</li>
                           <li><strong>Fielding Throws:</strong> Fielders throw to stumps! Sliding or grounding on time prevents run-out wickets.</li>
@@ -980,7 +1160,7 @@ function App() {
               <div style={{ padding: '60px 4%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', animation: 'tabTransition 0.5s ease-out', width: '100%' }}>
                 <div style={{ width: '100%', maxWidth: '1200px', textAlign: 'center' }}>
                   <div className="section-title-wrapper">
-                    <h2 style={{ fontFamily: 'var(--font-headings)', fontSize: '3rem', color: '#FFF' }}>
+                    <h2 style={{ fontFamily: 'var(--font-headings)', fontSize: '2.5rem', color: '#FFF', fontWeight: 800 }}>
                       3D FLIP COIN ARENA
                     </h2>
                   </div>
@@ -1001,7 +1181,7 @@ function App() {
               <div style={{ padding: '60px 4%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', animation: 'tabTransition 0.5s ease-out', width: '100%' }}>
                 <div style={{ width: '100%', maxWidth: '1200px', textAlign: 'center' }}>
                   <div className="section-title-wrapper">
-                    <h2 style={{ fontFamily: 'var(--font-headings)', fontSize: '3rem', color: '#FFF' }}>
+                    <h2 style={{ fontFamily: 'var(--font-headings)', fontSize: '2.5rem', color: '#FFF', fontWeight: 800 }}>
                       TOURNAMENT BRACKET BUILDER
                     </h2>
                   </div>
@@ -1015,7 +1195,7 @@ function App() {
               <div style={{ padding: '60px 4%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', animation: 'tabTransition 0.5s ease-out', width: '100%' }}>
                 <div style={{ width: '100%', maxWidth: '1200px', textAlign: 'center' }}>
                   <div className="section-title-wrapper">
-                    <h2 style={{ fontFamily: 'var(--font-headings)', fontSize: '3rem', color: '#FFF' }}>
+                    <h2 style={{ fontFamily: 'var(--font-headings)', fontSize: '2.5rem', color: '#FFF', fontWeight: 800 }}>
                       PLAYER PROFILES & SEASON STATS
                     </h2>
                   </div>
@@ -1029,7 +1209,7 @@ function App() {
               <div style={{ padding: '60px 4%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', animation: 'tabTransition 0.5s ease-out', width: '100%' }}>
                 <div style={{ width: '100%', maxWidth: '1200px', textAlign: 'center' }}>
                   <div className="section-title-wrapper">
-                    <h2 style={{ fontFamily: 'var(--font-headings)', fontSize: '3rem', color: '#FFF' }}>
+                    <h2 style={{ fontFamily: 'var(--font-headings)', fontSize: '2.5rem', color: '#FFF', fontWeight: 800 }}>
                       LEGENDS VAULT & TROPHY CABINET
                     </h2>
                   </div>
@@ -1057,11 +1237,11 @@ function App() {
               <div style={{ padding: '60px 8%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', animation: 'tabTransition 0.5s ease-out' }}>
                 <div style={{ width: '100%', maxWidth: '900px', textAlign: 'center' }}>
                   <div className="section-title-wrapper">
-                    <h2 style={{ fontFamily: 'var(--font-headings)', fontSize: '3rem', color: '#FFF' }}>
+                    <h2 style={{ fontFamily: 'var(--font-headings)', fontSize: '2.5rem', color: '#FFF', fontWeight: 800 }}>
                       PRACTICE NETS
                     </h2>
                   </div>
-                  <p style={{ color: 'var(--text-secondary)', maxWidth: '580px', margin: '0 auto 30px', fontSize: '1rem' }}>
+                  <p style={{ color: 'var(--text-secondary)', maxWidth: '580px', margin: '0 auto 30px', fontSize: '0.96rem' }}>
                     Hone your batting reflex mechanics against customizable ball curves. Check your alignment offsets in milliseconds.
                   </p>
                   <PracticeNets />
@@ -1080,7 +1260,7 @@ function App() {
             {currentTab === 'contact' && (
               <div style={{ padding: '60px 8%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', animation: 'tabTransition 0.5s ease-out' }}>
                 <div className="section-title-wrapper">
-                  <h2 style={{ fontFamily: 'var(--font-headings)', fontSize: '3rem', color: '#FFF' }}>
+                  <h2 style={{ fontFamily: 'var(--font-headings)', fontSize: '2.5rem', color: '#FFF', fontWeight: 800 }}>
                     GET IN TOUCH
                   </h2>
                 </div>
@@ -1090,7 +1270,7 @@ function App() {
               </div>
             )}
 
-          </div>
+          </main>
 
           <Footer />
         </div>
@@ -1101,6 +1281,10 @@ function App() {
           background-color: rgba(255, 255, 255, 0.08) !important;
           border-color: #FFFFFF !important;
           box-shadow: 0 0 15px rgba(255,255,255,0.15);
+        }
+
+        .hover-underline:hover {
+          text-decoration: underline !important;
         }
 
         @keyframes tabTransition {

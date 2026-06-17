@@ -387,20 +387,20 @@ export function PlayerStats() {
       
       {/* TABS CONTROLS */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px', flexWrap: 'wrap', gap: '15px' }}>
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           {(['stats', 'leaderboard', 'create', 'log'] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               style={{
-                padding: '10px 18px',
+                padding: '8px 14px',
                 borderRadius: '6px',
                 border: activeTab === tab ? '1.5px solid var(--primary)' : '1px solid rgba(255,255,255,0.06)',
                 backgroundColor: activeTab === tab ? 'rgba(0, 255, 135, 0.08)' : 'rgba(5, 10, 24, 0.4)',
                 color: activeTab === tab ? '#FFFFFF' : 'var(--text-secondary)',
-                fontSize: '1rem',
+                fontSize: '0.88rem',
                 fontFamily: 'var(--font-headings)',
-                letterSpacing: '1px',
+                letterSpacing: '0.5px',
                 fontWeight: 700,
                 textTransform: 'uppercase',
                 cursor: 'pointer',
@@ -408,10 +408,10 @@ export function PlayerStats() {
               }}
               className="interactive"
             >
-              {tab === 'stats' && '📋 Season Stats'}
-              {tab === 'leaderboard' && '🏆 Leaderboard'}
-              {tab === 'create' && '👤 Add Player'}
-              {tab === 'log' && '📝 Log Match Performance'}
+              {tab === 'stats' && '📋 Stats'}
+              {tab === 'leaderboard' && '🏆 Podium'}
+              {tab === 'create' && '👤 + Player'}
+              {tab === 'log' && '📝 Log Match'}
             </button>
           ))}
         </div>

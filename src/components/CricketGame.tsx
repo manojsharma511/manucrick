@@ -1596,14 +1596,14 @@ export function CricketGame() {
               textAlign: 'center',
             }}
           >
-            <h3 style={{ fontFamily: 'var(--font-headings)', fontSize: '3.6rem', color: '#FFF', letterSpacing: '2px', marginBottom: '8px' }}>
+            <h3 style={{ fontFamily: 'var(--font-headings)', fontSize: 'clamp(1.6rem, 7vw, 3.2rem)', color: '#FFF', letterSpacing: '2px', marginBottom: '8px', textAlign: 'center' }}>
               MANUCRICK PLAY ARENA
             </h3>
             <p style={{ maxWidth: '480px', fontSize: '0.96rem', color: 'var(--text-secondary)', marginBottom: '25px' }}>
               Select your match challenge mode, choose difficulty, and enter the pitch creases!
             </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', width: '300px', marginBottom: '24px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', width: '100%', maxWidth: '300px', marginBottom: '24px' }}>
               {/* Game Modes */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                 {(['endless', 'superover', 'survival', 'target', 'quick'] as const).map((mode) => (

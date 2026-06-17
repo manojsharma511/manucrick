@@ -618,12 +618,13 @@ export function TournamentBracket() {
           </div>
 
           {/* MOBILE ROUND SELECTION TABS */}
-          <div className="no-print mobile-only" style={{ display: 'none', gap: '8px', marginBottom: '20px', overflowX: 'auto', paddingBottom: '8px' }}>
+          <div className="no-print mobile-only" style={{ display: 'none', gap: '8px', marginBottom: '20px', overflowX: 'auto', paddingBottom: '8px', flexWrap: 'nowrap' }}>
             {rounds.map((r, idx) => (
               <button
                 key={idx}
                 onClick={() => setActiveRoundTab(idx)}
                 style={{
+                  flexShrink: 0,
                   padding: '8px 14px',
                   borderRadius: '20px',
                   border: activeRoundTab === idx ? '1px solid var(--primary)' : '1px solid rgba(255,255,255,0.08)',

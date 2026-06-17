@@ -6,7 +6,7 @@ interface ContactCardProps {
 }
 
 export function ContactCard({ onToast }: ContactCardProps) {
-  const email = 'manojkumarsharma27096@gmail.com';
+  const email = 'msharma27096@gmail.com';
   const phone = '6350542691';
 
   // Contact Form State

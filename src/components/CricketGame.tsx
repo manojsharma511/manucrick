@@ -169,9 +169,9 @@ interface MatchLog {
 export function CricketGame() {
   // Configs & customizations
   const [playerName, setPlayerName] = useState('Manoj');
-  const [jerseyColor, setJerseyColor] = useState('#00FF87');
+  const [jerseyColor, setJerseyColor] = useState('#F59E0B');
   const [jerseyNumber, setJerseyNumber] = useState('27');
-  const [batGripColor, setBatGripColor] = useState('#FF6B00');
+  const [batGripColor, setBatGripColor] = useState('#F97316');
 
   const [gameState, setGameState] = useState<'start' | 'playing' | 'out'>('start');
   const [gameMode, setGameMode] = useState<'endless' | 'superover' | 'survival' | 'target' | 'quick'>('endless');
@@ -259,7 +259,7 @@ export function CricketGame() {
       try {
         const parsed = JSON.parse(savedCustoms);
         setPlayerName(parsed.name || 'Manoj');
-        setJerseyColor(parsed.jerseyColor || '#00FF87');
+        setJerseyColor(parsed.jerseyColor || '#F59E0B');
         setJerseyNumber(parsed.jerseyNumber || '27');
         setBatGripColor(parsed.batGripColor || '#FF6B00');
       } catch (err) {
@@ -1255,7 +1255,7 @@ export function CricketGame() {
         ctx.stroke();
       } else if (selectedBatId === 'cyber') {
         // Cyber-Carbon: Carbon black with neon blue cyber glow
-        ctx.strokeStyle = '#00FF87'; // Cyber green grip
+        ctx.strokeStyle = '#F59E0B'; // Gold grip
         ctx.lineWidth = 2.2;
         ctx.beginPath();
         ctx.moveTo(0, 0);
@@ -1318,7 +1318,7 @@ export function CricketGame() {
         // Main Ball rendering: High contrast neon
         ctx.save();
         ctx.fillStyle = '#CCFF00'; // Neon yellow-lime
-        ctx.shadowColor = '#00FF87'; // Pitch green glow
+        ctx.shadowColor = '#F59E0B'; // Pitch gold glow
         ctx.shadowBlur = 20;
         ctx.beginPath();
         ctx.arc(ballXRef.current, ballYRef.current, 11, 0, Math.PI * 2);
@@ -1374,8 +1374,8 @@ export function CricketGame() {
       // 7. Draw Translucent Swing Fan
       if (batsmanSwingRef.current > 0) {
         ctx.save();
-        ctx.fillStyle = 'rgba(0, 255, 135, 0.12)';
-        ctx.strokeStyle = 'rgba(0, 255, 135, 0.4)';
+        ctx.fillStyle = 'rgba(245, 158, 11, 0.12)';
+        ctx.strokeStyle = 'rgba(245, 158, 11, 0.4)';
         ctx.lineWidth = 1.5;
         ctx.beginPath();
         ctx.moveTo(rx - 10, ry - 20);
@@ -1454,12 +1454,13 @@ export function CricketGame() {
           position: 'relative',
           width: '100%',
           maxWidth: '1200px',
-          borderRadius: '16px',
+          borderRadius: '20px',
           overflow: 'hidden',
           boxShadow: '0 15px 45px rgba(0, 0, 0, 0.85)',
-          backgroundColor: '#050A18',
-          border: '2px solid rgba(255, 255, 255, 0.08)',
+          backgroundColor: '#0a0a0a',
+          border: '1px solid rgba(245, 158, 11, 0.15)',
         }}
+        className="cricket-game-arena-wrapper"
       >
         {/* Fullscreen Overlay Close Button */}
         {isFullscreen && (
@@ -1581,18 +1582,15 @@ export function CricketGame() {
         {gameState === 'start' && (
           <div
             style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
               width: '100%',
-              height: '100%',
+              minHeight: '520px',
               zIndex: 15,
-              backgroundColor: 'rgba(5, 10, 24, 0.95)',
+              backgroundColor: 'rgba(10, 10, 10, 0.96)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
               alignItems: 'center',
-              padding: '30px',
+              padding: '40px 20px',
               textAlign: 'center',
             }}
           >
@@ -1605,7 +1603,7 @@ export function CricketGame() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', width: '100%', maxWidth: '300px', marginBottom: '24px' }}>
               {/* Game Modes */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              <div className="start-modes-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                 {(['endless', 'superover', 'survival', 'target', 'quick'] as const).map((mode) => (
                   <button
                     key={mode}
@@ -1615,7 +1613,7 @@ export function CricketGame() {
                       borderRadius: '6px',
                       border: '1px solid',
                       borderColor: gameMode === mode ? 'var(--primary)' : 'rgba(255,255,255,0.08)',
-                      backgroundColor: gameMode === mode ? 'rgba(0, 255, 135, 0.08)' : 'transparent',
+                      backgroundColor: gameMode === mode ? 'rgba(245, 158, 11, 0.08)' : 'transparent',
                       color: gameMode === mode ? 'var(--primary)' : '#FFF',
                       fontSize: '0.74rem',
                       fontWeight: 700,
@@ -1648,7 +1646,7 @@ export function CricketGame() {
                           borderRadius: '5px',
                           border: '1px solid',
                           borderColor: selectedOvers === overs ? 'var(--primary)' : 'rgba(255,255,255,0.08)',
-                          backgroundColor: selectedOvers === overs ? 'rgba(0, 255, 135, 0.08)' : 'transparent',
+                          backgroundColor: selectedOvers === overs ? 'rgba(245, 158, 11, 0.08)' : 'transparent',
                           color: selectedOvers === overs ? 'var(--primary)' : '#FFF',
                           fontSize: '0.75rem',
                           fontWeight: 700,
@@ -1664,7 +1662,7 @@ export function CricketGame() {
               )}
 
               {/* Difficulty */}
-              <div style={{ display: 'flex', gap: '8px' }}>
+              <div className="start-difficulty-row" style={{ display: 'flex', gap: '8px' }}>
                 {(['easy', 'medium', 'hard'] as const).map((diff) => (
                   <button
                     key={diff}
@@ -1675,7 +1673,7 @@ export function CricketGame() {
                       borderRadius: '5px',
                       border: '1px solid',
                       borderColor: difficulty === diff ? 'var(--primary)' : 'rgba(255,255,255,0.08)',
-                      backgroundColor: difficulty === diff ? 'rgba(0, 255, 135, 0.08)' : 'transparent',
+                      backgroundColor: difficulty === diff ? 'rgba(245, 158, 11, 0.08)' : 'transparent',
                       color: difficulty === diff ? 'var(--primary)' : '#FFF',
                       fontSize: '0.75rem',
                       fontWeight: 700,
@@ -1703,7 +1701,7 @@ export function CricketGame() {
                 fontSize: '1.5rem',
                 letterSpacing: '2px',
                 cursor: 'pointer',
-                boxShadow: '0 0 16px rgba(0, 255, 135, 0.4)',
+                boxShadow: '0 0 16px rgba(245, 158, 11, 0.4)',
                 transition: 'all 0.2s',
               }}
               className="interactive start-match-btn"
@@ -1717,18 +1715,15 @@ export function CricketGame() {
         {gameState === 'out' && (
           <div
             style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
               width: '100%',
-              height: '100%',
+              minHeight: '520px',
               zIndex: 15,
-              backgroundColor: 'rgba(5, 10, 24, 0.96)',
+              backgroundColor: 'rgba(10, 10, 10, 0.96)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
               alignItems: 'center',
-              padding: '30px',
+              padding: '40px 20px',
               textAlign: 'center',
             }}
           >
@@ -1781,7 +1776,7 @@ export function CricketGame() {
                   fontSize: '1.3rem',
                   letterSpacing: '1px',
                   cursor: 'pointer',
-                  boxShadow: '0 0 10px rgba(0, 255, 135, 0.3)',
+                  boxShadow: '0 0 10px rgba(245, 158, 11, 0.3)',
                 }}
                 className="interactive start-match-btn"
               >
@@ -1813,20 +1808,22 @@ export function CricketGame() {
         )}
 
         {/* Responsive Canvas */}
-        <canvas
-          ref={canvasRef}
-          width={480}
-          height={720}
-          style={{
-            display: 'block',
-            width: '100%',
-            maxWidth: '480px',
-            margin: '0 auto',
-            height: isFullscreen ? 'calc(100vh - 120px)' : 'auto', // Fits screen height in fullscreen mode
-            maxHeight: isFullscreen ? '78vh' : 'none',
-            aspectRatio: '48/72',
-          }}
-        />
+        {gameState === 'playing' && (
+          <canvas
+            ref={canvasRef}
+            width={480}
+            height={720}
+            style={{
+              display: 'block',
+              width: '100%',
+              maxWidth: '480px',
+              margin: '0 auto',
+              height: isFullscreen ? 'calc(100vh - 120px)' : 'auto', // Fits screen height in fullscreen mode
+              maxHeight: isFullscreen ? '78vh' : 'none',
+              aspectRatio: '48/72',
+            }}
+          />
+        )}
 
         {/* Bottom Panel */}
         {gameState === 'playing' && (
@@ -1842,7 +1839,7 @@ export function CricketGame() {
               boxSizing: 'border-box',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
+            <div className="game-hud-bottom-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                 <div style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '0.82rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   Bowling Style: <span style={{ color: 'var(--secondary)' }}>{deliveryName} DELIVERY</span>
@@ -1853,7 +1850,7 @@ export function CricketGame() {
               </div>
 
               {/* Actions */}
-              <div style={{ display: 'flex', gap: '10px' }}>
+              <div className="game-hud-actions" style={{ display: 'flex', gap: '10px' }}>
                 {!batsmanRunning ? (
                   <button
                     onClick={triggerRun}
@@ -1868,7 +1865,7 @@ export function CricketGame() {
                       fontSize: '1.1rem',
                       letterSpacing: '1px',
                       cursor: 'pointer',
-                      boxShadow: '0 0 10px rgba(0, 255, 135, 0.25)',
+                      boxShadow: '0 0 10px rgba(245, 158, 11, 0.25)',
                       opacity: ballStateRef.current === 'bowled' || ballStateRef.current === 'thrown' ? 0.35 : 1,
                     }}
                     className="interactive"

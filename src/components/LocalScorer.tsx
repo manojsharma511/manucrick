@@ -1803,14 +1803,14 @@ interface MatchAwardsResult {
   // Render match list in lobby
   if (!currentMatch && !viewingScorecard) {
     return (
-      <div style={{ width: '100%', maxWidth: '800px', margin: '0 auto', padding: '20px 10px' }} className="scroll-animate">
+      <div style={{ width: '100%', maxWidth: '800px', margin: '0 auto', padding: '20px 10px 100px' }} className="scroll-animate">
         {toast && (
-          <div style={{ position: 'fixed', bottom: '20px', right: '20px', backgroundColor: 'rgba(0, 255, 135, 0.95)', color: '#050A18', padding: '12px 24px', borderRadius: '8px', zIndex: 1000, fontWeight: 'bold', boxShadow: '0 0 15px rgba(0, 255, 135, 0.4)' }}>
+          <div style={{ position: 'fixed', bottom: '20px', right: '20px', backgroundColor: 'rgba(245, 158, 11, 0.95)', color: '#000', padding: '12px 24px', borderRadius: '8px', zIndex: 1000, fontWeight: 'bold', boxShadow: '0 0 15px rgba(245, 158, 11, 0.4)' }}>
             {toast.msg}
           </div>
         )}
 
-        <div className="glass-panel" style={{ padding: '30px', textAlign: 'center', marginBottom: '30px', border: '1.5px solid rgba(255,255,255,0.06)' }}>
+        <div className="glass-panel" style={{ padding: '30px', textAlign: 'center', marginBottom: '30px', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
           <h3 style={{ fontFamily: 'var(--font-headings)', fontSize: '2.5rem', color: '#FFF', letterSpacing: '1.5px', marginBottom: '8px' }}>
             LOCAL CRICKET SCORER
           </h3>
@@ -1842,9 +1842,9 @@ interface MatchAwardsResult {
 
         {/* Setup Match View Overlay Modal */}
         {showSetup && createPortal(
-          <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(5, 10, 24, 0.98)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px', overflowY: 'auto' }}>
-            <div className="glass-panel" style={{ width: '100%', maxWidth: '620px', padding: '30px', border: '2px solid rgba(255,255,255,0.08)', maxHeight: '90vh', overflowY: 'auto' }}>
-              <h4 style={{ fontFamily: 'var(--font-headings)', fontSize: '2.2rem', color: '#FFF', marginBottom: '20px', textAlign: 'center' }}>
+          <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(10, 10, 10, 0.98)', zIndex: 9999, overflowY: 'auto', padding: '20px 10px' }}>
+            <div className="glass-panel" style={{ width: '100%', maxWidth: '620px', padding: '25px', border: '1px solid rgba(245, 158, 11, 0.15)', margin: '40px auto' }}>
+              <h4 style={{ fontFamily: 'var(--font-headings)', fontSize: 'clamp(1.4rem, 5vw, 2.2rem)', color: '#FFF', marginBottom: '20px', textAlign: 'center' }}>
                 MATCH SETTINGS
               </h4>
               
@@ -2010,9 +2010,9 @@ interface MatchAwardsResult {
     const m = viewingScorecard;
 
     return (
-      <div style={{ width: '100%', maxWidth: '900px', margin: '0 auto', padding: '20px 10px' }} className="scroll-animate">
+      <div style={{ width: '100%', maxWidth: '900px', margin: '0 auto', padding: '20px 10px 100px' }} className="scroll-animate">
         {toast && (
-          <div style={{ position: 'fixed', bottom: '20px', right: '20px', backgroundColor: 'rgba(0, 255, 135, 0.95)', color: '#050A18', padding: '12px 24px', borderRadius: '8px', zIndex: 1000, fontWeight: 'bold' }}>
+          <div style={{ position: 'fixed', bottom: '20px', right: '20px', backgroundColor: 'rgba(245, 158, 11, 0.95)', color: '#000', padding: '12px 24px', borderRadius: '8px', zIndex: 1000, fontWeight: 'bold' }}>
             {toast.msg}
           </div>
         )}
@@ -2059,8 +2059,8 @@ interface MatchAwardsResult {
     }
 
     return (
-      <div style={{ width: '100%', maxWidth: '540px', margin: '0 auto', padding: '20px 10px' }} className="scroll-animate">
-        <div className="glass-panel" style={{ padding: '30px', border: '2px solid rgba(255,255,255,0.08)' }}>
+      <div style={{ width: '100%', maxWidth: '540px', margin: '0 auto', padding: '20px 10px 100px' }} className="scroll-animate">
+        <div className="glass-panel" style={{ padding: '30px', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
           <h4 style={{ fontFamily: 'var(--font-headings)', fontSize: '2rem', color: '#FFF', marginBottom: '20px', textAlign: 'center' }}>
             SELECT INNINGS OPENERS ({currentMatch.currentInnings === 1 ? '1st' : '2nd'} Innings)
           </h4>
@@ -2114,17 +2114,17 @@ interface MatchAwardsResult {
   const unbatted = currentMatch ? battingSquad.filter((p) => !Object.keys(getActiveInningsScore(currentMatch).batsmenStats).includes(p)) : [];
 
   return (
-    <div style={{ width: '100%', maxWidth: '850px', margin: '0 auto', padding: '20px 10px' }} className="scroll-animate">
+    <div style={{ width: '100%', maxWidth: '850px', margin: '0 auto', padding: '20px 10px 100px' }} className="scroll-animate">
       {toast && (
-        <div style={{ position: 'fixed', bottom: '20px', right: '20px', backgroundColor: 'rgba(0, 255, 135, 0.95)', color: '#050A18', padding: '12px 24px', borderRadius: '8px', zIndex: 1000, fontWeight: 'bold' }}>
+        <div style={{ position: 'fixed', bottom: '20px', right: '20px', backgroundColor: 'rgba(245, 158, 11, 0.95)', color: '#000', padding: '12px 24px', borderRadius: '8px', zIndex: 1000, fontWeight: 'bold' }}>
           {toast.msg}
         </div>
       )}
 
       {/* Over Complete Bowler Select Overlay Modal */}
       {showBowlerSelect && createPortal(
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(5, 10, 24, 0.97)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' }}>
-          <div className="glass-panel" style={{ width: '100%', maxWidth: '420px', padding: '28px', border: '2px solid rgba(255,255,255,0.08)' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(10, 10, 10, 0.97)', zIndex: 9999, overflowY: 'auto', padding: '20px 10px' }}>
+          <div className="glass-panel" style={{ width: '100%', maxWidth: '420px', padding: '25px', border: '1px solid rgba(245, 158, 11, 0.15)', margin: '40px auto' }}>
             <h4 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.8rem', color: '#FFF', marginBottom: '14px', textAlign: 'center' }}>
               🏏 OVER COMPLETE!
             </h4>
@@ -2148,8 +2148,8 @@ interface MatchAwardsResult {
 
       {/* No Ball Modal popup */}
       {showNoBallModal && createPortal(
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(5, 10, 24, 0.96)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' }}>
-          <div className="glass-panel" style={{ width: '100%', maxWidth: '420px', padding: '28px', border: '2px solid rgba(255,255,255,0.08)' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(10, 10, 10, 0.97)', zIndex: 9999, overflowY: 'auto', padding: '20px 10px' }}>
+          <div className="glass-panel" style={{ width: '100%', maxWidth: '420px', padding: '25px', border: '1px solid rgba(245, 158, 11, 0.15)', margin: '40px auto' }}>
             <h4 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.8rem', color: '#FFF', marginBottom: '14px', textAlign: 'center' }}>
               ⚡ NO BALL EXTRA
             </h4>
@@ -2167,7 +2167,7 @@ interface MatchAwardsResult {
                     borderRadius: '6px',
                     border: '1px solid',
                     borderColor: noBallOffBatRuns === r ? 'var(--primary)' : 'rgba(255,255,255,0.1)',
-                    backgroundColor: noBallOffBatRuns === r ? 'rgba(0, 255, 135, 0.15)' : 'transparent',
+                    backgroundColor: noBallOffBatRuns === r ? 'rgba(245, 158, 11, 0.15)' : 'transparent',
                     color: '#FFF',
                     fontWeight: 'bold',
                     fontSize: '1.1rem',
@@ -2192,8 +2192,8 @@ interface MatchAwardsResult {
 
       {/* Wicket Modal popup */}
       {showWicketModal && createPortal(
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(5, 10, 24, 0.96)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' }}>
-          <div className="glass-panel" style={{ width: '100%', maxWidth: '460px', padding: '28px', border: '2px solid rgba(255,255,255,0.08)' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(10, 10, 10, 0.97)', zIndex: 9999, overflowY: 'auto', padding: '20px 10px' }}>
+          <div className="glass-panel" style={{ width: '100%', maxWidth: '460px', padding: '25px', border: '1px solid rgba(245, 158, 11, 0.15)', margin: '40px auto' }}>
             <h4 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.8rem', color: '#FFF', marginBottom: '18px', textAlign: 'center' }}>
               🛑 LOG WICKET DISMISSAL
             </h4>
@@ -2255,7 +2255,7 @@ interface MatchAwardsResult {
                           borderRadius: '4px',
                           border: '1px solid',
                           borderColor: wicketFielder === player ? 'var(--primary)' : 'rgba(255,255,255,0.15)',
-                          backgroundColor: wicketFielder === player ? 'rgba(0, 255, 135, 0.15)' : 'rgba(255,255,255,0.02)',
+                          backgroundColor: wicketFielder === player ? 'rgba(245, 158, 11, 0.15)' : 'rgba(255,255,255,0.02)',
                           color: '#FFF',
                           fontSize: '0.8rem',
                           cursor: 'pointer',
@@ -2291,7 +2291,7 @@ interface MatchAwardsResult {
                           borderRadius: '6px',
                           border: '1px solid',
                           borderColor: wicketRunsCompleted === r ? 'var(--primary)' : 'rgba(255,255,255,0.1)',
-                          backgroundColor: wicketRunsCompleted === r ? 'rgba(0, 255, 135, 0.15)' : 'transparent',
+                          backgroundColor: wicketRunsCompleted === r ? 'rgba(245, 158, 11, 0.15)' : 'transparent',
                           color: '#FFF',
                           fontWeight: 'bold',
                           cursor: 'pointer'
@@ -2332,8 +2332,8 @@ interface MatchAwardsResult {
 
       {/* Wide Ball Modal popup */}
       {showWideModal && createPortal(
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(5, 10, 24, 0.96)', zIndex: 9999, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' }}>
-          <div className="glass-panel" style={{ width: '100%', maxWidth: '420px', padding: '28px', border: '2px solid rgba(255,255,255,0.08)' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(10, 10, 10, 0.97)', zIndex: 9999, overflowY: 'auto', padding: '20px 10px' }}>
+          <div className="glass-panel" style={{ width: '100%', maxWidth: '420px', padding: '25px', border: '1px solid rgba(245, 158, 11, 0.15)', margin: '40px auto' }}>
             <h4 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.8rem', color: '#FFF', marginBottom: '14px', textAlign: 'center' }}>
               ⚡ WIDE BALL EXTRA
             </h4>
@@ -2351,7 +2351,7 @@ interface MatchAwardsResult {
                     borderRadius: '6px',
                     border: '1px solid',
                     borderColor: wideExtraRuns === r ? 'var(--primary)' : 'rgba(255,255,255,0.1)',
-                    backgroundColor: wideExtraRuns === r ? 'rgba(0, 255, 135, 0.15)' : 'transparent',
+                    backgroundColor: wideExtraRuns === r ? 'rgba(245, 158, 11, 0.15)' : 'transparent',
                     color: '#FFF',
                     fontWeight: 'bold',
                     fontSize: '1.1rem',
@@ -2454,7 +2454,7 @@ interface MatchAwardsResult {
             </div>
 
             {/* Live Match Info Ticker */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', backgroundColor: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.04)', borderRadius: '6px', padding: '10px 15px', marginBottom: '20px', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+            <div className="scorer-info-ticker" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', backgroundColor: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.04)', borderRadius: '6px', padding: '10px 15px', marginBottom: '20px', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
               <div style={{ textAlign: 'center' }}>
                 <div>RUN RATE (CRR)</div>
                 <div style={{ fontWeight: 'bold', color: '#FFF', fontSize: '1rem', marginTop: '2px' }}>

@@ -305,7 +305,7 @@ export function PracticeNets() {
       ctx.fill();
 
       // Side nets lines
-      ctx.strokeStyle = 'rgba(0, 255, 135, 0.1)';
+      ctx.strokeStyle = 'rgba(245, 158, 11, 0.1)';
       ctx.lineWidth = 1;
       for (let i = 0; i < 600; i += 20) {
         ctx.beginPath();
@@ -370,7 +370,7 @@ export function PracticeNets() {
         ctx.lineTo(-24, -16);
         ctx.stroke();
       } else if (selectedBatId === 'cyber') {
-        ctx.strokeStyle = '#00FF87'; // Green grip
+        ctx.strokeStyle = '#F59E0B'; // Gold grip
         ctx.lineWidth = 2.2;
         ctx.beginPath();
         ctx.moveTo(0, 0);
@@ -427,7 +427,7 @@ export function PracticeNets() {
         // Draw main ball (neon yellow-lime, size 11)
         ctx.save();
         ctx.fillStyle = '#CCFF00';
-        ctx.shadowColor = '#00FF87';
+        ctx.shadowColor = '#F59E0B';
         ctx.shadowBlur = 18;
         ctx.beginPath();
         ctx.arc(ballXRef.current, ballYRef.current, 11, 0, Math.PI * 2);
@@ -443,8 +443,8 @@ export function PracticeNets() {
       // Draw Translucent Swing Fan in nets
       if (batsmanSwingRef.current > 0) {
         ctx.save();
-        ctx.fillStyle = 'rgba(0, 255, 135, 0.12)';
-        ctx.strokeStyle = 'rgba(0, 255, 135, 0.4)';
+        ctx.fillStyle = 'rgba(245, 158, 11, 0.12)';
+        ctx.strokeStyle = 'rgba(245, 158, 11, 0.4)';
         ctx.lineWidth = 1.2;
         ctx.beginPath();
         ctx.moveTo(tx - 8, ty - 20);
@@ -586,23 +586,19 @@ export function PracticeNets() {
         flexDirection: 'column',
         alignItems: 'center',
         width: '100%',
-        margin: '20px 0',
+        maxWidth: '480px',
+        margin: '0 auto',
+        borderRadius: '20px',
+        overflow: 'hidden',
+        backgroundColor: '#0a0a0a',
+        border: '1px solid rgba(245, 158, 11, 0.15)',
+        boxShadow: '0 12px 40px rgba(0,0,0,0.8)',
+        position: 'relative',
       }}
+      className="practice-nets-arena-wrapper"
       tabIndex={0}
       onKeyDown={handleKeyStrike}
     >
-      <div
-        style={{
-          width: '100%',
-          maxWidth: '800px',
-          borderRadius: '16px',
-          overflow: 'hidden',
-          backgroundColor: '#050A18',
-          border: '2px solid rgba(255,255,255,0.08)',
-          boxShadow: '0 12px 40px rgba(0,0,0,0.8)',
-          position: 'relative',
-        }}
-      >
         {/* HUD controls */}
         <div className="responsive-nets-hud">
           <div style={{ color: '#FFFFFF', fontWeight: 700, fontFamily: 'var(--font-body)', fontSize: '0.9rem', letterSpacing: '1px' }}>
@@ -620,7 +616,7 @@ export function PracticeNets() {
                   borderRadius: '4px',
                   border: '1px solid',
                   borderColor: deliveryType === type ? 'var(--primary)' : 'rgba(255,255,255,0.1)',
-                  backgroundColor: deliveryType === type ? 'rgba(0, 255, 135, 0.1)' : 'transparent',
+                  backgroundColor: deliveryType === type ? 'rgba(245, 158, 11, 0.1)' : 'transparent',
                   color: deliveryType === type ? 'var(--primary)' : '#FFF',
                   fontSize: '0.74rem',
                   fontWeight: 700,
@@ -682,7 +678,7 @@ export function PracticeNets() {
                   overflow: 'hidden',
                 }}
               >
-                <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', width: '20%', height: '100%', backgroundColor: 'rgba(0, 255, 135, 0.25)', borderLeft: '1px dashed var(--primary)', borderRight: '1px dashed var(--primary)' }} />
+                <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', width: '20%', height: '100%', backgroundColor: 'rgba(245, 158, 11, 0.25)', borderLeft: '1px dashed var(--primary)', borderRight: '1px dashed var(--primary)' }} />
                 
                 {/* User strike marker */}
                 <div
@@ -729,6 +725,5 @@ export function PracticeNets() {
           </div>
         </div>
       </div>
-    </div>
   );
 }

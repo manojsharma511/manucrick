@@ -141,7 +141,7 @@ function App() {
         <Preloader onComplete={() => setLoading(false)} />
       ) : (
         <div style={{ position: 'relative', width: '100%', minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#060814', color: '#F8FAFC' }}>
-          
+
           {/* HEADER NAV */}
           <nav
             style={{
@@ -174,18 +174,18 @@ function App() {
               className="interactive"
             >
               <CyberLogo width={150} height={44} />
-              
-              <span 
-                style={{ 
-                  fontFamily: 'var(--font-data)', 
-                  fontSize: '0.68rem', 
-                  color: 'var(--primary)', 
-                  border: '1px solid rgba(99, 102, 241, 0.3)',
+
+              <span
+                style={{
+                  fontFamily: 'var(--font-data)',
+                  fontSize: '0.68rem',
+                  color: 'var(--primary)',
+                  border: '1px solid rgba(245, 158, 11, 0.3)',
                   padding: '2px 8px',
                   borderRadius: '6px',
                   marginLeft: '15px',
                   letterSpacing: '1px',
-                  background: 'rgba(99, 102, 241, 0.06)'
+                  background: 'rgba(245, 158, 11, 0.06)'
                 }}
                 className="desktop-only"
               >
@@ -193,47 +193,88 @@ function App() {
               </span>
             </div>
 
-            {/* Desktop Quick Tools */}
+            {/* Desktop Dropdown Navigation Menu */}
             <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '20px',
+                gap: '8px',
               }}
               className="desktop-only"
             >
-              {/* Technical Search Field */}
-              <div 
-                style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  backgroundColor: 'rgba(255,255,255,0.02)',
-                  padding: '8px 16px',
-                  borderRadius: '12px',
-                  border: '1px solid rgba(255, 255, 255, 0.06)',
-                }}
+              <button
+                onClick={() => handleTabTransition('home')}
+                className={`nav-direct-link interactive ${currentTab === 'home' ? 'active' : ''}`}
+                style={{ cursor: 'none' }}
               >
-                <span className="material-symbols-outlined" style={{ fontSize: '16px', color: 'var(--accent)', marginRight: '8px' }}>search</span>
-                <input 
-                  type="text" 
-                  placeholder="FIND MATCH..."
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    outline: 'none',
-                    color: '#FFF',
-                    fontFamily: 'var(--font-data)',
-                    fontSize: '0.72rem',
-                    width: '120px',
-                    letterSpacing: '1px'
-                  }}
-                  className="interactive"
-                  readOnly
-                  onClick={() => triggerToast('Search system online. Searching current active servers...', 'info')}
-                />
+                Dashboard
+              </button>
+
+              {/* Play Arena Dropdown */}
+              <div className="nav-dropdown">
+                <button className="nav-dropdown-trigger interactive" style={{ cursor: 'none' }}>
+                  Play Arena <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>keyboard_arrow_down</span>
+                </button>
+                <div className="nav-dropdown-menu">
+                  <button onClick={() => handleTabTransition('play')} className={`nav-dropdown-item interactive ${currentTab === 'play' ? 'active' : ''}`} style={{ cursor: 'none' }}>
+                    🏏 Play Game
+                  </button>
+                  <button onClick={() => handleTabTransition('practice')} className={`nav-dropdown-item interactive ${currentTab === 'practice' ? 'active' : ''}`} style={{ cursor: 'none' }}>
+                    🥎 Practice Nets
+                  </button>
+                  <button onClick={() => handleTabTransition('arcade')} className={`nav-dropdown-item interactive ${currentTab === 'arcade' ? 'active' : ''}`} style={{ cursor: 'none' }}>
+                    🕹️ Arcade Hub
+                  </button>
+                </div>
               </div>
 
-              {/* Bold premium CTA button */}
+              {/* Gully Tools Dropdown */}
+              <div className="nav-dropdown">
+                <button className="nav-dropdown-trigger interactive" style={{ cursor: 'none' }}>
+                  Gully Tools <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>keyboard_arrow_down</span>
+                </button>
+                <div className="nav-dropdown-menu">
+                  <button onClick={() => handleTabTransition('scorer')} className={`nav-dropdown-item interactive ${currentTab === 'scorer' ? 'active' : ''}`} style={{ cursor: 'none' }}>
+                    📊 Live Scorer
+                  </button>
+                  <button onClick={() => handleTabTransition('toss')} className={`nav-dropdown-item interactive ${currentTab === 'toss' ? 'active' : ''}`} style={{ cursor: 'none' }}>
+                    🪙 Coin Flipper
+                  </button>
+                  <button onClick={() => handleTabTransition('tournament')} className={`nav-dropdown-item interactive ${currentTab === 'tournament' ? 'active' : ''}`} style={{ cursor: 'none' }}>
+                    🏆 Bracket Builder
+                  </button>
+                  <button onClick={() => handleTabTransition('players')} className={`nav-dropdown-item interactive ${currentTab === 'players' ? 'active' : ''}`} style={{ cursor: 'none' }}>
+                    👤 Player Stats
+                  </button>
+                </div>
+              </div>
+
+              {/* Clubhouse Dropdown */}
+              <div className="nav-dropdown">
+                <button className="nav-dropdown-trigger interactive" style={{ cursor: 'none' }}>
+                  Clubhouse <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>keyboard_arrow_down</span>
+                </button>
+                <div className="nav-dropdown-menu">
+                  <button onClick={() => handleTabTransition('academy')} className={`nav-dropdown-item interactive ${currentTab === 'academy' ? 'active' : ''}`} style={{ cursor: 'none' }}>
+                    🎖️ Trophy Cabinet
+                  </button>
+                  <button onClick={() => handleTabTransition('leaderboard')} className={`nav-dropdown-item interactive ${currentTab === 'leaderboard' ? 'active' : ''}`} style={{ cursor: 'none' }}>
+                    📈 Leaderboard
+                  </button>
+                </div>
+              </div>
+
+              <button
+                onClick={() => handleTabTransition('contact')}
+                className={`nav-direct-link interactive ${currentTab === 'contact' ? 'active' : ''}`}
+                style={{ cursor: 'none' }}
+              >
+                Contact
+              </button>
+            </div>
+
+            {/* Right Action buttons */}
+            <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
               <button
                 onClick={() => handleTabTransition('play')}
                 className="interactive nav-play-now-btn"
@@ -270,107 +311,7 @@ function App() {
             </button>
           </nav>
 
-          {/* FLOATING DESKTOP SIDEBAR DOCK */}
-          <aside className="sidebar-hud desktop-only">
-            <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-              <div style={{ marginBottom: '30px', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '20px' }}>
-                <h2 style={{ fontFamily: 'var(--font-headings)', color: '#FFF', fontSize: '1.25rem', margin: '0 0 4px 0', fontWeight: 800, letterSpacing: '1px' }}>Stadium OS</h2>
-                <p style={{ fontFamily: 'var(--font-data)', fontSize: '0.62rem', color: 'var(--accent)', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--accent)', display: 'inline-block', boxShadow: '0 0 8px var(--accent)' }}></span>
-                  SYSTEM ONLINE • V2.5
-                </p>
-              </div>
 
-              {/* Navigation Items grouped */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', flexGrow: 1, overflowY: 'auto', paddingRight: '4px' }} className="table-scroll-container">
-                <div>
-                  <span style={{ fontFamily: 'var(--font-data)', fontSize: '0.66rem', color: 'var(--primary)', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, display: 'block', marginBottom: '8px', paddingLeft: '8px' }}>Play Arena</span>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <button onClick={() => handleTabTransition('play')} className={`sidebar-btn interactive ${currentTab === 'play' ? 'active' : ''}`}>
-                      <span className="material-symbols-outlined">sports_cricket</span>
-                      Play Game
-                    </button>
-                    <button onClick={() => handleTabTransition('practice')} className={`sidebar-btn interactive ${currentTab === 'practice' ? 'active' : ''}`}>
-                      <span className="material-symbols-outlined">sports_baseball</span>
-                      Practice Nets
-                    </button>
-                    <button onClick={() => handleTabTransition('arcade')} className={`sidebar-btn interactive ${currentTab === 'arcade' ? 'active' : ''}`}>
-                      <span className="material-symbols-outlined">videogame_asset</span>
-                      Arcade Hub
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <span style={{ fontFamily: 'var(--font-data)', fontSize: '0.66rem', color: 'var(--secondary)', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, display: 'block', marginBottom: '8px', paddingLeft: '8px' }}>Gully Tools</span>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <button onClick={() => handleTabTransition('toss')} className={`sidebar-btn interactive ${currentTab === 'toss' ? 'active' : ''}`}>
-                      <span className="material-symbols-outlined">monetization_on</span>
-                      Coin Flipper
-                    </button>
-                    <button onClick={() => handleTabTransition('scorer')} className={`sidebar-btn interactive ${currentTab === 'scorer' ? 'active' : ''}`}>
-                      <span className="material-symbols-outlined">analytics</span>
-                      Live Scorer
-                    </button>
-                    <button onClick={() => handleTabTransition('tournament')} className={`sidebar-btn interactive ${currentTab === 'tournament' ? 'active' : ''}`}>
-                      <span className="material-symbols-outlined">account_tree</span>
-                      Bracket Builder
-                    </button>
-                    <button onClick={() => handleTabTransition('players')} className={`sidebar-btn interactive ${currentTab === 'players' ? 'active' : ''}`}>
-                      <span className="material-symbols-outlined">monitoring</span>
-                      Player Stats
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <span style={{ fontFamily: 'var(--font-data)', fontSize: '0.66rem', color: 'var(--accent)', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, display: 'block', marginBottom: '8px', paddingLeft: '8px' }}>Clubhouse</span>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <button onClick={() => handleTabTransition('academy')} className={`sidebar-btn interactive ${currentTab === 'academy' ? 'active' : ''}`}>
-                      <span className="material-symbols-outlined">military_tech</span>
-                      Trophy Cabinet
-                    </button>
-                    <button onClick={() => handleTabTransition('leaderboard')} className={`sidebar-btn interactive ${currentTab === 'leaderboard' ? 'active' : ''}`}>
-                      <span className="material-symbols-outlined">leaderboard</span>
-                      Leaderboard
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <span style={{ fontFamily: 'var(--font-data)', fontSize: '0.66rem', color: 'rgba(255,255,255,0.4)', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700, display: 'block', marginBottom: '8px', paddingLeft: '8px' }}>Info</span>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <button onClick={() => handleTabTransition('contact')} className={`sidebar-btn interactive ${currentTab === 'contact' ? 'active' : ''}`}>
-                      <span className="material-symbols-outlined">contact_page</span>
-                      Contact & Bio
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Sidebar Profile Card */}
-              <div 
-                style={{ 
-                  borderTop: '1px solid rgba(255,255,255,0.06)', 
-                  paddingTop: '15px', 
-                  marginTop: '15px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px'
-                }}
-              >
-                <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--primary), var(--secondary))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#FFF', fontSize: '0.8rem', flexShrink: 0 }}>
-                  MS
-                </div>
-                <div style={{ overflow: 'hidden' }}>
-                  <div style={{ fontSize: '0.82rem', fontWeight: 'bold', color: '#FFF', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>Manoj K. Sharma</div>
-                  <a href="https://manojkumarsharma.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.68rem', color: 'var(--accent)', cursor: 'none', display: 'block' }} className="interactive hover-underline">
-                    View Portfolio
-                  </a>
-                </div>
-              </div>
-            </div>
-          </aside>
 
           {/* APP BOTTOM NAVIGATION FOR MOBILE */}
           <nav className="bottom-nav-dock">
@@ -398,69 +339,315 @@ function App() {
 
           {/* MOBILE DRAWER NAVIGATION MENU */}
           {mobileMenuOpen && (
-            <div 
-              style={{ 
-                position: 'fixed', 
-                top: 0, 
-                left: 0, 
-                width: '100vw', 
-                height: '100vh', 
-                background: 'rgba(6, 8, 20, 0.96)', 
-                backdropFilter: 'blur(30px)', 
-                WebkitBackdropFilter: 'blur(30px)', 
-                zIndex: 998, 
-                display: 'flex', 
-                flexDirection: 'column', 
-                padding: '100px 30px 50px',
+            <div
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100vw',
+                height: '100vh',
+                background: 'rgba(6, 8, 20, 0.98)',
+                backdropFilter: 'blur(30px)',
+                WebkitBackdropFilter: 'blur(30px)',
+                zIndex: 998,
+                display: 'flex',
+                flexDirection: 'column',
+                padding: '90px 24px 40px',
                 animation: 'tabTransition 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)'
               }}
             >
-              <h3 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.4rem', color: '#FFF', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '10px', marginBottom: '20px' }}>
-                NAVIGATE STADIUM
-              </h3>
+              {/* Header inside menu */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '15px', marginBottom: '20px' }}>
+                <h3 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.2rem', color: '#FFF', margin: 0, letterSpacing: '1px' }}>
+                  NAVIGATE STADIUM
+                </h3>
+                <button
+                  onClick={() => setMobileMenuOpen(false)}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.04)',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'none',
+                    color: '#FFF'
+                  }}
+                  className="interactive"
+                  aria-label="Close menu"
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>close</span>
+                </button>
+              </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', flexGrow: 1, overflowY: 'auto' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <span style={{ fontSize: '0.75rem', fontFamily: 'var(--font-data)', color: 'var(--primary)', letterSpacing: '1px', textTransform: 'uppercase' }}>Play Arena</span>
-                  <button onClick={() => handleTabTransition('play')} className="mobile-nav-subitem" style={{ textAlign: 'left', fontSize: '1.15rem' }}>🏏 Play Game</button>
-                  <button onClick={() => handleTabTransition('practice')} className="mobile-nav-subitem" style={{ textAlign: 'left', fontSize: '1.15rem' }}>🥎 Practice Nets</button>
-                  <button onClick={() => handleTabTransition('arcade')} className="mobile-nav-subitem" style={{ textAlign: 'left', fontSize: '1.15rem' }}>🕹️ Arcade Hub</button>
+              {/* Scrollable single column categories list */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', flexGrow: 1, overflowY: 'auto', paddingRight: '6px', paddingBottom: '30px' }}>
+
+                {/* Play Arena Group */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <span style={{ fontSize: '0.68rem', fontFamily: 'var(--font-data)', color: 'var(--primary)', letterSpacing: '2px', textTransform: 'uppercase', paddingLeft: '8px' }}>
+                    Play Arena
+                  </span>
+                  <button
+                    onClick={() => handleTabTransition('play')}
+                    className="mobile-nav-subitem interactive"
+                    style={{
+                      textAlign: 'left',
+                      fontSize: '1.25rem',
+                      padding: '8px 14px',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      cursor: 'none',
+                      borderLeft: currentTab === 'play' ? '3px solid var(--primary)' : '3px solid transparent',
+                      background: currentTab === 'play' ? 'rgba(245, 158, 11, 0.06)' : 'none',
+                      color: currentTab === 'play' ? 'var(--primary)' : 'var(--text-primary)',
+                      fontFamily: 'var(--font-headings)'
+                    }}
+                  >
+                    🏏 Play Game
+                  </button>
+                  <button
+                    onClick={() => handleTabTransition('practice')}
+                    className="mobile-nav-subitem interactive"
+                    style={{
+                      textAlign: 'left',
+                      fontSize: '1.25rem',
+                      padding: '8px 14px',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      cursor: 'none',
+                      borderLeft: currentTab === 'practice' ? '3px solid var(--primary)' : '3px solid transparent',
+                      background: currentTab === 'practice' ? 'rgba(245, 158, 11, 0.06)' : 'none',
+                      color: currentTab === 'practice' ? 'var(--primary)' : 'var(--text-primary)',
+                      fontFamily: 'var(--font-headings)'
+                    }}
+                  >
+                    🥎 Practice Nets
+                  </button>
+                  <button
+                    onClick={() => handleTabTransition('arcade')}
+                    className="mobile-nav-subitem interactive"
+                    style={{
+                      textAlign: 'left',
+                      fontSize: '1.25rem',
+                      padding: '8px 14px',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      cursor: 'none',
+                      borderLeft: currentTab === 'arcade' ? '3px solid var(--primary)' : '3px solid transparent',
+                      background: currentTab === 'arcade' ? 'rgba(245, 158, 11, 0.06)' : 'none',
+                      color: currentTab === 'arcade' ? 'var(--primary)' : 'var(--text-primary)',
+                      fontFamily: 'var(--font-headings)'
+                    }}
+                  >
+                    🕹️ Arcade Hub
+                  </button>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <span style={{ fontSize: '0.75rem', fontFamily: 'var(--font-data)', color: 'var(--secondary)', letterSpacing: '1px', textTransform: 'uppercase' }}>Gully Tools</span>
-                  <button onClick={() => handleTabTransition('toss')} className="mobile-nav-subitem" style={{ textAlign: 'left', fontSize: '1.15rem' }}>🪙 Coin Flipper</button>
-                  <button onClick={() => handleTabTransition('scorer')} className="mobile-nav-subitem" style={{ textAlign: 'left', fontSize: '1.15rem' }}>📊 Live Scorer</button>
-                  <button onClick={() => handleTabTransition('tournament')} className="mobile-nav-subitem" style={{ textAlign: 'left', fontSize: '1.15rem' }}>🏆 Tournament</button>
-                  <button onClick={() => handleTabTransition('players')} className="mobile-nav-subitem" style={{ textAlign: 'left', fontSize: '1.15rem' }}>👤 Player Stats</button>
+                {/* Gully Tools Group */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <span style={{ fontSize: '0.68rem', fontFamily: 'var(--font-data)', color: 'var(--secondary)', letterSpacing: '2px', textTransform: 'uppercase', paddingLeft: '8px' }}>
+                    Gully Tools
+                  </span>
+                  <button
+                    onClick={() => handleTabTransition('scorer')}
+                    className="mobile-nav-subitem interactive"
+                    style={{
+                      textAlign: 'left',
+                      fontSize: '1.25rem',
+                      padding: '8px 14px',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      cursor: 'none',
+                      borderLeft: currentTab === 'scorer' ? '3px solid var(--primary)' : '3px solid transparent',
+                      background: currentTab === 'scorer' ? 'rgba(245, 158, 11, 0.06)' : 'none',
+                      color: currentTab === 'scorer' ? 'var(--primary)' : 'var(--text-primary)',
+                      fontFamily: 'var(--font-headings)'
+                    }}
+                  >
+                    📊 Live Scorer
+                  </button>
+                  <button
+                    onClick={() => handleTabTransition('toss')}
+                    className="mobile-nav-subitem interactive"
+                    style={{
+                      textAlign: 'left',
+                      fontSize: '1.25rem',
+                      padding: '8px 14px',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      cursor: 'none',
+                      borderLeft: currentTab === 'toss' ? '3px solid var(--primary)' : '3px solid transparent',
+                      background: currentTab === 'toss' ? 'rgba(245, 158, 11, 0.06)' : 'none',
+                      color: currentTab === 'toss' ? 'var(--primary)' : 'var(--text-primary)',
+                      fontFamily: 'var(--font-headings)'
+                    }}
+                  >
+                    🪙 Coin Flipper
+                  </button>
+                  <button
+                    onClick={() => handleTabTransition('tournament')}
+                    className="mobile-nav-subitem interactive"
+                    style={{
+                      textAlign: 'left',
+                      fontSize: '1.25rem',
+                      padding: '8px 14px',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      cursor: 'none',
+                      borderLeft: currentTab === 'tournament' ? '3px solid var(--primary)' : '3px solid transparent',
+                      background: currentTab === 'tournament' ? 'rgba(245, 158, 11, 0.06)' : 'none',
+                      color: currentTab === 'tournament' ? 'var(--primary)' : 'var(--text-primary)',
+                      fontFamily: 'var(--font-headings)'
+                    }}
+                  >
+                    🏆 Bracket Builder
+                  </button>
+                  <button
+                    onClick={() => handleTabTransition('players')}
+                    className="mobile-nav-subitem interactive"
+                    style={{
+                      textAlign: 'left',
+                      fontSize: '1.25rem',
+                      padding: '8px 14px',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      cursor: 'none',
+                      borderLeft: currentTab === 'players' ? '3px solid var(--primary)' : '3px solid transparent',
+                      background: currentTab === 'players' ? 'rgba(245, 158, 11, 0.06)' : 'none',
+                      color: currentTab === 'players' ? 'var(--primary)' : 'var(--text-primary)',
+                      fontFamily: 'var(--font-headings)'
+                    }}
+                  >
+                    👤 Player Stats
+                  </button>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <span style={{ fontSize: '0.75rem', fontFamily: 'var(--font-data)', color: 'var(--accent)', letterSpacing: '1px', textTransform: 'uppercase' }}>Clubhouse</span>
-                  <button onClick={() => handleTabTransition('academy')} className="mobile-nav-subitem" style={{ textAlign: 'left', fontSize: '1.15rem' }}>🎖️ Cabinet</button>
-                  <button onClick={() => handleTabTransition('leaderboard')} className="mobile-nav-subitem" style={{ textAlign: 'left', fontSize: '1.15rem' }}>📈 Leaderboard</button>
+                {/* Clubhouse Group */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <span style={{ fontSize: '0.68rem', fontFamily: 'var(--font-data)', color: 'var(--accent)', letterSpacing: '2px', textTransform: 'uppercase', paddingLeft: '8px' }}>
+                    Clubhouse
+                  </span>
+                  <button
+                    onClick={() => handleTabTransition('academy')}
+                    className="mobile-nav-subitem interactive"
+                    style={{
+                      textAlign: 'left',
+                      fontSize: '1.25rem',
+                      padding: '8px 14px',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      cursor: 'none',
+                      borderLeft: currentTab === 'academy' ? '3px solid var(--primary)' : '3px solid transparent',
+                      background: currentTab === 'academy' ? 'rgba(245, 158, 11, 0.06)' : 'none',
+                      color: currentTab === 'academy' ? 'var(--primary)' : 'var(--text-primary)',
+                      fontFamily: 'var(--font-headings)'
+                    }}
+                  >
+                    🎖️ Trophy Cabinet
+                  </button>
+                  <button
+                    onClick={() => handleTabTransition('leaderboard')}
+                    className="mobile-nav-subitem interactive"
+                    style={{
+                      textAlign: 'left',
+                      fontSize: '1.25rem',
+                      padding: '8px 14px',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      cursor: 'none',
+                      borderLeft: currentTab === 'leaderboard' ? '3px solid var(--primary)' : '3px solid transparent',
+                      background: currentTab === 'leaderboard' ? 'rgba(245, 158, 11, 0.06)' : 'none',
+                      color: currentTab === 'leaderboard' ? 'var(--primary)' : 'var(--text-primary)',
+                      fontFamily: 'var(--font-headings)'
+                    }}
+                  >
+                    📈 Leaderboard
+                  </button>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <span style={{ fontSize: '0.75rem', fontFamily: 'var(--font-data)', color: 'rgba(255,255,255,0.4)', letterSpacing: '1px', textTransform: 'uppercase' }}>General</span>
-                  <button onClick={() => handleTabTransition('home')} className="mobile-nav-subitem" style={{ textAlign: 'left', fontSize: '1.15rem' }}>🏠 Dashboard</button>
-                  <button onClick={() => handleTabTransition('contact')} className="mobile-nav-subitem" style={{ textAlign: 'left', fontSize: '1.15rem' }}>📬 Contact</button>
+                {/* General Group */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <span style={{ fontSize: '0.68rem', fontFamily: 'var(--font-data)', color: 'rgba(255,255,255,0.4)', letterSpacing: '2px', textTransform: 'uppercase', paddingLeft: '8px' }}>
+                    General
+                  </span>
+                  <button
+                    onClick={() => handleTabTransition('home')}
+                    className="mobile-nav-subitem interactive"
+                    style={{
+                      textAlign: 'left',
+                      fontSize: '1.25rem',
+                      padding: '8px 14px',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      cursor: 'none',
+                      borderLeft: currentTab === 'home' ? '3px solid var(--primary)' : '3px solid transparent',
+                      background: currentTab === 'home' ? 'rgba(245, 158, 11, 0.06)' : 'none',
+                      color: currentTab === 'home' ? 'var(--primary)' : 'var(--text-primary)',
+                      fontFamily: 'var(--font-headings)'
+                    }}
+                  >
+                    🏠 Dashboard
+                  </button>
+                  <button
+                    onClick={() => handleTabTransition('contact')}
+                    className="mobile-nav-subitem interactive"
+                    style={{
+                      textAlign: 'left',
+                      fontSize: '1.25rem',
+                      padding: '8px 14px',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      cursor: 'none',
+                      borderLeft: currentTab === 'contact' ? '3px solid var(--primary)' : '3px solid transparent',
+                      background: currentTab === 'contact' ? 'rgba(245, 158, 11, 0.06)' : 'none',
+                      color: currentTab === 'contact' ? 'var(--primary)' : 'var(--text-primary)',
+                      fontFamily: 'var(--font-headings)'
+                    }}
+                  >
+                    📬 Contact
+                  </button>
                 </div>
+
               </div>
 
               {/* Mobile Drawer Footer */}
-              <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Manoj Kumar Sharma &copy; 2026</span>
-                <a 
-                  href="https://manojkumarsharma.vercel.app/" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  style={{ 
-                    fontSize: '0.78rem', 
-                    color: 'var(--primary)', 
-                    fontWeight: 'bold', 
-                    border: '1px solid var(--primary)', 
-                    padding: '6px 12px', 
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>Manoj Kumar Sharma &copy; 2026</span>
+                <a
+                  href="https://manojkumarsharma.vercel.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    fontSize: '0.74rem',
+                    color: 'var(--primary)',
+                    fontWeight: 'bold',
+                    border: '1px solid var(--primary)',
+                    padding: '5px 10px',
                     borderRadius: '8px',
                     cursor: 'none'
                   }}
@@ -479,7 +666,7 @@ function App() {
 
           {/* MAIN CONTENT CANVAS */}
           <main className="main-canvas-hud">
-            
+
             {/* TAB VIEW 1: HOME PAGE */}
             {currentTab === 'home' && (
               <div style={{ animation: 'tabTransition 0.5s ease-out', position: 'relative' }}>
@@ -507,19 +694,19 @@ function App() {
                 >
                   {/* Left Hero side */}
                   <div style={{ flex: '1.2', minWidth: '320px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', zIndex: 5, textAlign: 'left' }}>
-                    <div 
-                      style={{ 
-                        fontFamily: 'var(--font-data)', 
-                        fontWeight: 700, 
-                        fontSize: '0.72rem', 
-                        letterSpacing: '4px', 
-                        color: 'var(--accent)', 
-                        marginBottom: '18px', 
+                    <div
+                      style={{
+                        fontFamily: 'var(--font-data)',
+                        fontWeight: 700,
+                        fontSize: '0.72rem',
+                        letterSpacing: '4px',
+                        color: 'var(--accent)',
+                        marginBottom: '18px',
                         textTransform: 'uppercase',
-                        border: '1px solid rgba(6, 182, 212, 0.3)',
+                        border: '1px solid rgba(249, 115, 22, 0.3)',
                         padding: '6px 14px',
                         borderRadius: '20px',
-                        backgroundColor: 'rgba(6, 182, 212, 0.04)'
+                        backgroundColor: 'rgba(249, 115, 22, 0.04)'
                       }}
                     >
                       THE ULTIMATE WEB CRICKET ARENA
@@ -553,7 +740,7 @@ function App() {
                           letterSpacing: '1.5px',
                           cursor: 'none',
                           borderRadius: '14px',
-                          boxShadow: '0 10px 25px rgba(99, 102, 241, 0.35)',
+                          boxShadow: '0 10px 25px rgba(245, 158, 11, 0.35)',
                           transition: 'transform 0.1s ease',
                         }}
                         className="interactive magnetic-btn btn-pulse"
@@ -642,10 +829,10 @@ function App() {
                       {/* Grid Item 1: Running */}
                       <div className="glass-panel bento-card-7" style={{ minHeight: '260px', padding: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', textAlign: 'left', borderRadius: '20px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                          <div style={{ width: '48px', height: '48px', backgroundColor: 'rgba(99, 102, 241, 0.08)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(99, 102, 241, 0.15)' }}>
+                          <div style={{ width: '48px', height: '48px', backgroundColor: 'rgba(245, 158, 11, 0.08)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
                             <span className="material-symbols-outlined" style={{ fontSize: '26px', color: 'var(--primary)' }}>directions_run</span>
                           </div>
-                          <span style={{ fontSize: '0.68rem', fontFamily: 'var(--font-data)', color: 'var(--primary)', border: '1px solid rgba(99, 102, 241, 0.2)', padding: '2px 8px', borderRadius: '6px' }}>MANUAL RUNNING</span>
+                          <span style={{ fontSize: '0.68rem', fontFamily: 'var(--font-data)', color: 'var(--primary)', border: '1px solid rgba(245, 158, 11, 0.2)', padding: '2px 8px', borderRadius: '6px' }}>MANUAL RUNNING</span>
                         </div>
                         <div>
                           <h3 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.25rem', margin: '15px 0 8px 0', fontWeight: 'bold' }}>Interactive Running</h3>
@@ -661,10 +848,10 @@ function App() {
                       {/* Grid Item 2: Steer */}
                       <div className="glass-panel bento-card-5" style={{ minHeight: '260px', padding: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', textAlign: 'left', borderRadius: '20px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                          <div style={{ width: '48px', height: '48px', backgroundColor: 'rgba(6, 182, 212, 0.08)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(6, 182, 212, 0.15)' }}>
+                          <div style={{ width: '48px', height: '48px', backgroundColor: 'rgba(249, 115, 22, 0.08)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(249, 115, 22, 0.15)' }}>
                             <span className="material-symbols-outlined" style={{ fontSize: '26px', color: 'var(--accent)' }}>target</span>
                           </div>
-                          <span style={{ fontSize: '0.68rem', fontFamily: 'var(--font-data)', color: 'var(--accent)', border: '1px solid rgba(6, 182, 212, 0.2)', padding: '2px 8px', borderRadius: '6px' }}>PHYSICS AIM</span>
+                          <span style={{ fontSize: '0.68rem', fontFamily: 'var(--font-data)', color: 'var(--accent)', border: '1px solid rgba(249, 115, 22, 0.2)', padding: '2px 8px', borderRadius: '6px' }}>PHYSICS AIM</span>
                         </div>
                         <div>
                           <h3 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.25rem', margin: '15px 0 8px 0', fontWeight: 'bold' }}>Steering Aim Arc</h3>
@@ -680,10 +867,10 @@ function App() {
                       {/* Grid Item 3: Scorer */}
                       <div className="glass-panel bento-card-5" style={{ minHeight: '260px', padding: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', textAlign: 'left', borderRadius: '20px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                          <div style={{ width: '48px', height: '48px', backgroundColor: 'rgba(168, 85, 247, 0.08)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(168, 85, 247, 0.15)' }}>
+                          <div style={{ width: '48px', height: '48px', backgroundColor: 'rgba(252, 211, 77, 0.08)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(252, 211, 77, 0.15)' }}>
                             <span className="material-symbols-outlined" style={{ fontSize: '26px', color: 'var(--secondary)' }}>analytics</span>
                           </div>
-                          <span style={{ fontSize: '0.68rem', fontFamily: 'var(--font-data)', color: 'var(--secondary)', border: '1px solid rgba(168, 85, 247, 0.2)', padding: '2px 8px', borderRadius: '6px' }}>STATS RUN</span>
+                          <span style={{ fontSize: '0.68rem', fontFamily: 'var(--font-data)', color: 'var(--secondary)', border: '1px solid rgba(252, 211, 77, 0.2)', padding: '2px 8px', borderRadius: '6px' }}>STATS RUN</span>
                         </div>
                         <div>
                           <h3 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.25rem', margin: '15px 0 8px 0', fontWeight: 'bold' }}>Live Scorer Engine</h3>
@@ -735,7 +922,7 @@ function App() {
                           Track match achievements to unlock premium bat designs, gloves, and virtual stickers.
                         </p>
                       </div>
-                      <button 
+                      <button
                         onClick={() => handleTabTransition('academy')}
                         style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 24px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.08)', color: '#FFF', fontFamily: 'var(--font-data)', fontSize: '0.78rem', fontWeight: 'bold', letterSpacing: '1px', borderRadius: '10px', cursor: 'none' }}
                         className="interactive"
@@ -748,7 +935,7 @@ function App() {
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
                       {/* Achievement 1 */}
                       <div className="glass-panel hazard-tag" style={{ padding: '24px', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '18px', borderRadius: '16px' }}>
-                        <div style={{ width: '44px', height: '44px', borderRadius: '50%', backgroundColor: 'rgba(6, 182, 212, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ width: '44px', height: '44px', borderRadius: '50%', backgroundColor: 'rgba(249, 115, 22, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           <span className="material-symbols-outlined" style={{ color: 'var(--accent)', fontSize: '22px' }}>workspace_premium</span>
                         </div>
                         <div>
@@ -768,7 +955,7 @@ function App() {
 
                       {/* Achievement 2 */}
                       <div className="glass-panel hazard-tag" style={{ padding: '24px', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '18px', borderRadius: '16px' }}>
-                        <div style={{ width: '44px', height: '44px', borderRadius: '50%', backgroundColor: 'rgba(99, 102, 241, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ width: '44px', height: '44px', borderRadius: '50%', backgroundColor: 'rgba(245, 158, 11, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           <span className="material-symbols-outlined" style={{ color: 'var(--primary)', fontSize: '22px' }}>stars</span>
                         </div>
                         <div>
@@ -788,7 +975,7 @@ function App() {
 
                       {/* Achievement 3 */}
                       <div className="glass-panel hazard-tag" style={{ padding: '24px', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '18px', borderRadius: '16px' }}>
-                        <div style={{ width: '44px', height: '44px', borderRadius: '50%', backgroundColor: 'rgba(168, 85, 247, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ width: '44px', height: '44px', borderRadius: '50%', backgroundColor: 'rgba(252, 211, 77, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           <span className="material-symbols-outlined" style={{ color: 'var(--secondary)', fontSize: '22px' }}>bolt</span>
                         </div>
                         <div>
@@ -845,7 +1032,7 @@ function App() {
                         <p style={{ fontSize: '#0.96rem', color: 'var(--text-secondary)', lineHeight: '1.7', marginBottom: '25px' }}>
                           Built using <strong>React</strong>, <strong>TypeScript</strong>, and premium custom CSS animations, the site leverages advanced browser APIs—like the <strong>Web Audio API</strong> for programmatic sound synthesis—to provide an immersive soundscape without loading heavy media assets.
                         </p>
-                        
+
                         <div className="responsive-grid-2">
                           <div style={{ borderLeft: '3px solid var(--secondary)', paddingLeft: '15px' }}>
                             <h4 style={{ fontFamily: 'var(--font-headings)', fontWeight: 700, fontSize: '1.05rem', color: '#FFF', margin: '0 0 4px 0' }}>Pure Performance</h4>
@@ -962,11 +1149,11 @@ function App() {
                           <p style={{ fontSize: '0.94rem', color: 'var(--text-secondary)', lineHeight: '1.6', marginBottom: '20px' }}>
                             Enterprise Full Stack Software Engineer specializing in scalable retail operating systems, HRMS suites, and production-grade architectures. Currently engineering <strong>EnolaTech Retail OS</strong>, designing offline-first POS systems and robust database layers.
                           </p>
-                          
+
                           <h4 style={{ fontFamily: 'var(--font-headings)', fontSize: '1.1rem', color: '#FFF', marginTop: '20px', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 'bold' }}>
                             Core Expertise
                           </h4>
-                          
+
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                             <div>
                               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', fontWeight: 700, marginBottom: '4px', fontFamily: 'var(--font-data)' }}>
@@ -1064,7 +1251,7 @@ function App() {
                           🏏 Select Active Bat
                         </h4>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                          <button 
+                          <button
                             onClick={() => {
                               localStorage.setItem('manucrick_selected_bat', 'kashmir');
                               setActiveBat('kashmir');
@@ -1080,7 +1267,7 @@ function App() {
                             </div>
                           </button>
 
-                          <button 
+                          <button
                             onClick={() => {
                               localStorage.setItem('manucrick_selected_bat', 'cyber');
                               setActiveBat('cyber');
@@ -1096,7 +1283,7 @@ function App() {
                             </div>
                           </button>
 
-                          <button 
+                          <button
                             onClick={() => {
                               localStorage.setItem('manucrick_selected_bat', 'helicopter');
                               setActiveBat('helicopter');
@@ -1126,7 +1313,7 @@ function App() {
                             padding: '12px',
                             borderRadius: '10px',
                             border: '1.5px solid var(--primary)',
-                            backgroundColor: customizingPlayer ? 'rgba(99, 102, 241, 0.1)' : 'rgba(99, 102, 241, 0.03)',
+                            backgroundColor: customizingPlayer ? 'rgba(245, 158, 11, 0.1)' : 'rgba(245, 158, 11, 0.03)',
                             color: 'var(--primary)',
                             fontFamily: 'var(--font-headings)',
                             fontSize: '1.0rem',
@@ -1279,6 +1466,63 @@ function App() {
           <Footer />
         </div>
       )}
+
+      {/* Sawariya Floating Action Widgets */}
+      <div
+        style={{
+          position: 'fixed',
+          bottom: '24px',
+          right: '24px',
+          zIndex: 1000,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '12px',
+        }}
+        className="floating-sawariya-widgets"
+      >
+        <a
+          href="https://wa.me/916350542691?text=Hello%20Manoj%20Kumar%20Sharma,%20I%20visited%20your%20ManuCrick%20platform%20and%20want%20to%20connect!"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            width: '50px',
+            height: '50px',
+            borderRadius: '50%',
+            backgroundColor: '#25D366',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 4px 15px rgba(37, 211, 102, 0.4)',
+            cursor: 'none',
+            transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
+          }}
+          className="interactive floating-action-btn"
+          title="Connect on WhatsApp"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#FFF">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.5-5.739-1.451L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.42 9.864-9.852.002-2.63-1.023-5.101-2.883-6.963C16.588 1.926 14.12 1.01 11.492 1.01c-5.452 0-9.887 4.437-9.89 9.873-.001 1.779.475 3.51 1.378 5.037L1.87 20.612l4.777-1.458zm12.28-5.321c-.302-.15-.1.85-.302-1.002-.089-.148-.207-.229-.437-.344-.229-.115-1.353-.667-1.562-.743-.21-.076-.361-.115-.513.115-.152.23-.588.743-.72.894-.132.152-.263.17-.565.02-.301-.15-1.272-.468-2.422-1.494-.895-.797-1.498-1.782-1.674-2.083-.175-.301-.019-.464.131-.613.136-.134.302-.351.453-.527.151-.176.201-.293.302-.49.101-.196.05-.369-.026-.52-.076-.15-.635-1.53-.87-2.096-.229-.553-.458-.477-.63-.487-.162-.008-.347-.01-.533-.01-.187 0-.491.07-.748.349-.257.279-.982.96-.982 2.342 0 1.382 1.005 2.716 1.147 2.902.141.186 1.977 3.019 4.79 4.23.669.288 1.192.46 1.6.592.673.214 1.285.184 1.768.112.539-.08 1.562-.638 1.782-1.256.22-.619.22-1.15.152-1.256-.068-.106-.25-.17-.552-.32z" />
+          </svg>
+        </a>
+        <a
+          href="tel:6350542691"
+          style={{
+            width: '50px',
+            height: '50px',
+            borderRadius: '50%',
+            backgroundColor: 'var(--primary)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 4px 15px rgba(245, 158, 11, 0.4)',
+            cursor: 'none',
+            transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
+          }}
+          className="interactive floating-action-btn"
+          title="Call Us Now"
+        >
+          <span className="material-symbols-outlined" style={{ color: '#000', fontSize: '24px' }}>call</span>
+        </a>
+      </div>
 
       <style>{`
         .learn-more-btn:hover {

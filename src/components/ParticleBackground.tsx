@@ -39,8 +39,8 @@ export function ParticleBackground() {
       'rgba(255, 215, 0, 0.35)', // Gold
       'rgba(218, 165, 32, 0.25)', // Goldenrod
       'rgba(255, 223, 0, 0.35)', // Bright Gold
-      'rgba(0, 255, 135, 0.15)', // Green turf reflections
-      'rgba(255, 107, 0, 0.15)', // Orange balls reflections
+      'rgba(249, 115, 22, 0.2)',  // Saffron reflection
+      'rgba(245, 158, 11, 0.25)', // Amber reflection
     ];
 
     const createParticle = (init = false): Particle => {

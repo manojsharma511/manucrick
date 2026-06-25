@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 export function TossArena() {
   const [isFlipping, setIsFlipping] = useState(false);
@@ -8,10 +8,10 @@ export function TossArena() {
   const [message, setMessage] = useState<string | null>(null);
   const [messageType, setMessageType] = useState<'success' | 'error' | 'info' | null>(null);
   const [isMuted, setIsMuted] = useState(false);
-
-  // We keep track of the cumulative rotation so the coin always spins forward
-  const [rotation, setRotation] = useState({ x: 20, y: 0, z: 0 });
-  const rotationRef = useRef({ x: 20, y: 0, z: 0 });
+  const [flipClass, setFlipClass] = useState('');
+  const [shadowClass, setShadowClass] = useState('');
+  const [lastOutcome, setLastOutcome] = useState<'Heads' | 'Tails'>('Heads');
+  const [transitionEnabled, setTransitionEnabled] = useState(true);
 
   // Ground Rules states
   const [groundRules, setGroundRules] = useState({
@@ -23,6 +23,15 @@ export function TossArena() {
   });
   const [customRules, setCustomRules] = useState<string[]>([]);
   const [newCustomRule, setNewCustomRule] = useState('');
+
+  // Mobile viewport tracking
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 480);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Load ground rules on mount
   useEffect(() => {
@@ -92,34 +101,28 @@ export function TossArena() {
       const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
       
       if (type === 'flip') {
-        // High quality metallic coin spin using frequency modulation (LFO)
         const spinOsc = audioCtx.createOscillator();
         const spinGain = audioCtx.createGain();
         
         const fmOsc = audioCtx.createOscillator();
         const fmGain = audioCtx.createGain();
         
-        // Ring resonance oscillator
         const ringOsc = audioCtx.createOscillator();
         const ringGain = audioCtx.createGain();
         
-        // Configure Main Spin (frequency slides down as it spins)
         spinOsc.type = 'sine';
         spinOsc.frequency.setValueAtTime(950, audioCtx.currentTime);
         spinOsc.frequency.exponentialRampToValueAtTime(650, audioCtx.currentTime + 1.5);
         
-        // Configure LFO (Slows down the metallic whir/buzz modulation rate)
         fmOsc.type = 'sine';
         fmOsc.frequency.setValueAtTime(45, audioCtx.currentTime);
         fmOsc.frequency.exponentialRampToValueAtTime(8, audioCtx.currentTime + 1.5);
         fmGain.gain.setValueAtTime(150, audioCtx.currentTime);
         
-        // Configure Metallic Ring
         ringOsc.type = 'sine';
         ringOsc.frequency.setValueAtTime(2100, audioCtx.currentTime);
         ringOsc.frequency.exponentialRampToValueAtTime(1500, audioCtx.currentTime + 1.5);
         
-        // Gain settings
         spinGain.gain.setValueAtTime(0.08, audioCtx.currentTime);
         spinGain.gain.linearRampToValueAtTime(0.12, audioCtx.currentTime + 0.1);
         spinGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.5);
@@ -127,7 +130,6 @@ export function TossArena() {
         ringGain.gain.setValueAtTime(0.04, audioCtx.currentTime);
         ringGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
         
-        // Connect nodes
         fmOsc.connect(fmGain);
         fmGain.connect(spinOsc.frequency);
         
@@ -137,7 +139,6 @@ export function TossArena() {
         ringOsc.connect(ringGain);
         ringGain.connect(audioCtx.destination);
         
-        // Start oscillators
         fmOsc.start();
         spinOsc.start();
         ringOsc.start();
@@ -146,7 +147,6 @@ export function TossArena() {
         spinOsc.stop(audioCtx.currentTime + 1.5);
         ringOsc.stop(audioCtx.currentTime + 1.5);
       } else if (type === 'land') {
-        // Metallic landing chime
         const osc1 = audioCtx.createOscillator();
         const osc2 = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
@@ -176,59 +176,53 @@ export function TossArena() {
     }
   };
 
-  // Main Coin Flip execution
+  // Main Coin Flip execution using CSS Keyframe state trigger
   const flipCoin = () => {
     if (isFlipping) return;
     
-    // Clear message and start flipping state
     setIsFlipping(true);
+    setTransitionEnabled(true);
     setMessage(null);
     setMessageType(null);
+    setFlipClass('');
+    setShadowClass('');
     playSound('flip');
 
-    // Generate random outcome: 50% probability
     const isHeads = Math.random() < 0.5;
     const finalOutcome = isHeads ? 'Heads' : 'Tails';
+    setLastOutcome(finalOutcome);
 
-    // Spin details
-    const minSpins = 6;
-    const additionalSpins = Math.floor(Math.random() * 3) + 1;
-    const totalSpins = minSpins + additionalSpins;
-    
-    // Calculate final rotation
-    let targetX = rotationRef.current.x + totalSpins * 360;
-    if (finalOutcome === 'Tails') {
-      const currentFullSpins = Math.floor(targetX / 360);
-      targetX = currentFullSpins * 360 + 180 + (360 * additionalSpins);
-    } else {
-      const currentFullSpins = Math.floor(targetX / 360);
-      targetX = currentFullSpins * 360 + 360 + (360 * additionalSpins);
-    }
-    
-    const targetY = Math.floor(Math.random() * 30) - 15;
-    const targetZ = Math.floor(Math.random() * 30) - 15;
-
-    const finalRotation = { x: targetX, y: targetY, z: targetZ };
-    setRotation(finalRotation);
-    rotationRef.current = finalRotation;
-
-    // Trigger state change after landing (1.6 seconds transition)
+    // Trigger state repaint then apply CSS animation classes
     setTimeout(() => {
+      setFlipClass(isHeads ? 'toss-coin-animate-heads' : 'toss-coin-animate-tails');
+      setShadowClass('toss-shadow-animate');
+    }, 15);
+
+    setTimeout(() => {
+      // Temporarily disable transition to snap coin flat instantly without backwards spin
+      setTransitionEnabled(false);
+      setFlipClass('');
+      setShadowClass('');
       setIsFlipping(false);
       playSound('land');
 
       if (gameActive && userChoice) {
         if (userChoice === finalOutcome) {
-          setMessage(`🎉 YOU WON THE FLIP! The coin landed on ${finalOutcome.toUpperCase()}.`);
+          setMessage(`🎉 YOU WON THE FLIP! Coin landed on ${finalOutcome.toUpperCase()}.`);
           setMessageType('success');
         } else {
-          setMessage(`😢 YOU LOST THE FLIP! The coin landed on ${finalOutcome.toUpperCase()}.`);
+          setMessage(`😢 YOU LOST THE FLIP! Coin landed on ${finalOutcome.toUpperCase()}.`);
           setMessageType('error');
         }
       } else {
         setMessage(`Coin landed on: ${finalOutcome.toUpperCase()}`);
         setMessageType('info');
       }
+
+      // Re-enable transition after snap is complete
+      setTimeout(() => {
+        setTransitionEnabled(true);
+      }, 50);
     }, 1600);
   };
 
@@ -248,10 +242,7 @@ export function TossArena() {
     setMessageType(null);
   };
 
-  // Generate edge segments to give the coin real depth
-  const edgeSegments = Array.from({ length: 12 });
-
-  // Get active theme variables
+  // Theme settings
   const getThemeStyle = () => {
     switch (coinTheme) {
       case 'silver':
@@ -266,13 +257,13 @@ export function TossArena() {
         };
       case 'neon':
         return {
-          frontBg: 'var(--neon-metal)',
-          backBg: 'var(--neon-metal)',
-          borderColor: 'var(--primary)',
-          textColor: '#FFFFFF',
-          glow: 'rgba(0, 255, 135, 0.4)',
-          rimColor: 'radial-gradient(circle, var(--primary) 0%, var(--secondary) 100%)',
-          textColorInner: 'var(--primary)',
+          frontBg: 'linear-gradient(135deg, #00FF87 0%, #60EFFF 100%)',
+          backBg: 'linear-gradient(135deg, #00FF87 0%, #60EFFF 100%)',
+          borderColor: '#00FF87',
+          textColor: '#050A18',
+          glow: 'rgba(0, 255, 135, 0.45)',
+          rimColor: 'radial-gradient(circle, #00FF87 0%, #60EFFF 100%)',
+          textColorInner: '#00D16E',
         };
       case 'leather':
         return {
@@ -298,31 +289,45 @@ export function TossArena() {
     }
   };
 
+  const getRimGradient = () => {
+    switch (coinTheme) {
+      case 'silver':
+        return 'repeating-linear-gradient(90deg, #BDC3C7, #BDC3C7 3px, #7F8C8D 3px, #7F8C8D 6px)';
+      case 'neon':
+        return 'repeating-linear-gradient(90deg, #00FF87, #00FF87 3px, #60EFFF 3px, #60EFFF 6px)';
+      case 'leather':
+        return 'repeating-linear-gradient(90deg, #C2410C, #C2410C 3px, #F97316 3px, #F97316 6px)';
+      case 'gold':
+      default:
+        return 'repeating-linear-gradient(90deg, #FFE066, #FFE066 3px, #D35400 3px, #D35400 6px)';
+    }
+  };
+
   const activeTheme = getThemeStyle();
 
   return (
-    <div style={{ width: '100%', maxWidth: '600px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <div style={{ width: '100%', maxWidth: '600px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px', paddingBottom: isMobile ? '120px' : '40px' }}>
       
       {/* HEADER CONTROLS */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', width: '100%', padding: '0 4px' }}>
         {/* Themes Selectors */}
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Skin:</span>
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Skin:</span>
           {(['gold', 'silver', 'neon', 'leather'] as const).map((t) => (
             <button
               key={t}
               onClick={() => !isFlipping && setCoinTheme(t)}
               style={{
-                padding: '5px 12px',
-                borderRadius: '5px',
+                padding: '6px 12px',
+                borderRadius: '8px',
                 border: coinTheme === t ? '1.5px solid var(--primary)' : '1px solid rgba(255,255,255,0.06)',
-                backgroundColor: coinTheme === t ? 'rgba(0, 255, 135, 0.08)' : 'rgba(5, 10, 24, 0.4)',
+                backgroundColor: coinTheme === t ? 'rgba(245, 158, 11, 0.15)' : 'rgba(5, 10, 24, 0.4)',
                 color: coinTheme === t ? '#FFFFFF' : 'var(--text-secondary)',
-                fontSize: '0.78rem',
+                fontSize: '0.74rem',
                 fontWeight: 700,
                 textTransform: 'uppercase',
                 letterSpacing: '0.5px',
-                cursor: 'none',
+                cursor: 'pointer',
                 transition: 'all 0.2s',
               }}
               className="interactive"
@@ -339,15 +344,18 @@ export function TossArena() {
             background: 'none',
             border: 'none',
             color: 'var(--text-secondary)',
-            fontSize: '1.2rem',
-            cursor: 'none',
+            fontSize: '0.8rem',
+            fontWeight: 700,
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px',
+            cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             gap: '6px',
           }}
           className="interactive"
         >
-          {isMuted ? '🔇 Muted' : '🔊 Audio ON'}
+          {isMuted ? '🔇 Muted' : '🔊 Sound ON'}
         </button>
       </div>
 
@@ -356,34 +364,36 @@ export function TossArena() {
         className="glass-panel"
         style={{
           width: '100%',
-          padding: '40px 24px',
+          padding: isMobile ? '25px 16px' : '40px 24px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           position: 'relative',
+          border: '1px solid rgba(245, 158, 11, 0.15)',
+          boxShadow: '0 8px 32px 0 rgba(245, 158, 11, 0.08)',
         }}
       >
         {/* Ambient spotlights behind coin */}
         <div
           style={{
             position: 'absolute',
-            width: '180px',
-            height: '180px',
+            width: '200px',
+            height: '200px',
             borderRadius: '50%',
             background: `radial-gradient(circle, ${activeTheme.glow} 0%, transparent 70%)`,
-            filter: 'blur(15px)',
+            filter: 'blur(20px)',
             pointerEvents: 'none',
-            transform: `scale(${isFlipping ? 1.4 : 1})`,
+            transform: `scale(${isFlipping ? 1.5 : 1})`,
             transition: 'all 0.5s ease-out',
-            opacity: 0.65,
+            opacity: 0.7,
           }}
         />
 
         {/* 3D Coin Viewer Arena */}
         <div
           style={{
-            height: '300px',
+            height: isMobile ? '220px' : '280px',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
@@ -392,14 +402,21 @@ export function TossArena() {
           }}
         >
           {/* 3D Coin Wrapper Container */}
-          <div className="coin-container" style={{ transform: `scale(${isFlipping ? 1.15 : 1})`, transition: 'transform 1.6s cubic-bezier(0.1, 0.8, 0.1, 1)' }}>
-            
+          <div 
+            className="coin-container" 
+            style={{ 
+              width: isMobile ? '180px' : '220px',
+              height: isMobile ? '180px' : '220px',
+              transform: `scale(${isFlipping ? 1.05 : 1})`, 
+              transition: 'transform 1.6s cubic-bezier(0.1, 0.8, 0.1, 1)' 
+            }}
+          >
             {/* Actual Coin Rotating */}
             <div
-              className="coin-3d"
+              className={`coin-3d ${flipClass}`}
               style={{
-                transform: `rotateX(${rotation.x}deg) rotateY(${rotation.y}deg) rotateZ(${rotation.z}deg) translateY(${isFlipping ? -150 : 0}px)`,
-                transition: isFlipping ? 'transform 1.6s cubic-bezier(0.25, 0.9, 0.3, 1)' : 'transform 0.4s ease-out',
+                transform: !flipClass ? (lastOutcome === 'Heads' ? 'rotateX(0deg) rotateY(0deg) rotateZ(0deg)' : 'rotateX(180deg) rotateY(0deg) rotateZ(180deg)') : undefined,
+                transition: !transitionEnabled ? 'none' : 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
               }}
             >
               {/* HEADS SIDE (Front Face) */}
@@ -411,50 +428,39 @@ export function TossArena() {
                   color: activeTheme.textColor,
                   boxShadow: `inset 0 0 25px rgba(0, 0, 0, 0.35), 0 0 15px ${activeTheme.glow}`,
                   transform: 'translateZ(5px)',
+                  backfaceVisibility: 'hidden',
                 }}
               >
                 <div className="coin-shine" />
                 
                 {/* Styled Outer Emblem Ring */}
-                <div style={{ position: 'absolute', top: '10px', bottom: '10px', left: '10px', right: '10px', borderRadius: '50%', border: `1.5px dashed ${activeTheme.textColorInner}`, opacity: 0.65 }} />
+                <div style={{ position: 'absolute', top: '10px', bottom: '10px', left: '10px', right: '10px', borderRadius: '50%', border: `2px dashed ${activeTheme.textColorInner}`, opacity: 0.5 }} />
                 
                 {/* Inside Contents */}
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 2 }}>
-                  {coinTheme === 'leather' ? (
-                    <span style={{ fontSize: '3.6rem', filter: 'drop-shadow(0 2px 5px rgba(0,0,0,0.5))' }}>🏏</span>
-                  ) : (
-                    <span style={{ fontSize: '3.6rem', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>🏆</span>
-                  )}
-                  <span style={{ fontFamily: 'var(--font-headings)', fontSize: '1.5rem', letterSpacing: '2px', marginTop: '2px' }}>HEADS</span>
+                  <span style={{ fontSize: isMobile ? '3rem' : '3.8rem', filter: 'drop-shadow(0 3px 5px rgba(0,0,0,0.3))', userSelect: 'none' }}>
+                    {coinTheme === 'leather' ? '🏏' : '🏆'}
+                  </span>
+                  <span style={{ fontFamily: 'var(--font-headings)', fontSize: isMobile ? '1.2rem' : '1.4rem', fontWeight: 800, letterSpacing: '2px', marginTop: '2px' }}>HEADS</span>
                 </div>
               </div>
 
-              {/* CYLINDRICAL RIM SEGMENTS (Thickness) */}
-              <div className="coin-edge-loop">
-                {edgeSegments.map((_, i) => (
+              {/* CYLINDRICAL RIM SEGMENTS (CSS Stacked Layering) */}
+              {Array.from({ length: 10 }).map((_, idx) => {
+                const zOffset = -4.5 + idx * 1.0; // Stack from -4.5px to 4.5px
+                return (
                   <div
-                    key={i}
-                    className="coin-edge-segment"
+                    key={idx}
+                    className="coin-edge-layer"
                     style={{
-                      background: activeTheme.rimColor,
-                      height: '10px',
-                      width: '54px',
-                      left: '73px',
-                      top: '95px',
-                      position: 'absolute',
-                      borderTop: '1px solid rgba(255,255,255,0.15)',
-                      borderBottom: '1px solid rgba(0,0,0,0.3)',
-                      transform: `rotateY(${i * 30}deg) translateZ(99px) rotateX(90deg)`,
-                      backfaceVisibility: 'visible',
-                      transformStyle: 'preserve-3d',
+                      background: getRimGradient(),
+                      border: `3px solid ${activeTheme.borderColor}`,
+                      boxShadow: 'inset 0 0 15px rgba(0, 0, 0, 0.6)',
+                      transform: `translateZ(${zOffset}px)`,
                     }}
-                  >
-                    {coinTheme === 'leather' && (
-                      <div style={{ position: 'absolute', left: 0, right: 0, top: '4px', height: '2px', borderTop: '2px dashed #FFF', opacity: 0.9 }} />
-                    )}
-                  </div>
-                ))}
-              </div>
+                  />
+                );
+              })}
 
               {/* TAILS SIDE (Back Face) */}
               <div
@@ -465,21 +471,20 @@ export function TossArena() {
                   color: activeTheme.textColor,
                   boxShadow: `inset 0 0 25px rgba(0, 0, 0, 0.35), 0 0 15px ${activeTheme.glow}`,
                   transform: 'rotateY(180deg) translateZ(5px)',
+                  backfaceVisibility: 'hidden',
                 }}
               >
                 <div className="coin-shine" />
                 
                 {/* Outer Emblem Ring */}
-                <div style={{ position: 'absolute', top: '10px', bottom: '10px', left: '10px', right: '10px', borderRadius: '50%', border: `1.5px dashed ${activeTheme.textColorInner}`, opacity: 0.65 }} />
+                <div style={{ position: 'absolute', top: '10px', bottom: '10px', left: '10px', right: '10px', borderRadius: '50%', border: `2px dashed ${activeTheme.textColorInner}`, opacity: 0.5 }} />
                 
                 {/* Inside Contents */}
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 2 }}>
-                  {coinTheme === 'leather' ? (
-                    <span style={{ fontSize: '3.6rem', filter: 'drop-shadow(0 2px 5px rgba(0,0,0,0.5))' }}>🥎</span>
-                  ) : (
-                    <span style={{ fontSize: '3.6rem', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>🥎</span>
-                  )}
-                  <span style={{ fontFamily: 'var(--font-headings)', fontSize: '1.5rem', letterSpacing: '2px', marginTop: '2px' }}>TAILS</span>
+                  <span style={{ fontSize: isMobile ? '3rem' : '3.8rem', filter: 'drop-shadow(0 3px 5px rgba(0,0,0,0.3))', userSelect: 'none' }}>
+                    {coinTheme === 'leather' ? '🥎' : '🥎'}
+                  </span>
+                  <span style={{ fontFamily: 'var(--font-headings)', fontSize: isMobile ? '1.2rem' : '1.4rem', fontWeight: 800, letterSpacing: '2px', marginTop: '2px' }}>TAILS</span>
                 </div>
               </div>
 
@@ -487,10 +492,12 @@ export function TossArena() {
 
             {/* Coin Shadow */}
             <div
-              className="coin-shadow-3d"
+              className={`coin-shadow-3d ${shadowClass}`}
               style={{
-                transform: `scale(${isFlipping ? 0.45 : 1.05})`,
-                opacity: isFlipping ? 0.25 : 0.65,
+                width: '80%',
+                left: '10%',
+                transform: `scale(${isFlipping ? 0.5 : 1})`,
+                opacity: isFlipping ? 0.2 : 0.6,
                 transition: 'transform 1.6s cubic-bezier(0.1, 0.8, 0.1, 1), opacity 1.6s cubic-bezier(0.1, 0.8, 0.1, 1)',
               }}
             />
@@ -499,7 +506,7 @@ export function TossArena() {
 
         {/* CALL THE TOSS PICKER */}
         <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', marginTop: '10px', zIndex: 10 }}>
-          <p style={{ fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.85rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px' }}>
+          <p style={{ fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: '0.85rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1.5px' }}>
             Select your Call (Optional)
           </p>
           
@@ -509,15 +516,16 @@ export function TossArena() {
               disabled={isFlipping}
               style={{
                 flex: 1,
-                padding: '10px 0',
-                borderRadius: '8px',
+                padding: '12px 0',
+                borderRadius: '10px',
                 border: userChoice === 'Heads' ? '1.5px solid var(--primary)' : '1px solid rgba(255,255,255,0.08)',
-                backgroundColor: userChoice === 'Heads' ? 'rgba(0,255,135,0.08)' : 'rgba(255,255,255,0.01)',
+                backgroundColor: userChoice === 'Heads' ? 'rgba(245,158,11,0.1)' : 'rgba(255,255,255,0.01)',
                 color: userChoice === 'Heads' ? 'var(--primary)' : '#FFFFFF',
                 fontFamily: 'var(--font-headings)',
-                fontSize: '1.25rem',
+                fontSize: '1.1rem',
+                fontWeight: 700,
                 letterSpacing: '1px',
-                cursor: isFlipping ? 'not-allowed' : 'none',
+                cursor: 'pointer',
                 transition: 'all 0.25s',
               }}
               className="interactive"
@@ -530,15 +538,16 @@ export function TossArena() {
               disabled={isFlipping}
               style={{
                 flex: 1,
-                padding: '10px 0',
-                borderRadius: '8px',
+                padding: '12px 0',
+                borderRadius: '10px',
                 border: userChoice === 'Tails' ? '1.5px solid var(--secondary)' : '1px solid rgba(255,255,255,0.08)',
-                backgroundColor: userChoice === 'Tails' ? 'rgba(255,107,0,0.08)' : 'rgba(255,255,255,0.01)',
+                backgroundColor: userChoice === 'Tails' ? 'rgba(249,115,22,0.1)' : 'rgba(255,255,255,0.01)',
                 color: userChoice === 'Tails' ? 'var(--secondary)' : '#FFFFFF',
                 fontFamily: 'var(--font-headings)',
-                fontSize: '1.25rem',
+                fontSize: '1.1rem',
+                fontWeight: 700,
                 letterSpacing: '1px',
-                cursor: isFlipping ? 'not-allowed' : 'none',
+                cursor: 'pointer',
                 transition: 'all 0.25s',
               }}
               className="interactive"
@@ -557,9 +566,10 @@ export function TossArena() {
                 color: '#FF4D4D',
                 fontSize: '0.8rem',
                 fontWeight: 700,
-                cursor: isFlipping ? 'not-allowed' : 'none',
+                cursor: 'pointer',
                 textTransform: 'uppercase',
                 letterSpacing: '0.5px',
+                marginTop: '4px',
               }}
               className="interactive"
             >
@@ -575,16 +585,17 @@ export function TossArena() {
             disabled={isFlipping}
             style={{
               width: '100%',
-              padding: '14px 0',
-              borderRadius: '8px',
+              padding: '15px 0',
+              borderRadius: '10px',
               border: 'none',
               backgroundColor: isFlipping ? 'rgba(255, 255, 255, 0.05)' : 'var(--primary)',
-              color: isFlipping ? 'var(--text-secondary)' : '#050A18',
+              color: isFlipping ? 'var(--text-secondary)' : '#0A0A0A',
               fontFamily: 'var(--font-headings)',
-              fontSize: '1.5rem',
+              fontSize: '1.3rem',
+              fontWeight: 800,
               letterSpacing: '2.5px',
-              cursor: isFlipping ? 'not-allowed' : 'none',
-              boxShadow: isFlipping ? 'none' : '0 0 20px rgba(0, 255, 135, 0.35)',
+              cursor: isFlipping ? 'not-allowed' : 'pointer',
+              boxShadow: isFlipping ? 'none' : '0 4px 20px rgba(245, 158, 11, 0.35)',
               transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
             }}
             className="interactive"
@@ -598,8 +609,8 @@ export function TossArena() {
           <div
             style={{
               marginTop: '25px',
-              padding: '12px 20px',
-              borderRadius: '8px',
+              padding: '14px 24px',
+              borderRadius: '10px',
               width: '100%',
               maxWidth: '400px',
               textAlign: 'center',
@@ -614,14 +625,14 @@ export function TossArena() {
                   ? 'var(--primary)'
                   : messageType === 'error'
                   ? '#FF4D4D'
-                  : 'rgba(255, 255, 255, 0.08)'
+                  : 'rgba(255, 255, 255, 0.1)'
               }`,
               color: messageType === 'success' ? 'var(--primary)' : messageType === 'error' ? '#FF4D4D' : '#FFFFFF',
               fontFamily: 'var(--font-body)',
               fontWeight: 700,
-              fontSize: '1.02rem',
+              fontSize: '1rem',
               letterSpacing: '0.8px',
-              animation: 'badgePulse 2s infinite alternate ease-in-out',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
             }}
           >
             {message}
@@ -639,67 +650,80 @@ export function TossArena() {
           display: 'flex',
           flexDirection: 'column',
           textAlign: 'left',
-          animation: 'tabTransition 0.5s ease-out',
+          border: '1px solid rgba(245, 158, 11, 0.15)',
+          boxShadow: '0 8px 32px 0 rgba(245, 158, 11, 0.08)',
         }}
       >
-        <h3 style={{ fontSize: '1.4rem', color: 'var(--primary)', marginBottom: '4px' }}>
+        <h3 style={{ fontSize: '1.4rem', color: 'var(--primary)', marginBottom: '4px', fontWeight: 800 }}>
           🏏 GULLY MATCH RULES MANAGER
         </h3>
-        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '15px' }}>
+        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '20px' }}>
           Local ground arguments start at rules. Select and lock rules below, then share with both teams!
         </p>
 
-        {/* Rules Checklist */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '0.95rem' }}>
-            <input
-              type="checkbox"
-              checked={groundRules.oneTipOneHand}
-              onChange={(e) => setGroundRules({ ...groundRules, oneTipOneHand: e.target.checked })}
-              style={{ width: '18px', height: '18px', accentColor: 'var(--primary)' }}
-            />
-            <span>☝️ 1 Tip 1 Hand Out (One bounce catch is OUT)</span>
-          </label>
-
-          <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '0.95rem' }}>
-            <input
-              type="checkbox"
-              checked={groundRules.boxCricketMode}
-              onChange={(e) => setGroundRules({ ...groundRules, boxCricketMode: e.target.checked })}
-              style={{ width: '18px', height: '18px', accentColor: 'var(--primary)' }}
-            />
-            <span>📦 Box cricket boundaries (No 6s allowed unless hit over/wall check)</span>
-          </label>
-
-          <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '0.95rem' }}>
-            <input
-              type="checkbox"
-              checked={groundRules.lostBallRuns}
-              onChange={(e) => setGroundRules({ ...groundRules, lostBallRuns: e.target.checked })}
-              style={{ width: '18px', height: '18px', accentColor: 'var(--primary)' }}
-            />
-            <span>🥎 Lost ball = 5 Runs awarded to batting team</span>
-          </label>
-
-          <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '0.95rem' }}>
-            <input
-              type="checkbox"
-              checked={groundRules.noBallFreeHit}
-              onChange={(e) => setGroundRules({ ...groundRules, noBallFreeHit: e.target.checked })}
-              style={{ width: '18px', height: '18px', accentColor: 'var(--primary)' }}
-            />
-            <span>🚀 No ball = Free hit on next delivery</span>
-          </label>
-
-          <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontSize: '0.95rem' }}>
-            <input
-              type="checkbox"
-              checked={groundRules.lastManBatting}
-              onChange={(e) => setGroundRules({ ...groundRules, lastManBatting: e.target.checked })}
-              style={{ width: '18px', height: '18px', accentColor: 'var(--primary)' }}
-            />
-            <span>🧍 Last man batting (Last batsman bats alone till out)</span>
-          </label>
+        {/* Rules Checklist Grid */}
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', 
+          gap: '12px', 
+          width: '100%', 
+          marginBottom: '20px' 
+        }}>
+          {[
+            { key: 'oneTipOneHand', emoji: '☝️', label: '1 Tip 1 Hand Out', desc: 'One bounce catches are OUT' },
+            { key: 'boxCricketMode', emoji: '📦', label: 'Box Cricket Boundaries', desc: 'No standard 6s, hit over is OUT' },
+            { key: 'lostBallRuns', emoji: '🥎', label: 'Lost Ball Penalty', desc: '+5 Runs awarded to batting team' },
+            { key: 'noBallFreeHit', emoji: '🚀', label: 'Free Hit Rule', desc: 'No balls earn a free hit delivery' },
+            { key: 'lastManBatting', emoji: '🧍', label: 'Last Man Standing', desc: 'Last batsman bats alone till out' }
+          ].map((rule) => {
+            const isChecked = groundRules[rule.key as keyof typeof groundRules];
+            return (
+              <div
+                key={rule.key}
+                onClick={() => !isFlipping && setGroundRules({ ...groundRules, [rule.key]: !isChecked })}
+                style={{
+                  padding: '14px 16px',
+                  borderRadius: '12px',
+                  backgroundColor: isChecked ? 'rgba(245, 158, 11, 0.08)' : 'rgba(255, 255, 255, 0.01)',
+                  border: isChecked ? '1.5px solid var(--primary)' : '1.5px solid rgba(255, 255, 255, 0.05)',
+                  boxShadow: isChecked ? '0 0 12px rgba(245, 158, 11, 0.12)' : 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  textAlign: 'left',
+                  transition: 'all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1)',
+                }}
+                className="interactive rule-card-toggle"
+              >
+                <span style={{ fontSize: '1.8rem' }}>{rule.emoji}</span>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                  <span style={{ fontSize: '0.88rem', fontWeight: 'bold', color: isChecked ? 'var(--primary)' : '#FFF' }}>
+                    {rule.label}
+                  </span>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
+                    {rule.desc}
+                  </span>
+                </div>
+                {/* Switch checkbox box */}
+                <div style={{
+                  width: '20px',
+                  height: '20px',
+                  borderRadius: '6px',
+                  border: '1.5px solid',
+                  borderColor: isChecked ? 'var(--primary)' : 'rgba(255,255,255,0.2)',
+                  backgroundColor: isChecked ? 'var(--primary)' : 'transparent',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.2s',
+                  flexShrink: 0
+                }}>
+                  {isChecked && <span style={{ fontSize: '12px', color: '#0A0A0A', fontWeight: 'bold' }}>✔</span>}
+                </div>
+              </div>
+            );
+          })}
         </div>
 
         {/* Custom Ground Rules list */}
@@ -713,7 +737,7 @@ export function TossArena() {
                   <button
                     type="button"
                     onClick={() => removeCustomRule(idx)}
-                    style={{ background: 'none', border: 'none', color: 'var(--red)', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 'bold' }}
+                    style={{ background: 'none', border: 'none', color: '#FF4D4D', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 'bold' }}
                   >
                     Remove
                   </button>
@@ -724,25 +748,27 @@ export function TossArena() {
         )}
 
         {/* Custom Rule Input Form */}
-        <form onSubmit={addCustomRule} style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+        <form onSubmit={addCustomRule} style={{ display: 'flex', gap: '10px', marginBottom: '20px', width: '100%', flexWrap: 'wrap' }}>
           <input
             type="text"
             value={newCustomRule}
             onChange={(e) => setNewCustomRule(e.target.value)}
-            placeholder="Add custom rule (e.g. Lost ball in drain is OUT)..."
+            placeholder="Add custom rule (e.g. Lost ball in drain)..."
             className="premium-input"
-            style={{ flex: 1, marginTop: 0, padding: '8px 12px' }}
+            style={{ flex: 1, minWidth: '200px', marginTop: 0, padding: '10px 14px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', backgroundColor: 'rgba(0,0,0,0.3)', color: '#FFF' }}
           />
           <button
             type="submit"
             style={{
-              padding: '0 15px',
+              padding: '10px 20px',
               borderRadius: '8px',
               border: 'none',
               backgroundColor: 'var(--primary)',
-              color: '#050A18',
+              color: '#0A0A0A',
               fontWeight: 'bold',
               cursor: 'pointer',
+              flexShrink: 0,
+              flex: '0 0 auto'
             }}
             className="interactive"
           >
@@ -751,13 +777,14 @@ export function TossArena() {
         </form>
 
         {/* Action buttons */}
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div className="responsive-flex-row" style={{ display: 'flex', gap: '12px', width: '100%', flexWrap: 'wrap' }}>
           <button
             onClick={saveRules}
             style={{
               flex: 1,
-              padding: '10px 0',
-              borderRadius: '6px',
+              minWidth: '150px',
+              padding: '12px 0',
+              borderRadius: '8px',
               border: '1px solid rgba(255,255,255,0.15)',
               backgroundColor: 'transparent',
               color: '#FFF',
@@ -773,14 +800,15 @@ export function TossArena() {
             onClick={shareRules}
             style={{
               flex: 1.5,
-              padding: '10px 0',
-              borderRadius: '6px',
+              minWidth: '180px',
+              padding: '12px 0',
+              borderRadius: '8px',
               border: 'none',
               backgroundColor: 'var(--primary)',
-              color: '#050A18',
+              color: '#0A0A0A',
               fontWeight: 'bold',
               cursor: 'pointer',
-              boxShadow: '0 0 10px rgba(0, 255, 135, 0.2)',
+              boxShadow: '0 4px 10px rgba(245, 158, 11, 0.2)',
             }}
             className="interactive"
           >
@@ -788,6 +816,154 @@ export function TossArena() {
           </button>
         </div>
       </div>
+
+      <style>{`
+        @keyframes toss-flip-heads {
+          0% { 
+            transform: translateY(0) rotateX(0deg) scale(1); 
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+          }
+          15% { 
+            transform: translateY(-150px) rotateX(360deg) scale(1.1); 
+          }
+          45% { 
+            transform: translateY(-280px) rotateX(1080deg) scale(1.2); 
+            filter: drop-shadow(0 25px 15px rgba(0,0,0,0.6));
+          }
+          75% { 
+            transform: translateY(-80px) rotateX(1800deg) scale(1.05); 
+          }
+          90% { 
+            transform: translateY(0) rotateX(2160deg) scale(1); 
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+          }
+          95% { 
+            transform: translateY(-12px) rotateX(2175deg) scale(1.02); 
+          }
+          100% { 
+            transform: translateY(0) rotateX(2160deg) scale(1); 
+          }
+        }
+
+        @keyframes toss-flip-tails {
+          0% { 
+            transform: translateY(0) rotateX(0deg) scale(1); 
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+          }
+          15% { 
+            transform: translateY(-150px) rotateX(360deg) scale(1.1); 
+          }
+          45% { 
+            transform: translateY(-280px) rotateX(1080deg) scale(1.2); 
+            filter: drop-shadow(0 25px 15px rgba(0,0,0,0.6));
+          }
+          75% { 
+            transform: translateY(-80px) rotateX(1800deg) scale(1.05); 
+          }
+          90% { 
+            transform: translateY(0) rotateX(2340deg) scale(1); 
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+          }
+          95% { 
+            transform: translateY(-12px) rotateX(2325deg) scale(1.02); 
+          }
+          100% { 
+            transform: translateY(0) rotateX(2340deg) scale(1); 
+          }
+        }
+
+        @keyframes toss-flip-heads-mobile {
+          0% { 
+            transform: translateY(0) rotateX(0deg) scale(1); 
+            filter: drop-shadow(0 3px 5px rgba(0,0,0,0.4));
+          }
+          15% { 
+            transform: translateY(-70px) rotateX(360deg) scale(1.05); 
+          }
+          45% { 
+            transform: translateY(-130px) rotateX(1080deg) scale(1.15); 
+            filter: drop-shadow(0 15px 10px rgba(0,0,0,0.5));
+          }
+          75% { 
+            transform: translateY(-40px) rotateX(1800deg) scale(1.02); 
+          }
+          90% { 
+            transform: translateY(0) rotateX(2160deg) scale(1); 
+            filter: drop-shadow(0 3px 5px rgba(0,0,0,0.4));
+          }
+          95% { 
+            transform: translateY(-6px) rotateX(2170deg) scale(1.01); 
+          }
+          100% { 
+            transform: translateY(0) rotateX(2160deg) scale(1); 
+          }
+        }
+
+        @keyframes toss-flip-tails-mobile {
+          0% { 
+            transform: translateY(0) rotateX(0deg) scale(1); 
+            filter: drop-shadow(0 3px 5px rgba(0,0,0,0.4));
+          }
+          15% { 
+            transform: translateY(-70px) rotateX(360deg) scale(1.05); 
+          }
+          45% { 
+            transform: translateY(-130px) rotateX(1080deg) scale(1.15); 
+            filter: drop-shadow(0 15px 10px rgba(0,0,0,0.5));
+          }
+          75% { 
+            transform: translateY(-40px) rotateX(1800deg) scale(1.02); 
+          }
+          90% { 
+            transform: translateY(0) rotateX(2340deg) scale(1); 
+            filter: drop-shadow(0 3px 5px rgba(0,0,0,0.4));
+          }
+          95% { 
+            transform: translateY(-6px) rotateX(2330deg) scale(1.01); 
+          }
+          100% { 
+            transform: translateY(0) rotateX(2340deg) scale(1); 
+          }
+        }
+
+        @keyframes toss-shadow-scale {
+          0% { transform: scale(1); opacity: 0.6; filter: blur(2px); }
+          15% { transform: scale(0.75); opacity: 0.4; filter: blur(4px); }
+          45% { transform: scale(0.4); opacity: 0.15; filter: blur(8px); }
+          75% { transform: scale(0.8); opacity: 0.45; filter: blur(4px); }
+          90% { transform: scale(1); opacity: 0.6; filter: blur(2px); }
+          95% { transform: scale(0.95); opacity: 0.55; filter: blur(2px); }
+          100% { transform: scale(1); opacity: 0.6; filter: blur(2px); }
+        }
+
+        .toss-coin-animate-heads {
+          animation: toss-flip-heads 1.6s cubic-bezier(0.2, 0.85, 0.3, 1) forwards !important;
+        }
+
+        .toss-coin-animate-tails {
+          animation: toss-flip-tails 1.6s cubic-bezier(0.2, 0.85, 0.3, 1) forwards !important;
+        }
+
+        .toss-shadow-animate {
+          animation: toss-shadow-scale 1.6s cubic-bezier(0.2, 0.85, 0.3, 1) forwards !important;
+        }
+
+        /* Responsive keyframes injection for mobile */
+        @media (max-width: 480px) {
+          .toss-coin-animate-heads {
+            animation: toss-flip-heads-mobile 1.6s cubic-bezier(0.2, 0.85, 0.3, 1) forwards !important;
+          }
+
+          .toss-coin-animate-tails {
+            animation: toss-flip-tails-mobile 1.6s cubic-bezier(0.2, 0.85, 0.3, 1) forwards !important;
+          }
+        }
+
+        .rule-card-toggle:hover {
+          border-color: var(--primary) !important;
+          background-color: rgba(245, 158, 11, 0.04) !important;
+        }
+      `}</style>
     </div>
   );
 }

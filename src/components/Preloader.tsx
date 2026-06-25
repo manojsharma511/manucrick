@@ -42,7 +42,7 @@ export function Preloader({ onComplete }: PreloaderProps) {
         left: 0,
         width: '100vw',
         height: '100vh',
-        backgroundColor: '#050A18',
+        backgroundColor: '#050505',
         zIndex: 20000,
         display: 'flex',
         flexDirection: 'column',
@@ -59,7 +59,7 @@ export function Preloader({ onComplete }: PreloaderProps) {
           position: 'absolute',
           width: '250px',
           height: '250px',
-          background: 'radial-gradient(circle, rgba(0,255,135,0.08) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%)',
           pointerEvents: 'none',
           animation: 'preloaderGlowPulse 2.5s infinite alternate ease-in-out',
         }}
@@ -72,7 +72,7 @@ export function Preloader({ onComplete }: PreloaderProps) {
             width: '90px',
             height: '90px',
             borderRadius: '50%',
-            border: '2px solid rgba(0, 255, 135, 0.05)',
+            border: '2px solid rgba(245, 158, 11, 0.05)',
             borderTop: '2px solid var(--primary)',
             borderBottom: '2px solid var(--secondary)',
             animation: 'loaderSpin 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite',
@@ -129,7 +129,7 @@ export function Preloader({ onComplete }: PreloaderProps) {
               animationDelay: `${index * 0.07}s`,
               opacity: 0,
               transform: 'translateY(30px) scale(0.6)',
-              textShadow: '0 0 15px rgba(0, 255, 135, 0.3)',
+              textShadow: '0 0 15px rgba(245, 158, 11, 0.3)',
             }}
           >
             {char}

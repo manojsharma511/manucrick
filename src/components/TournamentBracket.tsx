@@ -622,13 +622,16 @@ export function TournamentBracket() {
             {rounds.map((r, idx) => (
               <button
                 key={idx}
-                onClick={() => setActiveRoundTab(idx)}
+                onClick={() => {
+                  setActiveRoundTab(idx);
+                  document.getElementById(`round-col-${idx}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                }}
                 style={{
                   flexShrink: 0,
                   padding: '8px 14px',
                   borderRadius: '20px',
                   border: activeRoundTab === idx ? '1px solid var(--primary)' : '1px solid rgba(255,255,255,0.08)',
-                  backgroundColor: activeRoundTab === idx ? 'rgba(0, 255, 135, 0.08)' : 'rgba(5, 10, 24, 0.4)',
+                  backgroundColor: activeRoundTab === idx ? 'rgba(245, 158, 11, 0.15)' : 'rgba(5, 10, 24, 0.4)',
                   color: activeRoundTab === idx ? '#FFF' : 'var(--text-secondary)',
                   fontSize: '0.85rem',
                   fontWeight: 'bold',
@@ -644,119 +647,122 @@ export function TournamentBracket() {
 
           {/* BRACKET LAYOUT DISPLAY */}
           {/* Desktop tree display, columns side by side */}
-          <div className="bracket-wrapper" style={{ display: 'grid', gridTemplateColumns: `repeat(${rounds.length}, 1fr)`, gap: '30px' }}>
-            {rounds.map((round, rIdx) => {
-              const isTabActive = activeRoundTab === rIdx;
-              return (
-                <div
-                  key={round.roundIndex}
-                  className={`bracket-round-col ${isTabActive ? 'mobile-active' : ''}`}
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-around',
-                    height: '100%',
-                    minHeight: '450px',
-                    transition: 'all 0.3s ease',
-                  }}
-                >
-                  {/* Round Header */}
-                  <div className="no-print" style={{ textAlign: 'center', marginBottom: '15px', borderBottom: '1px dashed rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
-                    <h3 style={{ fontSize: '1.2rem', color: 'var(--primary)' }}>{round.name.toUpperCase()}</h3>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>{round.matches.length} Matches</span>
-                  </div>
+          <div className="bracket-scroll-container" style={{ width: '100%', overflowX: 'auto', WebkitOverflowScrolling: 'touch', paddingBottom: '15px' }}>
+            <div className="bracket-wrapper" style={{ display: 'grid', gridTemplateColumns: `repeat(${rounds.length}, 1fr)`, gap: '30px' }}>
+              {rounds.map((round, rIdx) => {
+                const isTabActive = activeRoundTab === rIdx;
+                return (
+                  <div
+                    key={round.roundIndex}
+                    id={`round-col-${round.roundIndex}`}
+                    className={`bracket-round-col ${isTabActive ? 'mobile-active' : ''}`}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-around',
+                      height: '100%',
+                      minHeight: '450px',
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    {/* Round Header */}
+                    <div className="no-print" style={{ textAlign: 'center', marginBottom: '15px', borderBottom: '1px dashed rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
+                      <h3 style={{ fontSize: '1.2rem', color: 'var(--primary)' }}>{round.name.toUpperCase()}</h3>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>{round.matches.length} Matches</span>
+                    </div>
 
-                  {/* Print Round Header */}
-                  <div className="print-only" style={{ display: 'none', textAlign: 'center', marginBottom: '10px' }}>
-                    <h3 style={{ fontSize: '1.2rem', textDecoration: 'underline' }}>{round.name}</h3>
-                  </div>
+                    {/* Print Round Header */}
+                    <div className="print-only" style={{ display: 'none', textAlign: 'center', marginBottom: '10px' }}>
+                      <h3 style={{ fontSize: '1.2rem', textDecoration: 'underline' }}>{round.name}</h3>
+                    </div>
 
-                  {/* Round Matches List */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', height: '100%', justifyContent: 'space-evenly' }}>
-                    {round.matches.map((match) => {
-                      const isPlayable = !match.winner && !match.teamA.startsWith('Winner Match') && !match.teamB.startsWith('Winner Match');
-                      const isMatchWinnerA = match.winner === match.teamA && !!match.winner;
-                      const isMatchWinnerB = match.winner === match.teamB && !!match.winner;
+                    {/* Round Matches List */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', height: '100%', justifyContent: 'space-evenly' }}>
+                      {round.matches.map((match) => {
+                        const isPlayable = !match.winner && !match.teamA.startsWith('Winner Match') && !match.teamB.startsWith('Winner Match');
+                        const isMatchWinnerA = match.winner === match.teamA && !!match.winner;
+                        const isMatchWinnerB = match.winner === match.teamB && !!match.winner;
 
-                      return (
-                        <div
-                          key={match.id}
-                          className="glass-panel match-card"
-                          onClick={() => currentTournament.status === 'active' && handleOpenScoring(match)}
-                          style={{
-                            padding: '12px 14px',
-                            cursor: currentTournament.status === 'completed' ? 'default' : (isPlayable ? 'pointer' : 'not-allowed'),
-                            borderColor: match.winner ? 'rgba(0, 255, 135, 0.2)' : 'rgba(255, 255, 255, 0.08)',
-                            opacity: (match.teamA.startsWith('Winner Match') && match.teamB.startsWith('Winner Match')) ? 0.35 : 1,
-                            position: 'relative',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '8px',
-                          }}
-                        >
-                          {/* Match Index Tag */}
-                          <div style={{ position: 'absolute', top: '-10px', left: '15px', backgroundColor: '#090E1D', border: '1px solid rgba(255,255,255,0.08)', padding: '2px 8px', borderRadius: '4px', fontSize: '0.65rem', color: 'var(--text-secondary)' }}>
-                            MATCH {match.id}
+                        return (
+                          <div
+                            key={match.id}
+                            className="glass-panel match-card"
+                            onClick={() => currentTournament.status === 'active' && handleOpenScoring(match)}
+                            style={{
+                              padding: '12px 14px',
+                              cursor: currentTournament.status === 'completed' ? 'default' : (isPlayable ? 'pointer' : 'not-allowed'),
+                              borderColor: match.winner ? 'rgba(0, 255, 135, 0.2)' : 'rgba(255, 255, 255, 0.08)',
+                              opacity: (match.teamA.startsWith('Winner Match') && match.teamB.startsWith('Winner Match')) ? 0.35 : 1,
+                              position: 'relative',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: '8px',
+                            }}
+                          >
+                            {/* Match Index Tag */}
+                            <div style={{ position: 'absolute', top: '-10px', left: '15px', backgroundColor: '#090E1D', border: '1px solid rgba(255,255,255,0.08)', padding: '2px 8px', borderRadius: '4px', fontSize: '0.65rem', color: 'var(--text-secondary)' }}>
+                              MATCH {match.id}
+                            </div>
+
+                            {/* Team A Row */}
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                {isMatchWinnerA && <span style={{ color: 'var(--accent)' }}>👑</span>}
+                                <span style={{
+                                  fontWeight: isMatchWinnerA ? 'bold' : 'normal',
+                                  color: isMatchWinnerA ? 'var(--primary)' : (match.winner ? 'var(--text-secondary)' : '#FFF'),
+                                  fontSize: '0.95rem',
+                                }}>
+                                  {match.teamA}
+                                </span>
+                              </div>
+                              {match.scoreA ? (
+                                <span style={{ fontSize: '0.88rem', fontWeight: 'bold' }}>
+                                  {match.scoreA.runs}/{match.scoreA.wickets} <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 'normal' }}>({match.scoreA.overs})</span>
+                                </span>
+                              ) : null}
+                            </div>
+
+                            {/* Team B Row */}
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                {isMatchWinnerB && <span style={{ color: 'var(--accent)' }}>👑</span>}
+                                <span style={{
+                                  fontWeight: isMatchWinnerB ? 'bold' : 'normal',
+                                  color: isMatchWinnerB ? 'var(--primary)' : (match.winner ? 'var(--text-secondary)' : '#FFF'),
+                                  fontSize: '0.95rem',
+                                }}>
+                                  {match.teamB}
+                                </span>
+                              </div>
+                              {match.scoreB ? (
+                                <span style={{ fontSize: '0.88rem', fontWeight: 'bold' }}>
+                                  {match.scoreB.runs}/{match.scoreB.wickets} <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 'normal' }}>({match.scoreB.overs})</span>
+                                </span>
+                              ) : null}
+                            </div>
+
+                            {/* Match Result Footer text */}
+                            {match.winner && (
+                              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '4px', textAlign: 'center', fontWeight: 'bold', textTransform: 'uppercase' }}>
+                                🏆 {match.winner} WON
+                              </div>
+                            )}
+
+                            {/* Hover Playable overlay sign */}
+                            {isPlayable && currentTournament.status === 'active' && (
+                              <div className="match-card-overlay">
+                                <span>Score Match 🏏</span>
+                              </div>
+                            )}
                           </div>
-
-                          {/* Team A Row */}
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              {isMatchWinnerA && <span style={{ color: 'var(--accent)' }}>👑</span>}
-                              <span style={{
-                                fontWeight: isMatchWinnerA ? 'bold' : 'normal',
-                                color: isMatchWinnerA ? 'var(--primary)' : (match.winner ? 'var(--text-secondary)' : '#FFF'),
-                                fontSize: '0.95rem',
-                              }}>
-                                {match.teamA}
-                              </span>
-                            </div>
-                            {match.scoreA ? (
-                              <span style={{ fontSize: '0.88rem', fontWeight: 'bold' }}>
-                                {match.scoreA.runs}/{match.scoreA.wickets} <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 'normal' }}>({match.scoreA.overs})</span>
-                              </span>
-                            ) : null}
-                          </div>
-
-                          {/* Team B Row */}
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              {isMatchWinnerB && <span style={{ color: 'var(--accent)' }}>👑</span>}
-                              <span style={{
-                                fontWeight: isMatchWinnerB ? 'bold' : 'normal',
-                                color: isMatchWinnerB ? 'var(--primary)' : (match.winner ? 'var(--text-secondary)' : '#FFF'),
-                                fontSize: '0.95rem',
-                              }}>
-                                {match.teamB}
-                              </span>
-                            </div>
-                            {match.scoreB ? (
-                              <span style={{ fontSize: '0.88rem', fontWeight: 'bold' }}>
-                                {match.scoreB.runs}/{match.scoreB.wickets} <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 'normal' }}>({match.scoreB.overs})</span>
-                              </span>
-                            ) : null}
-                          </div>
-
-                          {/* Match Result Footer text */}
-                          {match.winner && (
-                            <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '4px', textAlign: 'center', fontWeight: 'bold', textTransform: 'uppercase' }}>
-                              🏆 {match.winner} WON
-                            </div>
-                          )}
-
-                          {/* Hover Playable overlay sign */}
-                          {isPlayable && currentTournament.status === 'active' && (
-                            <div className="match-card-overlay">
-                              <span>Score Match 🏏</span>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
       ) : (
@@ -943,14 +949,12 @@ export function TournamentBracket() {
             display: flex !important;
           }
           .bracket-wrapper {
-            grid-template-columns: 1fr !important;
+            grid-template-columns: repeat(${rounds.length}, minmax(280px, 1fr)) !important;
+            min-width: ${rounds.length * 300}px;
           }
           .bracket-round-col {
-            display: none !important;
-            min-height: auto !important;
-          }
-          .bracket-round-col.mobile-active {
             display: flex !important;
+            min-height: auto !important;
           }
         }
       `}</style>

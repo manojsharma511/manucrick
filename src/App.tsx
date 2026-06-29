@@ -1,4 +1,5 @@
 import { useState, useEffect, Suspense, lazy } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 const ArcadeHub = lazy(() => import('./components/arcade/ArcadeHub'));
 import { useSmoothScroll } from './hooks/useSmoothScroll';
 import { useIntersectionObserver } from './hooks/useIntersectionObserver';
@@ -133,6 +134,7 @@ function App() {
 
   return (
     <>
+      <Analytics />
       <div className="noise-overlay" />
       <CustomCursor />
       <ParticleBackground />
